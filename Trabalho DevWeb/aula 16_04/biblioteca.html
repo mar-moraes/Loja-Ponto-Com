@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca - IFSP Hortolândia</title>
+    <link rel="stylesheet" href="style.css">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pesquisa - IFSP Hortolândia</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <style>
+            .image-container {
+                text-align: center;
+                margin: 20px 0;
+            }
+            
+            .library-photo {
+                max-width: 600px;
+                /* Limita a largura máxima da imagem */
+                height: auto;
+                /* Mantém a proporção da imagem */
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            
+            ul {
+                list-style-type: disc;
+                margin-left: 20px;
+            }
+            
+            ol {
+                list-style-type: decimal;
+                margin-left: 20px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <header>
+            <div class="container">
+                <img src="imagens/logo.jpeg" alt="Logotipo IFSP" class="logo" />
+                <h1>IFSP Câmpus Hortolândia</h1>
+                <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">☰</button>
+            </div>
+            <nav>
+                <ul class="menu" id="menu">
+                    <li><a href="home.html">Início</a></li>
+                    <li><a href="historico.html">Histórico</a></li>
+                    <li><a href="localizacao.html">Localização</a></li>
+                    <li><a href="cursos.html">Cursos</a></li>
+                    <li><a href="biblioteca.html">Biblioteca</a></li>
+                    <li><a href="extensao.html">Extensão</a></li>
+                    <li><a href="processo-seletivo.html">Vestibulares</a></li>
+                    <li><a href="calendario.html">Calendário</a></li>
+                    <li><a href="formulario.html">Contato</a></li>
+                    <li><a href="pesquisa.html">Pesquisa</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="container">
+                <section id="biblioteca">
+                    <h2>Biblioteca</h2>
+                    <div class="image-container">
+                        <img src="imagens/biblioteca.jpeg" alt="Foto da Biblioteca do IFSP Hortolândia" class="library-photo">
+                    </div>
+                    <p>A biblioteca do IFSP Câmpus Hortolândia é um espaço dedicado ao aprendizado, pesquisa e desenvolvimento acadêmico. Com um acervo diversificado e atualizado, ela atende às necessidades de alunos, professores e comunidade.</p>
+
+                    <h3>Horário de Funcionamento</h3>
+                    <ul>
+                        <li><strong>Segunda a Sexta:</strong> 8h às 21h</li>
+                        <li><strong>Sábados:</strong> 8h às 12h</li>
+                        <li><strong>Domingos e Feriados:</strong> Fechado</li>
+                    </ul>
+
+                    <h3>Serviços Disponíveis</h3>
+                    <ul>
+                        <li>Empréstimo e devolução de livros</li>
+                        <li>Consulta local</li>
+                        <li>Acesso a computadores e internet</li>
+                        <li>Orientação para pesquisas acadêmicas</li>
+                        <li>Espaço para estudo individual e em grupo</li>
+                        <li>Treinamentos para uso de bases de dados acadêmicas</li>
+                        <li>Auxílio na normalização de trabalhos acadêmicos (ABNT, APA, etc.)</li>
+                        <li>Eventos culturais e literários, como clubes de leitura e palestras</li>
+                    </ul>
+
+                    <h3>Acervo</h3>
+                    <p>O acervo da biblioteca é composto por uma ampla variedade de materiais para atender às demandas acadêmicas e culturais:</p>
+                    <ul>
+                        <li>Livros técnicos e científicos em diversas áreas do conhecimento</li>
+                        <li>Revistas acadêmicas e periódicos especializados</li>
+                        <li>Trabalhos de conclusão de curso (TCCs) e dissertações</li>
+                        <li>Materiais multimídia, como DVDs e CDs educativos</li>
+                        <li>E-books e acesso a bases de dados digitais</li>
+                        <li>Jornais e revistas de circulação nacional</li>
+                        <li>Mapas e atlas geográficos</li>
+                    </ul>
+
+                    <h3>Regras de Uso</h3>
+                    <ul>
+                        <li>É necessário apresentar a carteirinha de estudante ou documento oficial com foto para empréstimos.</li>
+                        <li>O prazo de devolução é de 14 dias, com possibilidade de renovação por mais 14 dias, desde que não haja reserva.</li>
+                        <li>Multas serão aplicadas em caso de atraso na devolução, no valor de R$ 1,00 por dia de atraso por item.</li>
+                        <li>O uso dos computadores é limitado a 2 horas por dia, podendo ser estendido caso não haja fila de espera.</li>
+                        <li>É proibido consumir alimentos e bebidas dentro da biblioteca, exceto água em garrafas fechadas.</li>
+                        <li>O silêncio deve ser mantido para garantir um ambiente de estudo adequado.</li>
+                        <li>Materiais de consulta local não podem ser retirados da biblioteca.</li>
+                    </ul>
+
+                    <h3>Como Fazer Empréstimos</h3>
+                    <p>Para realizar empréstimos, siga os passos abaixo:</p>
+                    <ol>
+                        <li>Apresente sua carteirinha de estudante no balcão de atendimento.</li>
+                        <li>Informe o título ou autor do material que deseja emprestar.</li>
+                        <li>Verifique a disponibilidade do item no sistema.</li>
+                        <li>Retire o material e observe o prazo de devolução informado no recibo.</li>
+                    </ol>
+
+                    <h3>Eventos e Atividades</h3>
+                    <p>A biblioteca organiza regularmente eventos e atividades para promover a leitura e o aprendizado:</p>
+                    <ul>
+                        <li>Clubes de leitura para discussão de obras literárias</li>
+                        <li>Palestras com autores e especialistas</li>
+                        <li>Exposições temáticas sobre ciência, tecnologia e cultura</li>
+                        <li>Oficinas de escrita acadêmica e produção científica</li>
+                    </ul>
+
+                    <h3>Contato</h3>
+                    <p>Para mais informações, entre em contato com a biblioteca:</p>
+                    <ul>
+                        <li><strong>Telefone:</strong> (19) 3865-0800</li>
+                        <li><strong>Email:</strong> biblioteca@ifsp.edu.br</li>
+                        <li><strong>Endereço:</strong> Av. Thereza Ana Cecon Breda, 1896 - Vila São Pedro, Hortolândia - SP, 13183-091</li>
+                    </ul>
+                </section>
+            </div>
+        </main>
+
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <p>&copy; 2023 IFSP Câmpus Hortolândia. Todos os direitos reservados.</p>
+                    <ul class="social-media">
+                        <li>
+                            <a href="https://www.instagram.com/ifsp.hortolandia/" target="_blank" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.facebook.com/ifsphto" target="_blank" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.youtube.com/channel/UCXrKgGH_mpGd8USA2Yhk31Q" target="_blank" aria-label="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://br.linkedin.com/company/instituto-federal-de-educa%C3%A7%C3%A3o-ci%C3%AAncia-e-tecnologia-de-s%C3%A3o-paulo-campus-hortol%C3%A2ndia" target="_blank" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/ecahtoifsp" target="_blank" aria-label="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            // Menu responsivo
+            const menuToggle = document.querySelector('.menu-toggle');
+            const menu = document.querySelector('.menu');
+
+            menuToggle.addEventListener('click', () => {
+                menu.classList.toggle('active');
+            });
+            
+             // Carregar o cabeçalho
+    fetch('header.html')
+    .then(response => response.text())
+    .then(data => {
+        document.body.insertAdjacentHTML('afterbegin', data);
+    });
+
+// Carregar o rodapé
+fetch('footer.html')
+    .then(response => response.text())
+    .then(data => {
+        document.body.insertAdjacentHTML('beforeend', data);
+    });
+
+        // Animações de entrada
+        document.querySelectorAll('.animate__animated').forEach(element => {
+            element.classList.add('animate__fadeIn');
+        });
+        </script>
+    </body>
+
+</html>

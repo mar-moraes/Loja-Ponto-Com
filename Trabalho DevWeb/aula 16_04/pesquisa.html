@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa - IFSP Hortolândia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="container">
+            <img src="imagens/logo.jpeg" alt="Logotipo IFSP" class="logo" />
+            <h1>IFSP Câmpus Hortolândia</h1>
+            <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">☰</button>
+        </div>
+        <nav>
+            <ul class="menu" id="menu">
+                <li><a href="home.html">Início</a></li>
+                <li><a href="historico.html">Histórico</a></li>
+                <li><a href="localizacao.html">Localização</a></li>
+                <li><a href="cursos.html">Cursos</a></li>
+                <li><a href="biblioteca.html">Biblioteca</a></li>
+                <li><a href="extensao.html">Extensão</a></li>
+                <li><a href="processo-seletivo.html">Vestibulares</a></li>
+                <li><a href="calendario.html">Calendário</a></li>
+                <li><a href="formulario.html">Contato</a></li>
+                <li><a href="pesquisa.html">Pesquisa</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="banner">
+            <div class="container">
+                <h2>Bem-vindo à Pesquisa no IFSP Hortolândia</h2>
+                <p>Explore as iniciativas de pesquisa que transformam ideias em inovação.</p>
+            </div>
+        </section>
+
+        <section id="pesquisa" class="container">
+            <h2>Pesquisa</h2>
+            <p>O IFSP Câmpus Hortolândia promove diversas atividades de pesquisa para incentivar o desenvolvimento acadêmico e científico de seus alunos e professores. Confira abaixo algumas das principais iniciativas:</p>
+
+            <h3>Iniciações Científicas</h3>
+            <p>Os projetos de iniciação científica permitem que os alunos desenvolvam habilidades de pesquisa e inovação, trabalhando em conjunto com professores orientadores. Áreas de destaque incluem:</p>
+            <ul>
+                <li>Desenvolvimento de tecnologias sustentáveis</li>
+                <li>Automação e robótica</li>
+                <li>Ciência de dados e inteligência artificial</li>
+            </ul>
+            <p>Os alunos interessados podem se inscrever nos editais abertos anualmente.</p>
+
+            <h3>Congressos e Eventos</h3>
+            <p>O câmpus organiza e participa de diversos congressos e eventos acadêmicos, como:</p>
+            <ul>
+                <li><strong>Semana de Tecnologia:</strong> Um evento anual que reúne palestras, workshops e exposições de projetos inovadores.</li>
+                <li><strong>Congresso de Iniciação Científica:</strong> Apresentação de trabalhos desenvolvidos por alunos e professores.</li>
+                <li><strong>Feiras de Ciências:</strong> Oportunidade para alunos apresentarem suas ideias e projetos à comunidade.</li>
+            </ul>
+
+            <h3>Parcerias e Projetos</h3>
+            <p>O câmpus mantém parcerias com empresas e instituições para o desenvolvimento de projetos de pesquisa aplicada. Exemplos incluem:</p>
+            <ul>
+                <li>Colaboração com empresas locais para soluções de automação industrial</li>
+                <li>Projetos de sustentabilidade em parceria com ONGs</li>
+                <li>Desenvolvimento de aplicativos educacionais</li>
+            </ul>
+
+            <h3>Publicações</h3>
+            <p>Os resultados das pesquisas realizadas no câmpus são frequentemente publicados em revistas científicas e apresentados em eventos nacionais e internacionais.</p>
+
+            <h3>Como Participar</h3>
+            <p>Se você é aluno ou professor e deseja participar das atividades de pesquisa, entre em contato com o Núcleo de Pesquisa do câmpus pelo email <a href="mailto:pesquisa@ifsp.edu.br">pesquisa@ifsp.edu.br</a>.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2023 IFSP Câmpus Hortolândia. Todos os direitos reservados.</p>
+                <ul class="social-media">
+                    <li>
+                        <a href="https://www.instagram.com/ifsp.hortolandia/" target="_blank" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.facebook.com/ifsphto" target="_blank" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/channel/UCXrKgGH_mpGd8USA2Yhk31Q" target="_blank" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://br.linkedin.com/company/instituto-federal-de-educa%C3%A7%C3%A3o-ci%C3%AAncia-e-tecnologia-de-s%C3%A3o-paulo-campus-hortol%C3%A2ndia" target="_blank" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://twitter.com/ecahtoifsp" target="_blank" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu responsivo
+        const menuToggle = document.querySelector('.menu-toggle');
+        const menu = document.querySelector('.menu');
+
+        menuToggle.addEventListener('click', () => {
+            menu.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>
