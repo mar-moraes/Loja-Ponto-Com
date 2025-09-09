@@ -1,0 +1,47 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Visual Studio 6.0">
+<TITLE></TITLE>
+<SCRIPT SRC="biblioteca/validaCPF.js"></SCRIPT>
+<SCRIPT LANGUAGE=javascript>
+function window_onload() {
+   form1.nome.focus();
+}
+</SCRIPT>
+<SCRIPT ID=clientEventHandlersJS LANGUAGE=javascript>
+function button1_onclick() {
+   //alert(form1.nome.value.substr(3,4));
+   //alert(form1.nome.value.indexOf('@')); 
+}
+function cpf_onblur() {
+  if (form1.cpf.value.indexOf('.')== -1) {
+     form1.cpf.value=
+       form1.cpf.value.substr(0,3)+'.'+
+       form1.cpf.value.substr(3,3)+'.'+
+       form1.cpf.value.substr(6,3)+'-'+
+       form1.cpf.value.substr(9,2);
+  }
+  
+}
+
+function cpf_onchange() {
+   if (!ok_CPF(form1.cpf)) {
+       alert('cpf invalido');
+       form1.cpf.select();
+       return false;
+   }
+}
+
+</SCRIPT>
+</HEAD>
+<BODY onload="return window_onload()">
+
+<FORM action="" method=POST id=form1 name=form1>
+nome<INPUT type="text"  name=nome><br>
+cpf<INPUT type="text"  name=cpf LANGUAGE=javascript onblur="return cpf_onblur()" onchange="return cpf_onchange()"><br>
+idade<INPUT type="text"  name=idade><br>
+<INPUT type="button" value="Button" id=button1 name=button1 LANGUAGE=javascript onclick="return button1_onclick()">
+</FORM>
+
+</BODY>
+</HTML>

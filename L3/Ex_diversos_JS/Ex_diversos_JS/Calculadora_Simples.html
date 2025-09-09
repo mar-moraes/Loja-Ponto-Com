@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Calculadora Simples</title>
+
+<script>
+function calcula(operacao){
+var parcela1 = document.calc.parcela1.value
+var parcela2 = document.calc.parcela2.value
+var result = eval(parcela1 + operacao + parcela2)
+document.calc.resultado.value = result
+}
+</script>
+</head>
+
+<body>
+<p><h2>Calculadora Simples</h2></p>
+<br>
+<form name="calc">
+<input type="Text" name="parcela1" value="0" size="15">
+<br>
+<input type="Text" name="parcela2" value="0" size="15">
+<br>
+<input type="Button" name="" value=" + " onclick="calcula('+')">
+<input type="Button" name="" value=" - " onclick="calcula('-')">
+<input type="Button" name="" value=" X " onclick="calcula('*')">
+<input type="Button" name="" value=" / " onclick="calcula('/')">
+<br>
+<input type="Text" name="resultado" value="0" size="15">
+</form>
+</body>
+</html>

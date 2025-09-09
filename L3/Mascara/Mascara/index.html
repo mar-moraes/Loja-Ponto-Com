@@ -1,0 +1,79 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Cadastro</title>
+<link href="Estilo.css" rel="stylesheet" type="text/css" />
+<script language="javascript" type="text/javascript" src="mascaras.js"></script>
+</head>
+
+<body>
+<!-- onBlur=Comprova-se a validade de um dado ao sair do campo de texto aonde está escrito. onKeyPress= é acionado quando o usuário pressiona uma tecla (no teclado).-->
+<div class="conteudo">
+<form id="form1" name="form1" method="post" action="">
+  <br>
+  <img src="imagem.png"> 
+  <br> <br>
+  <label for="edit_cpf">CPF:</label>
+  <input name="edit_cpf" type="text" id="edit_cpf" maxlength="14" size="15" onBlur="ValidaCPF(form1.edit_cpf)" onKeyPress="MascaraCPF(form1.edit_cpf)"/>
+    
+   <p>
+    <label for="edit_nome">Nome</label>
+    <input name="edit_nome" type="text" id="edit_nome" size="50" maxlength="47"  />
+  </p> 
+  <p>
+    <label for="edit_nascimento">Data de Nascimento:</label>
+    <input name="edit_nascimento" type="date" id="edit_nascimento" maxlength="10" onBlur="ValidaData(form1.edit_nascimento)" onKeyPress="MascaraData(form1.edit_nascimento)" />
+ </p>
+  <p>
+    <label for="edit_endereco">Endereco:</label>
+    <input name="edit_endereco" type="text" id="edit_endereco" value="" size="49" maxlength="45" /> 
+    
+  </p>
+  <p>
+    <label for="edit_cep">CEP........:</label>
+    <input name="edit_cep" type="text" id="edit_cep" size="10" maxlength="10" onBlur="ValidaCep(form1.edit_cep)" onKeyPress="MascaraCep(form1.edit_cep)" />
+    <label for="edit_hora">Hora</label>
+    <input name="edit_hora" type="time" id="edit_hora" maxlength="28" size="26" />
+  </p>
+  <p>
+    <label for="edit_cidade">Cidade....:</label>
+    <input name="edit_cidade" type="text" id="edit_cidade" maxlength="35" size="34"/>
+    <label for="list_estado">Estado</label>
+    <select name="list_estado" id="list_estado">
+    <option>AC</option>
+    <option>AL</option>
+    <option>AP</option>
+    <option>AM</option>
+    <option>BA</option>
+    <option>CE</option>
+    <option>DF</option>
+    <option>BA</option>
+    <option>ES</option>
+    <option>GO</option>
+    <option>MA</option>
+    <option>MT</option>
+    <option>MS</option>
+    <option>MG</option>
+    <option>PA</option>
+    <option>PB</option>
+    <option>PR</option>
+    <option>PE</option>
+    <option>PI</option>
+    <option>RJ</option>
+    <option>RN</option>
+    <option>RS</option>
+    <option>RO</option>
+    <option>RR</option>
+    <option>SC</option>
+    <option>SP</option>
+    <option>SE</option>
+    <option>TO</option>
+    </select>
+
+  <p>  <input type="submit" name="btn_envia" id="btn_envia" value="Cadastrar" />
+       <input name="limpar" type="reset" id="btn_limpar" value="Limpar" /> </p>
+    </form>
+</div>
+
+</body>
+</html>	
