@@ -1,0 +1,31 @@
+
+
+
+body {
+ color: grey;
+ width: 100%;
+ background-color: grey;
+
+}
+
+.painel {
+  color: rgb(65, 60, 60); /* Cor do texto */
+  width: 100%; 
+  border: 1px solid hsl(0, 14%, 90%); /* Cor da borda */
+  background-color: #f0f0f0; /* Cor de fundo cinza claro */
+  padding: 20px; /* Espaçamento interno */
+  box-sizing: border-box; 
+}
+
+.produto {
+  color: white; 
+  border: 1px solid #8f8d8d; /* Corrigido: adicionado tipo e espessura da borda */
+  padding: 10px; 
+  box-sizing: content-box; 
+}
+
+.produto img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+}
