@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Tela de Compras</title>
+
+
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Referência ao CSS -->
+  <link rel="stylesheet" href="estilo_carrinho.css">
+
+</head>
+
+<body>
+    <!-- Barra fixa -->
+    <header class="topbar">
+      <nav class="actions" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
+
+
+        <div style="display: flex; align-items: center; justify-content: flex-start; flex: 1;">
+          <a href="index.html" style="display: flex; align-items: center;">
+            <img src="imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px; margin-right: 20px; margin-left: 0;">
+          </a>
+        </div>
+
+        <!-- Formulário envia os dados para buscar.php -->
+        <form action="buscar.php" method="GET" style="display: flex; align-items: center; width: 500px; max-width: 100%;">
+          <input type="search" id="pesquisa" name="q" placeholder="Digite sua busca..." style="font-size: 16px; width: 300px; height: 40px;">
+          <button type="submit" style="margin-left: 0px; height: 40px;">
+            <img src="imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px;">
+          </button>
+        </form>
+        <div style="display: flex; gap: 30px; align-items: center;">
+          <a href="#">Crie a sua conta</a>
+          <a href="#">Entre</a>
+          <a href="#">Carrinho 🛒</a>
+        </div>
+      </nav>
+    </header>
+
+
+
+
+
+  <div class="painel">
+
+    <!-- Produto 1 -->
+    <div class="produto" style="display: flex; align-items: center;">
+      <img src="imagens/exemplo01.png" alt="teclado">
+      <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit</p>
+      <!-- Contador 1-->
+      <div class="contador-container" style="display: flex; align-items: center;">
+        <button type="button" onclick="alterarContador(1, -1)">-</button>
+        <div id="contador1" class="contador-numero" style="color: black;">0</div>
+        <button type="button" onclick="alterarContador(1, 1)">+</button>
+      </div>
+    </div>
+
+    <!-- Produto 2 -->
+    <div class="produto" style="display: flex; align-items: center;">
+      <img src="imagens/exemplo02.png" alt="teclado">
+      <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit</p>
+      <!-- Contador 2 -->
+      <div class="contador-container" style="display: flex; align-items: center;">
+        <button type="button" onclick="alterarContador(2, -1)">-</button>
+        <div id="contador2" class="contador-numero" style="color: black;">0</div>
+        <button type="button" onclick="alterarContador(2, 1)">+</button>
+      </div>
+    </div>
+
+    <!-- Produto 3-->
+    <div class="produto" style="display: flex; align-items: center;">
+      <img src="imagens/exemplo03.png" alt="teclado">
+      <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit</p>
+      <!-- Contador 3 -->
+      <div class="contador-container" style="display: flex; align-items: center;">
+        <button type="button" onclick="alterarContador(3, -1)">-</button>
+        <div id="contador3" class="contador-numero" style="color: black;">0</div>
+        <button type="button" onclick="alterarContador(3, 1)">+</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Script do contador -->
+  <script>
+    // Cada contador é independente
+    let contadores = {
+      1: 0,
+      2: 0,
+      3: 0
+    };
+
+    function alterarContador(id, valor) {
+      contadores[id] += valor;
+      if (contadores[id] < 0) contadores[id] = 0;
+      document.getElementById('contador' + id).innerText = contadores[id];
+    }
+  </script>
+</body>
+</html>

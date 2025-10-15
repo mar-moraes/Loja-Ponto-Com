@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loja Ponto Com</title>
+
+  <!-- Importa o arquivo de estilos -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Barra fixa -->
+    <header class="topbar">
+      <nav class="actions" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
+
+
+        <a href="index.html" style="display: flex; align-items: center;">
+          <img src="imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px; margin-right: 20px;">
+        </a>
+
+
+        <!-- Formulário envia os dados para buscar.php -->
+        <form action="buscar.php" method="GET" style="display: flex; align-items: center; width: 500px; max-width: 100%;">
+          <input type="search" id="pesquisa" name="q" placeholder="Digite sua busca..." style="font-size: 16px; width: 300px; height: 40px;">
+          <button type="submit" style="margin-left: 0px; height: 40px;">
+            <img src="imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px;">
+          </button>
+        </form>
+        <div style="display: flex; gap: 30px; align-items: center;">
+          <a href="#">Crie a sua conta</a>
+          <a href="#">Entre</a>
+          <a href="tela_carrinho.html">Carrinho 🛒</a>
+        </div>
+      </nav>
+    </header>
+
+  <!-- Logotipo (imagem central) -->
+  <section class="hero">
+    <img class="logo" src="" alt="Logo da Loja">
+  </section>
+
+  <!-- Conteúdo principal -->
+  <main class="container">
+
+    <!-- Controle de "ordenação" -->
+    <div class="controls">
+      <label for="sort">Ordenar por</label>
+      <select id="sort" aria-label="Ordenar por">
+        <option>Mais relevantes</option>
+        <option>Menor preço</option>
+        <option>Maior preço</option>
+      </select>
+    </div>
+
+    <!-- Grade de produtos -->
+    <section class="grid">
+
+      <!-- Exemplo do layout Produto -->
+      <article class="card" data-price="6"> <!-- "data-price" é necessário para se ordensr os itens, ssendo ele o valor atual-->
+        <div class="thumb" style="background-image:url('adicionar imagem')"></div>
+        <div class="title">Nome do produto</div>
+        <div>
+          <span class="old">preço antigo</span>
+          <span class="price">preço</span>
+          <span class="badge">porcentagem de desconto</span>
+          <span class="parcel"> parcelas </span>
+        </div>
+      </article>
+
+      <!-- Produto de Exemplo --> 
+      <article class="card" data-price="159.79">
+        <div class="thumb" style="background-image:url('imagens/Zane lego.jpg')"></div>
+        <div class="title">LEGO NINJAGO!!</div>
+        <div>
+          <span class="old">R$ 199,99</span>
+          <span class="price">R$ 159,79</span>
+          <span class="badge">21% OFF</span> <!-- ainda tem que adicionar uma fórmula que calcule isso automaticamente... -->
+          <span class="parcel">12x sem juros no CARTÃO</span>
+        </div>
+      </article>
+
+      <!-- Modelo para edição -->
+      <article class="card" data-price="">
+        <div class="thumb" style="background-image:url('')"></div>
+        <div class="title"></div>
+        <div>
+          <span class="old"></span>
+          <span class="price"></span>
+          <span class="badge"></span>
+          <span class="parcel"></span>
+          <div><di/v>
+        </div>
+      </article>
+
+      <!-- Card Vazio Cópia --> 
+      <article class="card" data-price="">
+        <div class="thumb" style="background-image:url('')"></div>
+        <div class="title"></div>
+        <div>
+          <span class="old"></span>
+          <span class="price"></span>
+          <span class="badge"></span>
+          <span class="parcel"></span>
+          <div><di/v>
+        </div>
+      </article>
+
+      <!-- Card Vazio Cópia -->
+      <article class="card" data-price="">
+        <div class="thumb" style="background-image:url('')"></div>
+        <div class="title"></div>
+        <div>
+          <span class="old"></span>
+          <span class="price"></span>
+          <span class="badge"></span>
+          <span class="parcel"></span>
+          <div><di/v>
+        </div>
+      </article>
+
+      <!-- Card Vazio Cópia -->
+      <article class="card" data-price="">
+        <div class="thumb" style="background-image:url('')"></div>
+        <div class="title"></div>
+        <div>
+          <span class="old"></span>
+          <span class="price"></span>
+          <span class="badge"></span>
+          <span class="parcel"></span>
+          <div><di/v>
+
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer></footer>
+
+  <!-- Importa o JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
