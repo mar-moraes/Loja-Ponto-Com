@@ -4,19 +4,14 @@
   <meta charset="UTF-8">
   <title>Tela de Compras</title>
 
-
   <link rel="stylesheet" href="style.css"/>
-
-  <!-- Referência ao CSS -->
   <link rel="stylesheet" href="estilo_carrinho.css">
 
 </head>
 
 <body>
-    <!-- Barra fixa -->
     <header class="topbar">
       <nav class="actions" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
-
 
         <div style="display: flex; align-items: center; justify-content: flex-start; flex: 1;">
           <a href="index.html" style="display: flex; align-items: center;">
@@ -24,7 +19,6 @@
           </a>
         </div>
 
-        <!-- Formulário envia os dados para buscar.php -->
         <form action="buscar.php" method="GET" style="display: flex; align-items: center; width: 500px; max-width: 100%;">
           <input type="search" id="pesquisa" name="q" placeholder="Digite sua busca..." style="font-size: 16px; width: 300px; height: 40px;">
           <button type="submit" style="margin-left: 0px; height: 40px;">
@@ -39,11 +33,19 @@
       </nav>
     </header>
 
+    <div class="carrinho-layout-container">
+    
+      <div class="painel" id="painel-carrinho">
+        </div>
+    
+      <div class="resumo-container">
+        <h3 id="resumo-titulo" style="color: black;">Total: <span id="valor-total">R$ 0,00</span></h3>
+        
+        <button type="button" class="btn-continuar">Continuar a compra</button>
+      </div>
+    
+    </div>
 
-<div class="painel" id="painel-carrinho"></div>
-<div style="display: flex; justify-content: flex-end; align-items: center; margin: 20px 40px 0px 20px; background-color: #FFFFFF; border: 1px solid black; border-radius: 4px; padding: 10px;">
-  <h2 style="color: black;">Total: <span id="valor-total">R$ 0,00</span></h2>
-</div>
 
 <script>
   // Recupera o carrinho
@@ -51,6 +53,8 @@
 
   const painel = document.getElementById("painel-carrinho");
   const totalSpan = document.getElementById("valor-total");
+  const resumoTitulo = document.getElementById("resumo-titulo");
+  const btnContinuar = document.querySelector(".btn-continuar"); // <-- NOVO: Seleciona o botão
 
   function renderCarrinho() {
     if (carrinho.length === 0) {
@@ -63,35 +67,62 @@
         const quantidade = typeof produto.quantidade === "number" ? produto.quantidade : 1;
         const price = typeof produto.price === "number" ? produto.price : 0;
         return `
-          <div class="produto" style="display: flex; align-items: center; gap: 10px;">
-            <img src="${imgSrc}" alt="Produto">
-            <p>${produto.title || ""}</p>
-            <span style="color: black;">R$ ${price.toFixed(2)}</span>
-
-            <div class="contador-container">
-              <button type="button" onclick="alterarContador(${index}, -1)">-</button>
-              <div id="contador${index}" class="contador-numero" style="color: black;">${quantidade}</div>
-              <button type="button" onclick="alterarContador(${index}, 1)">+</button>
+            <div class="produto" style="display: flex; align-items: center; gap: 10px;">
+            <img src="${imgSrc}" alt="Produto" style="width:80px; height:80px; object-fit:cover;">
+            <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+              <p style="margin: 0;">${produto.title || ""}</p>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="contador-container">
+                <button type="button" onclick="alterarContador(${index}, -1)">-</button>
+                <div id="contador${index}" class="contador-numero" style="color: black;">${quantidade}</div>
+                <button type="button" onclick="alterarContador(${index}, 1)">+</button>
+                </div>
+                <span id="preco${index}" style="color: black; white-space: nowrap;">R$ ${(price * quantidade).toFixed(2)}</span>
+              </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 15px; margin-top: 4px;">
+                <button type="button" onclick="comprarAgora(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: inherit;">Comprar agora</button>
+                <button type="button" onclick="salvarDepois(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: inherit;">Salvar para depois</button>
+                <button type="button" onclick="removerProduto(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: inherit;">Excluir</button>
+              </div>
             </div>
-            <button type="button" onclick="removerProduto(${index})" style="margin-left: 10px; color: blue;">Excluir</button>
-          </div>
+            </div>
         `;
       }).join("");
     }
   }
 
-  // Atualiza o total
+  // ATUALIZADO: Atualiza o total, o título do resumo E O BOTÃO
   function atualizarTotal() {
-    const total = carrinho.reduce((acc, p) => acc + p.price * p.quantidade, 0);
-    totalSpan.innerText = "R$ " + total.toFixed(2).replace(".", ",");
+    if (carrinho.length === 0) {
+      // Se o carrinho estiver vazio, mostra "resumo da compra"
+      resumoTitulo.innerText = "resumo da compra";
+      resumoTitulo.style.color = "black"; // Garante a cor
+      btnContinuar.style.display = "none"; // <-- NOVO: Esconde o botão
+    } else {
+      // Se tiver itens, calcula o total e exibe
+      const total = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
+      
+      // Garante que o HTML do título esteja correto antes de atualizar o valor
+      resumoTitulo.innerHTML = 'Total: <span id="valor-total"></span>';
+      resumoTitulo.style.color = "black"; // Garante a cor
+      document.getElementById("valor-total").innerText = "R$ " + total.toFixed(2).replace(".", ",");
+      btnContinuar.style.display = "block"; // <-- NOVO: Mostra o botão
+    }
   }
 
   // Alterar quantidade de produtos
   function alterarContador(index, valor) {
-    carrinho[index].quantidade += valor;
-    if (carrinho[index].quantidade < 1) carrinho[index].quantidade = 1;
+    const item = carrinho[index];
+    item.quantidade += valor;
+    if (item.quantidade < 1) item.quantidade = 1;
+
     localStorage.setItem("carrinho", JSON.stringify(carrinho));
-    renderCarrinho();
+
+    document.getElementById(`contador${index}`).textContent = item.quantidade;
+    document.getElementById(`preco${index}`).textContent = "R$ " + (item.price * item.quantidade).toFixed(2);
+
     atualizarTotal();
   }
 
@@ -102,6 +133,23 @@
     renderCarrinho();
     atualizarTotal();
   }
+
+  // Função para "Comprar Agora" (ação de exemplo)
+  function comprarAgora(index) {
+    const produto = carrinho[index];
+    alert("Iniciando a compra de: " + produto.title);
+    // No futuro, redirecionar para uma página de checkout:
+    // window.location.href = "checkout.html?item=" + produto.title;
+  }
+
+  // Função para "Salvar para depois" (ação de exemplo)
+  function salvarDepois(index) {
+    const produto = carrinho[index];
+    alert("Salvar para depois: " + produto.title);
+    // No futuro, redirecionar para uma página de checkout:
+    // window.location.href = "checkout.html?item=" + produto.title;
+  }
+
 
   // Inicializa a tela
   renderCarrinho();
