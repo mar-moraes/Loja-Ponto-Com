@@ -39,7 +39,14 @@
         </div>
     
       <div class="resumo-container">
-        <h3 id="resumo-titulo" style="color: black;">Total: <span id="valor-total">R$ 0,00</span></h3>
+        <h3 class="resumo-titulo-fixo">Resumo da compra</h3>
+        
+        <div id="resumo-separador"></div>
+
+        <div id="total-container">
+            <span>Total:</span>
+            <span id="valor-total">R$ 0,00</span>
+        </div>
         
         <button type="button" class="btn-continuar">Continuar a compra</button>
       </div>
@@ -52,9 +59,12 @@
   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
   const painel = document.getElementById("painel-carrinho");
+  
+  // SELETORES ATUALIZADOS
   const totalSpan = document.getElementById("valor-total");
-  const resumoTitulo = document.getElementById("resumo-titulo");
-  const btnContinuar = document.querySelector(".btn-continuar"); // <-- NOVO: Seleciona o botão
+  const separador = document.getElementById("resumo-separador"); // <-- NOVO
+  const totalContainer = document.getElementById("total-container"); // <-- NOVO
+  const btnContinuar = document.querySelector(".btn-continuar");
 
   function renderCarrinho() {
     if (carrinho.length === 0) {
@@ -67,24 +77,25 @@
         const quantidade = typeof produto.quantidade === "number" ? produto.quantidade : 1;
         const price = typeof produto.price === "number" ? produto.price : 0;
         return `
-            <div class="produto" style="display: flex; align-items: center; gap: 10px;">
+            <!-- Adicionado border-radius: 8px para arredondar as bordas do card do produto -->
+            <div class="produto" style="display: flex; align-items: center; gap: 10px; border-radius: 8px; border: 1px solid #e0e0e0; padding: 10px;">
             <img src="${imgSrc}" alt="Produto" style="width:80px; height:80px; object-fit:cover;">
             <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
               <p style="margin: 0;">${produto.title || ""}</p>
               <div style="display: flex; align-items: center; gap: 10px;">
-                <div class="contador-container">
-                <button type="button" onclick="alterarContador(${index}, -1)">-</button>
-                <div id="contador${index}" class="contador-numero" style="color: black;">${quantidade}</div>
-                <button type="button" onclick="alterarContador(${index}, 1)">+</button>
-                </div>
-                <span id="preco${index}" style="color: black; white-space: nowrap;">R$ ${(price * quantidade).toFixed(2)}</span>
-              </div>
+            
+            <div class="contador-container">
+            <button type="button" onclick="alterarContador(${index}, -1)">-</button>
+            <div id="contador${index}" class="contador-numero" style="color: black; font-weight:500; ">${quantidade}</div>
+            <button type="button" onclick="alterarContador(${index}, 1)">+</button>
+            </div>
+            <span id="preco${index}" style="color: black; white-space: nowrap; margin-right: 10px;">R$ ${(price * quantidade).toFixed(2)}</span>  </div>
               </div>
               <div style="display: flex; align-items: center; gap: 15px; margin-top: 4px;">
-                <button type="button" onclick="comprarAgora(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: inherit;">Comprar agora</button>
-                <button type="button" onclick="salvarDepois(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: inherit;">Salvar para depois</button>
-                <button type="button" onclick="removerProduto(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: inherit;">Excluir</button>
+            <button type="button" onclick="comprarAgora(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: 12px;">Comprar agora</button>
+            <button type="button" onclick="salvarDepois(${index})" style="color: blue; background: none; border: none; border-left: 1px solid rgba(0,0,0,0.15); border-right: 1px solid rgba(0,0,0,0.15); padding: 0 8px; cursor: pointer; font-size: 12px; outline: none;">Salvar para depois</button>
+            <button type="button" onclick="removerProduto(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: 12px;">Excluir</button>
               </div>
             </div>
             </div>
@@ -93,22 +104,31 @@
     }
   }
 
-  // ATUALIZADO: Atualiza o total, o título do resumo E O BOTÃO
+  // FUNÇÃO ATUALIZAR TOTAL - COMPLETAMENTE REESCRITA
   function atualizarTotal() {
     if (carrinho.length === 0) {
-      // Se o carrinho estiver vazio, mostra "resumo da compra"
-      resumoTitulo.innerText = "resumo da compra";
-      resumoTitulo.style.color = "black"; // Garante a cor
-      btnContinuar.style.display = "none"; // <-- NOVO: Esconde o botão
+      // Se o carrinho estiver vazio:
+      // O título "resumo da compra" (HTML) continua visível
+      
+      // Esconde o separador
+      separador.style.display = "none";
+      // Esconde o container do total
+      totalContainer.style.display = "none";
+      // Esconde o botão
+      btnContinuar.style.display = "none";
     } else {
-      // Se tiver itens, calcula o total e exibe
+      // Se tiver itens:
       const total = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
       
-      // Garante que o HTML do título esteja correto antes de atualizar o valor
-      resumoTitulo.innerHTML = 'Total: <span id="valor-total"></span>';
-      resumoTitulo.style.color = "black"; // Garante a cor
-      document.getElementById("valor-total").innerText = "R$ " + total.toFixed(2).replace(".", ",");
-      btnContinuar.style.display = "block"; // <-- NOVO: Mostra o botão
+      // Mostra o separador
+      separador.style.display = "block";
+      // Mostra o container do total (como flex)
+      totalContainer.style.display = "flex";
+      // Mostra o botão
+      btnContinuar.style.display = "block"; 
+      
+      // Atualiza o valor
+      totalSpan.innerText = "R$ " + total.toFixed(2).replace(".", ",");
     }
   }
 
@@ -138,16 +158,12 @@
   function comprarAgora(index) {
     const produto = carrinho[index];
     alert("Iniciando a compra de: " + produto.title);
-    // No futuro, redirecionar para uma página de checkout:
-    // window.location.href = "checkout.html?item=" + produto.title;
   }
 
   // Função para "Salvar para depois" (ação de exemplo)
   function salvarDepois(index) {
     const produto = carrinho[index];
     alert("Salvar para depois: " + produto.title);
-    // No futuro, redirecionar para uma página de checkout:
-    // window.location.href = "checkout.html?item=" + produto.title;
   }
 
 
