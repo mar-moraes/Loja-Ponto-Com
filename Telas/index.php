@@ -1,95 +1,146 @@
-<?php
-// --- INÍCIO DO PHP ---
-// Aqui você pode fazer conexão com o banco de dados, se necessário.
-// Exemplo (futuro):
-// include 'conexao.php';
-
-// Verifica se há uma busca sendo feita
-$termo_busca = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : "";
-
-// Exemplo simples de uso posterior:
-// if ($termo_busca != "") {
-//     $resultado = mysqli_query($con, "SELECT * FROM produtos WHERE nome LIKE '%$termo_busca%'");
-// }
-?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Título da Página</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loja Ponto Com</title>
 
-  <!-- Referência ao arquivo CSS -->
-  <link rel="stylesheet" href="estilo_tela_compras.css">
-
-  <style>
-    /* Estilo básico para o contador */
-    .contador-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
-      font-family: Arial, sans-serif;
-      font-size: 20px;
-    }
-
-    .contador-container button {
-      width: 40px;
-      height: 40px;
-      font-size: 24px;
-      cursor: pointer;
-      border: 1px solid #ccc;
-      background-color: #f0f0f0;
-      border-radius: 5px;
-    }
-
-    .contador-numero {
-      min-width: 30px;
-      text-align: center;
-    }
-  </style>
+  <!-- Importa o arquivo de estilos -->
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="painel">
-    <!-- Formulário de busca -->
-    <form action="" method="GET">
-      <label for="pesquisa">Pesquisar:</label>
-      <input type="search" id="pesquisa" name="q" placeholder="Digite sua busca..." value="<?= $termo_busca ?>">
-      <button type="submit">Buscar</button>
-    </form>
+    <!-- Barra fixa -->
+    <header class="topbar">
+      <nav class="actions" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
 
-    <?php
-    // Exemplo: exibir produtos (aqui está fixo, mas futuramente pode vir do banco)
-    // Enquanto não há banco de dados, deixamos um produto de exemplo:
-    ?>
-    <div class="produto">
-      <p>Descrição do produto: Teclado Gamer</p>
-      <img src="exemplo01.png" alt="teclado">
 
-      <!-- Contador de quantidade -->
-      <div class="contador-container">
-        <button type="button" onclick="alterarContador(-1)">-</button>
-        <div id="contador" class="contador-numero">0</div>
-        <button type="button" onclick="alterarContador(1)">+</button>
-      </div>
+        <a href="index.html" style="display: flex; align-items: center;">
+          <img src="imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px; margin-right: 20px;">
+        </a>
+
+
+        <!-- Formulário envia os dados para buscar.php -->
+        <form action="buscar.php" method="GET" style="display: flex; align-items: center; width: 500px; max-width: 100%;">
+          <input type="search" id="pesquisa" name="q" placeholder="Digite sua busca..." style="font-size: 16px; width: 300px; height: 40px;">
+          <button type="submit" style="margin-left: 0px; height: 40px;">
+            <img src="imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px;">
+          </button>
+        </form>
+        <div style="display: flex; gap: 30px; align-items: center;">
+          <a href="#">Crie a sua conta</a>
+          <a href="#">Entre</a>
+          <a href="tela_carrinho.html" style="display: flex; align-items: center; gap: 5px;">
+            Carrinho
+            <img src="imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
+          </a>
+        </div>
+      </nav>
+    </header>
+
+  <!-- Logotipo (imagem central) -->
+  <section class="hero">
+    <img class="logo" src="" alt="Logo da Loja">
+  </section>
+
+  <!-- Conteúdo principal -->
+  <main class="container">
+
+    <!-- Controle de "ordenação" -->
+    <div class="controls">
+      <label for="sort">Ordenar por</label>
+      <select id="sort" aria-label="Ordenar por">
+        <option>Mais relevantes</option>
+        <option>Menor preço</option>
+        <option>Maior preço</option>
+      </select>
     </div>
 
-    <?php
-    // Exemplo simples de retorno de busca:
-    if ($termo_busca != "") {
-        echo "<p>Você pesquisou por: <strong>$termo_busca</strong></p>";
-    }
-    ?>
-  </div>
+    <!-- Grade de produtos -->
+    <section class="grid">
 
-  <!-- Script do contador -->
-  <script>
-    let contador = 0;
+      <!-- Exemplo do layout Produto -->
+      <article class="card" data-price="6"> <!-- "data-price" é necessário para se ordensr os itens, ssendo ele o valor atual-->
+        <div class="thumb" style="background-image:url('adicionar imagem')"></div>
+        <div class="title">Nome do produto</div>
+        <div>
+          <span class="old">preço antigo</span>
+          <span class="price">preço</span>
+          <span class="badge">porcentagem de desconto</span>
+          <span class="parcel"> parcelas </span>
+        </div>
+      </article>
 
-    function alterarContador(valor) {
-      contador += valor;
-      if (contador < 0) contador = 0;
-      document.getElementById('contador').innerText = contador;
-    }
-  </script>
+      <!-- Produto de Exemplo --> 
+      <article class="card" data-price="159.79">
+        <div class="thumb" style="background-image:url('imagens/Zane lego.jpg')"></div>
+        <div class="title">LEGO NINJAGO!!</div>
+        <div>
+          <span class="old">R$ 199,99</span>
+          <span class="price">R$ 159,79</span>
+          <span class="badge">21% OFF</span> <!-- ainda tem que adicionar uma fórmula que calcule isso automaticamente... -->
+          <span class="parcel">12x sem juros no CARTÃO</span>
+        </div>
+      </article>
+
+      <!-- Modelo para edição -->
+      <article class="card" data-price="">
+        <div class="thumb" style="background-image:url('')"></div>
+        <div class="title"></div>
+        <div>
+          <span class="old"></span>
+          <span class="price"></span>
+          <span class="badge"></span>
+          <span class="parcel"></span>
+          <div><di/v>
+        </div>
+      </article>
+
+      <!-- Card Vazio Cópia --> 
+      <article class="card" data-price="">
+        <div class="thumb" style="background-image:url('')"></div>
+        <div class="title"></div>
+        <div>
+          <span class="old"></span>
+          <span class="price"></span>
+          <span class="badge"></span>
+          <span class="parcel"></span>
+          <div><di/v>
+        </div>
+      </article>
+
+      <!-- Card Vazio Cópia -->
+      <article class="card" data-price="">
+        <div class="thumb" style="background-image:url('')"></div>
+        <div class="title"></div>
+        <div>
+          <span class="old"></span>
+          <span class="price"></span>
+          <span class="badge"></span>
+          <span class="parcel"></span>
+          <div><di/v>
+        </div>
+      </article>
+
+      <!-- Card Vazio Cópia -->
+      <article class="card" data-price="">
+        <div class="thumb" style="background-image:url('')"></div>
+        <div class="title"></div>
+        <div>
+          <span class="old"></span>
+          <span class="price"></span>
+          <span class="badge"></span>
+          <span class="parcel"></span>
+          <div><di/v>
+
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer></footer>
+
+  <!-- Importa o JavaScript -->
+  <script src="script.js"></script>
 </body>
 </html>
