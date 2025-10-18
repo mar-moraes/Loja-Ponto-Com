@@ -81,6 +81,71 @@ body {
   color: black;
 }
 
+/* =================================== */
+/* NOVOS ESTILOS - Layout do Carrinho */
+/* =================================== */
 
-/* 🔹 Agora, se quiser mudar o tamanho da imagem,
-   basta alterar os valores de width e height acima. */
+/* Este é o novo container principal que segura 
+  o painel de produtos e o painel de resumo.
+  Usamos flex para colocá-los lado a lado.
+*/
+.carrinho-layout-container {
+  display: flex;
+  flex-wrap: wrap; /* Em telas pequenas, o resumo pode quebrar para baixo */
+  gap: 20px; /* Espaço entre os produtos e o resumo */
+  
+  /* Alinha com o padding do header */
+  padding: 20px 40px; 
+  
+  /* Alinha os dois painéis pelo topo */
+  align-items: flex-start; 
+}
+
+/* Ajuste no painel de produtos (que já existe).
+  Fazemos ele ocupar o espaço disponível.
+*/
+#painel-carrinho.painel {
+  flex: 1; /* O painel de produtos cresce para ocupar o espaço */
+  min-width: 400px; /* Largura mínima antes de quebrar */
+  margin: 0; /* Remove margens extras */
+  padding: 20px; /* Garante o padding */
+}
+
+/* Este é o novo painel de resumo/total.
+*/
+.resumo-container {
+  /* Estilos copiados do <div> inline que existia antes */
+  background-color: #FFFFFF;
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 20px;
+  
+  /* Define uma largura fixa para o painel de resumo */
+  flex-basis: 300px; 
+  flex-grow: 0;
+  flex-shrink: 0;
+  
+  /* Efeito "sticky" para o painel acompanhar a rolagem */
+  position: sticky;
+  /* 64px (altura da topbar) + 20px (padding do container) */
+  top: 84px; 
+}
+
+.btn-continuar {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  font-weight: lighter;
+  /* Usando o amarelo da sua barra superior (style.css) */
+  background-color: #2968C8; 
+  color: #FFFFFF;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px; /* Espaço entre o total e o botão */
+  /* text-transform: uppercase; Deixa o texto em maiúsculas */
+}
+
+.btn-continuar:hover {
+  opacity: 0.9; /* Efeito simples ao passar o mouse */
+}
