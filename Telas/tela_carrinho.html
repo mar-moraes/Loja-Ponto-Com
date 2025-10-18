@@ -77,7 +77,6 @@
         const quantidade = typeof produto.quantidade === "number" ? produto.quantidade : 1;
         const price = typeof produto.price === "number" ? produto.price : 0;
         return `
-            <!-- Adicionado border-radius: 8px para arredondar as bordas do card do produto -->
             <div class="produto" style="display: flex; align-items: center; gap: 10px; border-radius: 8px; border: 1px solid #e0e0e0; padding: 10px;">
             <img src="${imgSrc}" alt="Produto" style="width:80px; height:80px; object-fit:cover;">
             <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
@@ -165,6 +164,25 @@
     const produto = carrinho[index];
     alert("Salvar para depois: " + produto.title);
   }
+
+  
+  //  VERIFICAÇÃO DE LOGIN AO CLICAR EM "CONTINUAR"
+  btnContinuar.addEventListener("click", function() {
+      // 1. Simula a verificação de login (procurando "usuarioLogado" no localStorage)
+      const usuarioLogado = localStorage.getItem("usuarioLogado");
+
+      if (!usuarioLogado) {
+        // 2. Se não encontrar, redireciona para a tela de login
+        alert("Você precisa estar logado para continuar. Redirecionando...");
+        window.location.href = "tela_login.html"; // Redireciona
+      } else {
+        // 3. Se estiver logado, continua para o próximo passo (checkout)
+        // Por enquanto, apenas um alerta:
+        alert("Usuário logado! Prosseguindo para o checkout...");
+        // No futuro, mude para:
+        // window.location.href = "tela_checkout.html";
+      }
+  });
 
 
   // Inicializa a tela
