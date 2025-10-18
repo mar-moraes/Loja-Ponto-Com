@@ -7,18 +7,39 @@
   <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="estilo_carrinho.css">
 
+  <style>
+    .carrinho-tabs {
+      display: flex;
+      gap: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .carrinho-tab {
+      font-size: 16px;
+      font-weight: 500;
+      color: #666;
+      background: none;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+    .carrinho-tab.active {
+      /* Cor azul do botão 'continuar' */
+      color: #2968C8; 
+      border-bottom: 3px solid #2968C8;
+    }
+  </style>
+
 </head>
 
 <body>
     <header class="topbar">
       <nav class="actions" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
-
         <div style="display: flex; align-items: center; justify-content: flex-start; flex: 1;">
           <a href="index.html" style="display: flex; align-items: center;">
             <img src="imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px; margin-right: 20px; margin-left: 0;">
           </a>
         </div>
-
         <form action="buscar.php" method="GET" style="display: flex; align-items: center; width: 500px; max-width: 100%;">
           <input type="search" id="pesquisa" name="q" placeholder="Digite sua busca..." style="font-size: 16px; width: 300px; height: 40px;">
           <button type="submit" style="margin-left: 0px; height: 40px;">
@@ -28,26 +49,38 @@
         <div style="display: flex; gap: 30px; align-items: center;">
           <a href="#">Crie a sua conta</a>
           <a href="#">Entre</a>
-          <a href="#">Carrinho 🛒</a>
+          <a href="tela_carrinho.html" style="display: flex; align-items: center; gap: 5px;">
+            Carrinho
+            <img src="imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
+          </a>
         </div>
       </nav>
     </header>
 
     <div class="carrinho-layout-container">
     
-      <div class="painel" id="painel-carrinho">
+      <div style="flex: 1; min-width: 400px;">
+    
+        <div class="carrinho-tabs">
+          <button id="tab-carrinho" class="carrinho-tab active">Carrinho (0)</button>
+          <button id="tab-salvos" class="carrinho-tab">Salvos (0)</button>
         </div>
     
+        <div class="painel" id="painel-carrinho" style="margin-top: 20px;">
+          </div>
+        
+        <div class="painel" id="painel-salvos" style="display: none; margin-top: 20px;">
+          </div>
+        
+      </div> 
+      
       <div class="resumo-container">
         <h3 class="resumo-titulo-fixo">Resumo da compra</h3>
-        
         <div id="resumo-separador"></div>
-
         <div id="total-container">
             <span>Total:</span>
             <span id="valor-total">R$ 0,00</span>
         </div>
-        
         <button type="button" class="btn-continuar">Continuar a compra</button>
       </div>
     
@@ -55,83 +88,130 @@
 
 
 <script>
-  // Recupera o carrinho
+  // --- 1. RECUPERAÇÃO DE DADOS E SELETORES ---
   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+  let salvos = JSON.parse(localStorage.getItem("salvos")) || []; 
 
-  const painel = document.getElementById("painel-carrinho");
+  const painelCarrinho = document.getElementById("painel-carrinho");
+  const painelSalvos = document.getElementById("painel-salvos"); 
+
+  const tabCarrinho = document.getElementById("tab-carrinho"); 
+  const tabSalvos = document.getElementById("tab-salvos"); 
   
-  // SELETORES ATUALIZADOS
+  const resumoContainer = document.querySelector(".resumo-container"); 
   const totalSpan = document.getElementById("valor-total");
-  const separador = document.getElementById("resumo-separador"); // <-- NOVO
-  const totalContainer = document.getElementById("total-container"); // <-- NOVO
+  const separador = document.getElementById("resumo-separador");
+  const totalContainer = document.getElementById("total-container");
   const btnContinuar = document.querySelector(".btn-continuar");
 
+  // --- 2. FUNÇÕES DE RENDERIZAÇÃO ---
+
+  // Renderiza os itens do CARRINHO (CORRIGIDA)
   function renderCarrinho() {
     if (carrinho.length === 0) {
-      painel.innerHTML = "<p>Nenhum produto no carrinho.</p>";
+      painelCarrinho.innerHTML = "<p style=\"display: flex; align-items: center; justify-content: left;\"><img src=\"imagens/carrinho.png\" alt=\"\" style=\"width: 30px; height: 30px; margin-right: 5px;\"> Nenhum produto no carrinho. </p>";    
+      
+      // Reseta os estilos que o 'else' aplica
+      painelCarrinho.style.flexDirection = "initial"; 
+      painelCarrinho.style.gap = "0";
     } else {
-      painel.innerHTML = carrinho.map((produto, index) => {
-        const imgSrc = typeof produto.img === "string"
-          ? produto.img.replace('url("', '').replace('")', '')
-          : "";
+      // Adiciona 'gap' para espaçar os produtos
+      painelCarrinho.style.display = "flex"; // Garante que é flex
+      painelCarrinho.style.flexDirection = "column";
+      painelCarrinho.style.gap = "15px";
+
+      painelCarrinho.innerHTML = carrinho.map((produto, index) => {
+        const imgSrc = typeof produto.img === "string" ? produto.img.replace('url("', '').replace('")', '') : "";
         const quantidade = typeof produto.quantidade === "number" ? produto.quantidade : 1;
         const price = typeof produto.price === "number" ? produto.price : 0;
         return `
             <div class="produto" style="display: flex; align-items: center; gap: 10px; border-radius: 8px; border: 1px solid #e0e0e0; padding: 10px;">
-            <img src="${imgSrc}" alt="Produto" style="width:80px; height:80px; object-fit:cover;">
-            <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-              <p style="margin: 0;">${produto.title || ""}</p>
-              <div style="display: flex; align-items: center; gap: 10px;">
-            
-            <div class="contador-container">
-            <button type="button" onclick="alterarContador(${index}, -1)">-</button>
-            <div id="contador${index}" class="contador-numero" style="color: black; font-weight:500; ">${quantidade}</div>
-            <button type="button" onclick="alterarContador(${index}, 1)">+</button>
-            </div>
-            <span id="preco${index}" style="color: black; white-space: nowrap; margin-right: 10px;">R$ ${(price * quantidade).toFixed(2)}</span>  </div>
+              <img src="${imgSrc}" alt="Produto" style="width:80px; height:80px; object-fit:cover;">
+              <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <p style="margin: 0;">${produto.title || ""}</p>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="contador-container">
+                      <button type="button" onclick="alterarContador(${index}, -1)">-</button>
+                      <div id="contador${index}" class="contador-numero" style="color: black; font-weight:500; ">${quantidade}</div>
+                      <button type="button" onclick="alterarContador(${index}, 1)">+</button>
+                    </div>
+                    <span id="preco${index}" style="color: black; white-space: nowrap; margin-right: 10px;">R$ ${(price * quantidade).toFixed(2)}</span>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px; margin-top: 4px;">
+                  <button type="button" onclick="comprarAgora(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: 12px;">Comprar agora</button>
+                  <button type="button" onclick="salvarDepois(${index})" style="color: blue; background: none; border: none; border-left: 1px solid rgba(0,0,0,0.15); border-right: 1px solid rgba(0,0,0,0.15); padding: 0 8px; cursor: pointer; font-size: 12px; outline: none;">Salvar para depois</button>
+                  <button type="button" onclick="removerProduto(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: 12px;">Excluir</button>
+                </div>
               </div>
-              <div style="display: flex; align-items: center; gap: 15px; margin-top: 4px;">
-            <button type="button" onclick="comprarAgora(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: 12px;">Comprar agora</button>
-            <button type="button" onclick="salvarDepois(${index})" style="color: blue; background: none; border: none; border-left: 1px solid rgba(0,0,0,0.15); border-right: 1px solid rgba(0,0,0,0.15); padding: 0 8px; cursor: pointer; font-size: 12px; outline: none;">Salvar para depois</button>
-            <button type="button" onclick="removerProduto(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: 12px;">Excluir</button>
-              </div>
-            </div>
             </div>
         `;
       }).join("");
     }
   }
 
-  // FUNÇÃO ATUALIZAR TOTAL - COMPLETAMENTE REESCRITA
+  // Renderiza os itens SALVOS (CORRIGIDA)
+  function renderSalvos() {
+    if (salvos.length === 0) {
+      painelSalvos.innerHTML = "<p>Nenhum item salvo para depois.</p>";
+
+      // Reseta os estilos que o 'else' aplica
+      painelSalvos.style.flexDirection = "initial";
+      painelSalvos.style.gap = "0";
+    } else {
+      // Adiciona 'gap' para espaçar os produtos
+      painelSalvos.style.display = "flex"; // Garante que é flex
+      painelSalvos.style.flexDirection = "column";
+      painelSalvos.style.gap = "15px";
+
+      painelSalvos.innerHTML = salvos.map((produto, index) => {
+        const imgSrc = typeof produto.img === "string" ? produto.img.replace('url("', '').replace('")', '') : "";
+        const price = typeof produto.price === "number" ? produto.price : 0;
+        return `
+          <div class="produto" style="display: flex; align-items: center; gap: 10px; border-radius: 8px; border: 1px solid #e0e0e0; padding: 10px;">
+            <img src="${imgSrc}" alt="Produto" style="width:80px; height:80px; object-fit:cover;">
+            <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <p style="margin: 0;">${produto.title || ""}</p>
+                <span style="color: black; white-space: nowrap; margin-right: 10px;">R$ ${price.toFixed(2)}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 15px; margin-top: 4px;">
+                <button type="button" onclick="moverParaCarrinho(${index})" style="color: blue; background: none; border: none; padding: 0; cursor: pointer; font-size: 12px;">Mover para o carrinho</button>
+                <button type="button" onclick="removerDosSalvos(${index})" style="color: blue; background: none; border: none; padding: 0 8px; border-left: 1px solid rgba(0,0,0,0.15); cursor: pointer; font-size: 12px;">Excluir</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+  }
+
+  // --- 3. FUNÇÕES DE ATUALIZAÇÃO (Total e Contadores) ---
+
+  // Atualiza o TOTAL (bloco de resumo)
   function atualizarTotal() {
     if (carrinho.length === 0) {
-      // Se o carrinho estiver vazio:
-      // O título "resumo da compra" (HTML) continua visível
-      
-      // Esconde o separador
       separador.style.display = "none";
-      // Esconde o container do total
       totalContainer.style.display = "none";
-      // Esconde o botão
       btnContinuar.style.display = "none";
     } else {
-      // Se tiver itens:
       const total = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
-      
-      // Mostra o separador
       separador.style.display = "block";
-      // Mostra o container do total (como flex)
       totalContainer.style.display = "flex";
-      // Mostra o botão
       btnContinuar.style.display = "block"; 
-      
-      // Atualiza o valor
       totalSpan.innerText = "R$ " + total.toFixed(2).replace(".", ",");
     }
   }
 
-  // Alterar quantidade de produtos
+  // Atualiza os contadores nas ABAS
+  function atualizarContadoresTabs() {
+    tabCarrinho.innerText = `Carrinho (${carrinho.length})`;
+    tabSalvos.innerText = `Salvos (${salvos.length})`;
+  }
+
+  // --- 4. FUNÇÕES DE AÇÃO DOS PRODUTOS ---
+
   function alterarContador(index, valor) {
     const item = carrinho[index];
     item.quantidade += valor;
@@ -145,52 +225,118 @@
     atualizarTotal();
   }
 
-  // Remover produto do carrinho
+  // Remove do Carrinho (ATUALIZADA)
   function removerProduto(index) {
     carrinho.splice(index, 1);
     localStorage.setItem("carrinho", JSON.stringify(carrinho));
-    renderCarrinho();
-    atualizarTotal();
+    
+    renderCarrinho(); // Atualiza o conteúdo
+    atualizarContadoresTabs(); // Atualiza a aba
+    mostrarCarrinho(); // Garante que a visão (painel + resumo) está correta
   }
 
-  // Função para "Comprar Agora" (ação de exemplo)
+  // Remove dos Salvos (ATUALIZADA)
+  function removerDosSalvos(index) {
+    salvos.splice(index, 1);
+    localStorage.setItem("salvos", JSON.stringify(salvos));
+    
+    renderSalvos(); // Atualiza o conteúdo
+    atualizarContadoresTabs(); // Atualiza a aba
+    mostrarSalvos(); // Garante que a visão (painel) está correta
+  }
+
   function comprarAgora(index) {
     const produto = carrinho[index];
     alert("Iniciando a compra de: " + produto.title);
   }
 
-  // Função para "Salvar para depois" (ação de exemplo)
+  // "Salvar para depois" (ATUALIZADA)
   function salvarDepois(index) {
-    const produto = carrinho[index];
-    alert("Salvar para depois: " + produto.title);
+    const item = carrinho[index];
+    
+    salvos.push(item);
+    carrinho.splice(index, 1);
+    
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+    localStorage.setItem("salvos", JSON.stringify(salvos));
+    
+    renderCarrinho();
+    renderSalvos();
+    atualizarContadoresTabs();
+    mostrarCarrinho(); // Garante que a visão (painel + resumo) é atualizada
   }
 
-  
-  //  VERIFICAÇÃO DE LOGIN AO CLICAR EM "CONTINUAR"
+  // Mover dos Salvos para o Carrinho (ATUALIZADA)
+  function moverParaCarrinho(index) {
+    const item = salvos[index];
+    
+    salvos.splice(index, 1);
+    
+    const existente = carrinho.find(p => p.title === item.title);
+    if (existente) {
+      existente.quantidade += (item.quantidade || 1);
+    } else {
+      carrinho.push(item);
+    }
+    
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+    localStorage.setItem("salvos", JSON.stringify(salvos));
+    
+    renderCarrinho();
+    renderSalvos();
+    atualizarContadoresTabs();
+    mostrarSalvos(); // Garante que a visão (painel) é atualizada
+  }
+
+  // --- 5. LÓGICA DAS ABAS (Funções principais de visão) ---
+
+  function mostrarCarrinho() {
+    painelCarrinho.style.display = "block"; // Mostra painel carrinho
+    painelSalvos.style.display = "none";   // Esconde painel salvos
+    
+    tabCarrinho.classList.add("active");
+    tabSalvos.classList.remove("active");
+    
+    resumoContainer.style.display = "block"; // Mostra o resumo
+    atualizarTotal(); // Atualiza o total (que pode ficar visível ou não)
+  }
+
+  function mostrarSalvos() {
+    painelCarrinho.style.display = "none";  // Esconde painel carrinho
+    painelSalvos.style.display = "block"; // Mostra painel salvos
+    
+    tabCarrinho.classList.remove("active");
+    tabSalvos.classList.add("active");
+    
+    resumoContainer.style.display = "none"; // Esconde o resumo
+  }
+
+  tabCarrinho.addEventListener("click", mostrarCarrinho);
+  tabSalvos.addEventListener("click", mostrarSalvos);
+
+
+  // --- 6. AÇÃO DO BOTÃO "CONTINUAR" ---
   btnContinuar.addEventListener("click", function() {
-      // 1. Simula a verificação de login (procurando "usuarioLogado" no localStorage)
       const usuarioLogado = localStorage.getItem("usuarioLogado");
 
       if (!usuarioLogado) {
-        // 2. Se não encontrar, redireciona para a tela de login
         alert("Você precisa estar logado para continuar. Redirecionando...");
-        window.location.href = "tela_login.html"; // Redireciona
+        window.location.href = "tela_login.html";
       } else {
-        // 3. Se estiver logado, continua para o próximo passo (checkout)
-        // Por enquanto, apenas um alerta:
         alert("Usuário logado! Prosseguindo para o checkout...");
-        // No futuro, mude para:
         // window.location.href = "tela_checkout.html";
       }
   });
 
 
-  // Inicializa a tela
+  // --- 7. INICIALIZAÇÃO DA PÁGINA ---
   renderCarrinho();
-  atualizarTotal();
+  renderSalvos();
+  atualizarContadoresTabs();
+  
+  // Define o estado inicial (mostra o carrinho e seu resumo)
+  mostrarCarrinho();
 </script>
-
-
 
 </body>
 </html>
