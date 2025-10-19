@@ -35,16 +35,16 @@
       </nav>
     </header>
 
-    <main class="produto-container" 
+      <main class="produto-container" 
           data-title="" 
           data-price="" 
           data-img="">
       
       <div class="coluna-galeria">
         <div class="thumbnails">
-          <img src="" alt="Thumb 1" class="thumb-img active" onclick="mudarImagem(this)">
-          <img src="imagens/Zane lego - 1.jpg" alt="Thumb 2" class="thumb-img" onclick="mudarImagem(this)">
-          <img src="imagens/Zane lego - 2.jpg" alt="Thumb 3" class="thumb-img" onclick="mudarImagem(this)">
+          <img src="" alt="Thumb 1" class="thumb-img active" onmouseover="mudarImagem(this)">
+          <img src="imagens/Zane lego - 1.jpg" alt="Thumb 2" class="thumb-img" onmouseover="mudarImagem(this)">
+          <img src="imagens/Zane lego - 2.jpg" alt="Thumb 3" class="thumb-img" onmouseover="mudarImagem(this)">
         </div>
         <div class="imagem-principal-container">
           <img src="" alt="Imagem Principal do Produto" id="imagem-principal">
@@ -68,6 +68,15 @@
         </div>
 
         <div class="especificacoes-rapidas">
+
+          <div class="produto-avaliacao">
+            <span class="star" data-value="1">&#9734;</span>
+            <span class="star" data-value="2">&#9734;</span>
+            <span class="star" data-value="3">&#9734;</span>
+            <span class="star" data-value="4">&#9734;</span>
+            <span class="star" data-value="5">&#9734;</span>
+          </div>          
+
           <h3>O que você precisa saber sobre este produto:</h3>
           <ul>
             <li>Compatível com outros conjuntos LEGO.</li>
@@ -93,11 +102,11 @@
         </div>
       </div>
     </main>
-
 <script>
 
   // --- 0. PREENCHIMENTO DA PÁGINA (NOVO BLOCO) ---
   // Este script roda assim que a página termina de carregar
+  
   document.addEventListener("DOMContentLoaded", () => {
     // 1. Tenta ler o produto do localStorage
     const produto = JSON.parse(localStorage.getItem("produtoSelecionado"));
@@ -129,7 +138,6 @@
       imagemPrincipal.src = produto.img;
       thumbImg.src = produto.img;
 
-      // --- INÍCIO DA CORREÇÃO ---
       // 7. Verifica se o item já está favoritado (nos 'salvos')
       const btnFavoritar = document.getElementById("btn-favoritar");
       const salvos = JSON.parse(localStorage.getItem("salvos")) || []; // Pega a lista de salvos
@@ -141,14 +149,26 @@
         // Se estiver, já marca o botão como ativo
         btnFavoritar.classList.add("active");
       }
+      
+      // =======================================================
+      // --- INÍCIO DA CORREÇÃO (BLOCO MOVIDO E CORRIGIDO) ---
+      // 8. Carrega a avaliação (estrelas) salva
+      // As vars 'currentRating' e 'drawStars' são definidas mais abaixo,
+      // mas são acessíveis globalmente no script.
+      // =======================================================
+      const savedRating = localStorage.getItem("rating_" + container.dataset.title);
+      if (savedRating) {
+        currentRating = parseInt(savedRating); // Atualiza a variável global
+        drawStars(currentRating); // Desenha as estrelas salvas
+      }
       // --- FIM DA CORREÇÃO ---
 
 
-      // 8. Opcional: Limpar o item do localStorage...
+      // 9. Opcional: Limpar o item do localStorage...
       // localStorage.removeItem("produtoSelecionado");
 
     } else {
-      // 9. Se, por algum motivo, o usuário chegar aqui sem um produto,
+      // 10. Se, por algum motivo, o usuário chegar aqui sem um produto,
       // podemos redirecioná-lo de volta para a home.
       alert("Nenhum produto foi selecionado. Voltando para a loja.");
       window.location.href = "index.html";
@@ -289,6 +309,60 @@
     localStorage.setItem("salvos", JSON.stringify(salvos));
   });
 
+  // --- 6. LÓGICA DE AVALIAÇÃO (ESTRELAS) ---
+  const stars = document.querySelectorAll(".produto-avaliacao .star");
+  const starContainer = document.querySelector(".produto-avaliacao");
+  
+  // Variável para guardar a nota que foi clicada
+  let currentRating = 0; 
+
+  // =======================================================
+  // --- CORREÇÃO: O Bloco que estava aqui foi REMOVIDO ---
+  // (O 'if (savedRating) ...' estava quebrado e no
+  // lugar errado. Ele foi movido para a Seção 0)
+  // =======================================================
+
+  /**
+   * Função para desenhar as estrelas
+   * @param {number} rating - A nota (1 a 5) a ser exibida
+   */
+  function drawStars(rating) {
+    stars.forEach(star => {
+      const starValue = parseInt(star.dataset.value);
+      
+      if (starValue <= rating) {
+        star.classList.add("filled");
+        star.innerHTML = "&#9733;"; // Ícone de estrela cheia
+      } else {
+        star.classList.remove("filled");
+        star.innerHTML = "&#9734;"; // Ícone de estrela vazia
+      }
+    });
+  }
+
+  // Adiciona eventos de HOVER (mouse enter) para cada estrela
+  stars.forEach(star => {
+    star.addEventListener("mouseover", () => {
+      const rating = parseInt(star.dataset.value);
+      drawStars(rating); // Preenche as estrelas até a que está em hover
+    });
+
+    // Adiciona evento de CLIQUE para cada estrela
+    star.addEventListener("click", () => {
+      currentRating = parseInt(star.dataset.value); // Salva a nota
+      
+      // Salva a nota no localStorage
+      localStorage.setItem("rating_" + container.dataset.title, currentRating);
+      
+      drawStars(currentRating); // Trava a nota clicada
+    });
+  });
+
+  // Adiciona evento de MOUSE LEAVE (mouse out) no CONTAINER
+  starContainer.addEventListener("mouseleave", () => {
+    // Quando o mouse sai, volta para a nota que foi CLICADA (currentRating)
+    drawStars(currentRating);
+  });
 
 </script>
 </body>
