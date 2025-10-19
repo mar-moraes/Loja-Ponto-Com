@@ -204,3 +204,27 @@
     align-items: center; /* Alinha o contador e o texto verticalmente */
     margin-bottom: 20px; /* A margem que estava no style inline do contador */
 }
+
+
+/* =================================== */
+/* ESTILOS DA AVALIAÇÃO (ESTRELAS) */
+/* =================================== */
+
+/* Container das estrelas */
+.produto-avaliacao {
+  margin-bottom: 15px; /* Espaço entre as estrelas e o h3 */
+}
+
+/* Estilo individual de cada estrela */
+.produto-avaliacao .star {
+  font-size: 28px;          /* Tamanho do ícone de estrela */
+  color: #ccc;              /* Cor da estrela vazia */
+  cursor: pointer;
+  transition: color 0.1s ease-in-out;
+  margin-right: 2px;        /* Espaço entre as estrelas */
+}
+
+/* Classe 'filled' que será adicionada/removida pelo JavaScript */
+.produto-avaliacao .star.filled {
+  color: #FFC107; /* Cor dourada para estrela preenchida */
+}
