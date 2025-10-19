@@ -70,7 +70,7 @@ document.querySelectorAll("a.card-link").forEach(link => {
   link.addEventListener("click", (event) => {
     
     // Pega o .card que está DENTRO do link
-    const card = link.querySelector(".card"); 
+    const card = link.querySelector(".card");
     if (!card) return; // Segurança
 
     // 1. Coletar todos os dados do card clicado
