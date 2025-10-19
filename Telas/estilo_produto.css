@@ -1,0 +1,194 @@
+/* Layout principal da página de produto */
+.produto-container {
+  display: flex;
+  flex-wrap: wrap; /* Permite quebrar em telas menores */
+  gap: 30px;
+  
+  /* Pega o layout do style.css */
+  width: 1100px; 
+  max-width: calc(100% - 40px);
+  margin: 28px auto;
+
+  /* Fundo branco para o container */
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* --- Coluna da Galeria (Esquerda) --- */
+.coluna-galeria {
+  flex: 1; /* Ocupa metade do espaço */
+  min-width: 300px; /* Largura mínima */
+  display: flex;
+  gap: 15px;
+}
+
+.thumbnails {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.thumbnails .thumb-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.thumbnails .thumb-img:hover {
+  border-color: #aaa;
+}
+
+.thumbnails .thumb-img.active {
+  border-color: #2968C8; /* Azul (cor do botão de comprar) */
+}
+
+.imagem-principal-container {
+  flex: 1; /* Ocupa o espaço restante da coluna */
+}
+
+#imagem-principal {
+  width: 100%;
+  height: auto;
+  max-height: 450px;
+  object-fit: contain;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+/* --- Coluna de Informações (Direita) --- */
+.coluna-info {
+  flex: 1; /* Ocupa a outra metade */
+  min-width: 300px;
+  position: relative; /* Necessário para o botão de favoritar */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Título */
+.produto-titulo {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  margin-bottom: 10px;
+  /* Espaço para o botão de favoritar não sobrepor */
+  padding-right: 40px; 
+}
+
+/* Preço */
+.produto-preco {
+  margin-bottom: 20px;
+}
+.produto-preco .price {
+  font-size: 32px; /* Preço maior */
+}
+.produto-preco .old {
+  font-size: 16px;
+}
+.produto-preco .badge {
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+/* Especificações Rápidas */
+.especificacoes-rapidas {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+.especificacoes-rapidas h3 {
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+.especificacoes-rapidas ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.especificacoes-rapidas li {
+  margin-bottom: 5px;
+}
+
+/* Quantidade */
+.label-quantidade {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+.qtd-disponivel {
+  font-size: 13px;
+  color: #777;
+  margin-left: 10px;
+  align-self: center;
+}
+
+/* Botões de Ação */
+.botoes-acao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto; /* Empurra os botões para o final da coluna */
+}
+
+.btn-acao {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-acao:hover {
+  opacity: 0.9;
+}
+
+/* Estilo "Comprar" (Principal) - Pega do estilo_carrinho.css */
+.btn-comprar {
+  background-color: #2968C8; 
+  color: #FFFFFF;
+}
+
+/* Estilo "Adicionar" (Secundário) */
+.btn-adicionar {
+  background-color: rgba(41, 104, 200, 0.1); /* Fundo azul claro */
+  color: #2968C8; /* Texto azul */
+  border: 1px solid transparent;
+}
+.btn-adicionar:hover {
+  background-color: rgba(41, 104, 200, 0.2);
+}
+
+/* Botão de Favoritar */
+.btn-favoritar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  color: #aaa; /* Cor inicial (vazio) */
+}
+.btn-favoritar:hover {
+  color: #2968C8;
+}
+.btn-favoritar.active {
+  color: #2968C8; /* Cor quando 'salvo' (cheio) */
+  fill: #2968C8;
+}
+.btn-favoritar svg {
+  /* Garante que o 'fill' funcione */
+  stroke: currentColor; 
+}
