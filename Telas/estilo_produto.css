@@ -184,11 +184,23 @@
 .btn-favoritar:hover {
   color: #2968C8;
 }
+
 .btn-favoritar.active {
   color: #2968C8; /* Cor quando 'salvo' (cheio) */
-  fill: #2968C8;
 }
 .btn-favoritar svg {
-  /* Garante que o 'fill' funcione */
-  stroke: currentColor; 
+  stroke: currentColor;
+  fill: none; /* Garante que o ícone comece vazio */
+}
+
+.btn-favoritar.active svg {
+  fill: currentColor; /* Preenche o SVG com a cor do botão 'active' */
+}
+
+/* --- ESTILO PARA O WRAPPER DO SELETOR DE QUANTIDADE --- */
+
+.seletor-quantidade-wrapper {
+    display: flex;
+    align-items: center; /* Alinha o contador e o texto verticalmente */
+    margin-bottom: 20px; /* A margem que estava no style inline do contador */
 }
