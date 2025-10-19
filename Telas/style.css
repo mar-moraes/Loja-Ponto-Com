@@ -97,6 +97,7 @@
     padding: 12px;
     display: flex;
     flex-direction: column;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* <-- ADICIONE ESTA LINHA */
   }
   
   .thumb {
@@ -105,6 +106,8 @@
     background-size: cover;
     background-position: center;
     margin-bottom: 12px;
+    overflow: hidden; /* <-- ADICIONE ESTA LINHA */
+    transition: transform 0.2s ease-out; /* <-- ADICIONE ESTA LINHA */
   }
   
   .title { /* nome do produto*/
@@ -154,3 +157,33 @@
     }
   }
   
+/* --- ADIÇÃO PARA LINKS DE PRODUTO --- */
+
+/* Remove a decoração de link padrão dos cards */
+/* Substitua o bloco "a.card-link:hover .card { ... }" por este: */
+
+/* Efeito de levantar o card no hover (para todos os cards) */
+.card:hover,
+a.card-link:hover .card {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Efeito de zoom na imagem (thumb) no hover (para todos os cards) */
+.card:hover .thumb,
+a.card-link:hover .thumb {
+  transform: scale(1.05);
+}
+
+/* E por fim, remova a 'transition' duplicada 
+  da regra 'a.card-link .card' 
+*/
+a.card-link .card {
+  /* transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; */ /* <-- REMOVA OU COMENTE ESTA LINHA */
+  flex-grow: 1; 
+}
+
+a.card-link:hover .card {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
