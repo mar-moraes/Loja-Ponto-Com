@@ -43,8 +43,8 @@
       <div class="coluna-galeria">
         <div class="thumbnails">
           <img src="" alt="Thumb 1" class="thumb-img active" onclick="mudarImagem(this)">
-          <img src="imagens/placeholder-thumb2.png" alt="Thumb 2" class="thumb-img" onclick="mudarImagem(this)">
-          <img src="imagens/placeholder-thumb3.png" alt="Thumb 3" class="thumb-img" onclick="mudarImagem(this)">
+          <img src="imagens/Zane lego - 1.jpg" alt="Thumb 2" class="thumb-img" onclick="mudarImagem(this)">
+          <img src="imagens/Zane lego - 2.jpg" alt="Thumb 3" class="thumb-img" onclick="mudarImagem(this)">
         </div>
         <div class="imagem-principal-container">
           <img src="" alt="Imagem Principal do Produto" id="imagem-principal">
@@ -54,7 +54,7 @@
       <div class="coluna-info">
         
         <button class="btn-favoritar" id="btn-favoritar">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
           </svg>
         </button>
@@ -95,6 +95,7 @@
     </main>
 
 <script>
+
   // --- 0. PREENCHIMENTO DA PÁGINA (NOVO BLOCO) ---
   // Este script roda assim que a página termina de carregar
   document.addEventListener("DOMContentLoaded", () => {
@@ -128,13 +129,26 @@
       imagemPrincipal.src = produto.img;
       thumbImg.src = produto.img;
 
-      // 7. Opcional: Limpar o item do localStorage para não carregar
-      // o mesmo produto sempre, mas é melhor manter caso o usuário
-      // dê F5 na página.
+      // --- INÍCIO DA CORREÇÃO ---
+      // 7. Verifica se o item já está favoritado (nos 'salvos')
+      const btnFavoritar = document.getElementById("btn-favoritar");
+      const salvos = JSON.parse(localStorage.getItem("salvos")) || []; // Pega a lista de salvos
+      
+      // Compara pelo título (que é o identificador único até agora)
+      const existenteEmSalvos = salvos.find(p => p.title === produto.title); 
+
+      if (existenteEmSalvos) {
+        // Se estiver, já marca o botão como ativo
+        btnFavoritar.classList.add("active");
+      }
+      // --- FIM DA CORREÇÃO ---
+
+
+      // 8. Opcional: Limpar o item do localStorage...
       // localStorage.removeItem("produtoSelecionado");
 
     } else {
-      // 8. Se, por algum motivo, o usuário chegar aqui sem um produto,
+      // 9. Se, por algum motivo, o usuário chegar aqui sem um produto,
       // podemos redirecioná-lo de volta para a home.
       alert("Nenhum produto foi selecionado. Voltando para a loja.");
       window.location.href = "index.html";
@@ -210,51 +224,71 @@
 
     localStorage.setItem("carrinho", JSON.stringify(carrinho));
 
-    // Feedback visual para o usuário
-    alert(`${produto.quantidade}x ${produto.title} adicionado(s) ao carrinho!`);
-  });
-
-  // Botão "Comprar agora" (Adiciona e Redireciona)
-  btnComprar.addEventListener("click", () => {
-    const produto = getDadosProduto();
-    let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-    
-    const existente = carrinho.find(p => p.title === produto.title);
-
-    if (existente) {
-      existente.quantidade += produto.quantidade;
-    } else {
-      carrinho.push(produto);
-    }
-
-    localStorage.setItem("carrinho", JSON.stringify(carrinho));
-    
     // Redireciona imediatamente para o carrinho
-    window.location.href = "tela_carrinho.html";
+    window.location.href = "tela_carrinho.html"; // <-- Linha alterada
   });
 
-  // Botão "Favoritar" (Salvar para depois)
+  // Botão "Comprar agora" (Verifica login, Adiciona e Redireciona)
+  btnComprar.addEventListener("click", () => {
+    
+    // 1. Verifica se o usuário está logado (lógica do tela_carrinho.html)
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+
+    if (!usuarioLogado) {
+      // 2. Se NÃO estiver logado, redireciona para login
+      alert("Você precisa estar logado para continuar. Redirecionando...");
+      window.location.href = "tela_login.html";
+    
+    } else {
+      // 3. Se ESTIVER logado, executa a ação original
+      const produto = getDadosProduto();
+      let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+      
+      const existente = carrinho.find(p => p.title === produto.title);
+
+      if (existente) {
+        existente.quantidade += produto.quantidade;
+      } else {
+        carrinho.push(produto);
+      }
+
+      localStorage.setItem("carrinho", JSON.stringify(carrinho));
+      
+      // Redireciona imediatamente para o carrinho
+      window.location.href = "tela_carrinho.html";
+    }
+  });
+
+  // Botão "Favoritar" (Alterna Salvar/Remover)
   btnFavoritar.addEventListener("click", (e) => {
     const produto = getDadosProduto();
-    // Reutiliza a quantidade 1 (geralmente não se salva quantidade em favoritos)
+    // Define a quantidade padrão para favoritos
     produto.quantidade = 1; 
     
     let salvos = JSON.parse(localStorage.getItem("salvos")) || [];
 
-    // Verifica se já não está salvo
-    const existente = salvos.find(p => p.title === produto.title);
+    // Procura o ÍNDICE do produto na lista de salvos
+    const indexExistente = salvos.findIndex(p => p.title === produto.title);
 
-    if (!existente) {
+    if (indexExistente === -1) {
+      // --- SE NÃO EXISTE: ADICIONA (FAVORITA) ---
       salvos.push(produto);
-      localStorage.setItem("salvos", JSON.stringify(salvos));
       
       // Altera o visual do botão
-      btnFavoritar.classList.add("active");;
+      btnFavoritar.classList.add("active");
+      
     } else {
-      // (Opcional) Remover dos salvos se clicar de novo
-      alert("Este produto já está na sua lista de 'Salvos'.");
+      // --- SE JÁ EXISTE: REMOVE (DESFAVORITA) ---
+      salvos.splice(indexExistente, 1); // Remove o item pelo índice
+      
+      // Altera o visual do botão
+      btnFavoritar.classList.remove("active");
     }
+    
+    // Salva o array atualizado (adicionado ou removido) no localStorage
+    localStorage.setItem("salvos", JSON.stringify(salvos));
   });
+
 
 </script>
 </body>
