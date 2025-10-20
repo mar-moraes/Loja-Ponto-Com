@@ -13,45 +13,19 @@
 
 }
 
-/* Regra original, com uma transição suave adicionada */
 .contador-container button {
-  width: 32px;
-  height: 32px;
-  font-size: 20px;
-  border: none;
+  width: 32px; /* vindo do style inline */
+  height: 32px; /* vindo do style inline */
+  font-size: 20px; /* Reduzido */
+  border: none; /* Removido borda do botão */
   background-color: #f0f0f0;
-  color: #3483FA;
   
+  /* Adicionado para centralizar o '-' e '+' no botão */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   cursor: pointer;
-  
-  /* --- ADIÇÃO --- */
-  /* Adiciona transição suave para o efeito de hover */
-  transition: background-color 0.2s, color 0.2s; 
-}
-
-/* --- ADIÇÃO (HOVER PRETO) --- */
-/* Hover SÓ se aplica se o botão NÃO tiver a classe .disabled */
-.contador-container button:not(.disabled):hover {
-  background-color: #ECF3FC; /* Fundo preto */
-  color: #3483FA;           /* Ícone branco */
-}
-
-/* --- ADIÇÃO (CLASSE DESABILITADA) --- */
-/* Estilo para o botão de menos quando a quantidade é 1 */
-.contador-container button.disabled {
-  color: #ccc;          /* Cor cinza para o ícone */
-  cursor: not-allowed; /* Muda o cursor */
-  opacity: 0.7;
-}
-
-/* (Opcional) Remove o hover preto do botão desabilitado */
-.contador-container button.disabled:hover {
-  background-color: #f0f0f0; /* Mantém o fundo original */
-  color: #ccc;                /* Mantém a cor cinza */
 }
 
 /* Arredonda os botões das pontas */
@@ -229,69 +203,4 @@ body {
   font-size: 18px;
   font-weight: bold;
   color: black;
-}
-
-/* =================================== */
-/* ESTILOS DAS RECOMENDAÇÕES (SWIPER)  */
-/* =================================== */
-
-/* O container principal da seção */
-.recomendacoes-container {
-  /* Alinha este container com o .carrinho-layout-container */
-  padding: 24px;
-  margin: 0 40px 28px 40px; /* Margem (top 0, laterais 40px, baixo 28px) */
-  
-  /* Estilo de "card" branco */
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-}
-
-.recomendacoes-container h2 {
-  /* Título (baseado em estilo_produto.css) */
-  font-size: 22px;
-  font-weight: 600;
-  color: #333;
-  margin-top: 0;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.recomendacoes-swiper {
-  width: 100%;
-  overflow: hidden;
-  /* Adiciona padding para as setas não ficarem
-     coladas nas bordas do container */
-  padding: 0 10px;
-}
-
-/* O .card já é estilizado pelo style.css,
-   mas o .swiper-slide precisa de ajustes */
-.recomendacoes-swiper .swiper-slide {
-  display: flex;
-  height: auto; /* Permite que o card defina a altura */
-}
-
-/* Faz o <a> e o <article> preencherem o slide */
-.recomendacoes-swiper .swiper-slide .card-link,
-.recomendacoes-swiper .swiper-slide .card {
-  width: 100%;
-  flex-grow: 1;
-}
-
-/* Estilo das setas (usando o azul da página) */
-.recomendacoes-swiper .swiper-button-prev,
-.recomendacoes-swiper .swiper-button-next {
-  color: #2968C8; /* Azul dos botões */
-  font-weight: bold;
-  top: 45%; /* Centraliza verticalmente (considerando o card) */
-}
-
-/* Ajusta posição das setas para fora dos slides */
-.recomendacoes-swiper .swiper-button-prev {
-  left: -5px; /* Posição seta esquerda */
-}
-.recomendacoes-swiper .swiper-button-next {
-  right: -5px; /* Posição seta direita */
 }

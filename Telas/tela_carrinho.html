@@ -6,8 +6,6 @@
 
   <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="estilo_carrinho.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
 
   <style>
     .carrinho-tabs {
@@ -87,85 +85,7 @@
       </div>
     
     </div>
-<div class="carrinho-layout-container">
-    </div>
-  <div class="recomendacoes-container">
-    <h2>Produtos que podem interessar</h2>
-    
-    <div class="swiper recomendacoes-swiper">
-      <div class="swiper-wrapper">
-        
-        <div class="swiper-slide">
-          <a href="tela_produto.html" class="card-link">
-            <article class="card" data-price="159.79">
-              <div class="thumb" style="background-image:url('imagens/Zane lego.jpg')"></div>
-              <div class="title">LEGO NINJAGO!!</div>
-              <div class="card-avaliacao"></div> <div>
-                <span class="old">R$ 199,99</span>
-                <span class="price">R$ 159,79</span>
-                <span class="badge">21% OFF</span>
-              </div>
-            </article>
-          </a>
-        </div>
 
-        <div class="swiper-slide">
-          <a href="tela_produto.html" class="card-link">
-            <article class="card" data-price="89.90">
-              <div class="thumb" style="background-image:url('imagens/Zane lego - 1.jpg')"></div>
-              <div class="title">Outro Boneco LEGO</div>
-              <div class="card-avaliacao"></div>
-              <div>
-                <span class="price">R$ 89,90</span>
-              </div>
-            </article>
-          </a>
-        </div>
-        
-        <div class="swiper-slide">
-          <a href="tela_produto.html" class="card-link">
-            <article class="card" data-price="120.50">
-              <div class="thumb" style="background-image:url('imagens/Zane lego - 2.jpg')"></div>
-              <div class="title">Kit Peças Complementares</div>
-              <div class="card-avaliacao"></div>
-              <div>
-                <span class="price">R$ 120,50</span>
-              </div>
-            </article>
-          </a>
-        </div>
-
-        <div class="swiper-slide">
-          <a href="tela_produto.html" class="card-link">
-            <article class="card" data-price="159.79">
-              <div class="thumb" style="background-image:url('imagens/Zane lego.jpg')"></div>
-              <div class="title">LEGO NINJAGO!! (Repetido)</div>
-              <div class="card-avaliacao"></div>
-              <div>
-                <span class="old">R$ 199,99</span>
-                <span class="price">R$ 159,79</span>
-                <span class="badge">21% OFF</span>
-              </div>
-            </article>
-          </a>
-        </div>
-
-        <div class="swiper-slide">
-          <a href="tela_produto.html" class="card-link">
-            <article class="card" data-price="89.90">
-              <div class="thumb" style="background-image:url('imagens/Zane lego - 1.jpg')"></div>
-              <div class="title">Outro Boneco LEGO</div>
-              <div class="card-avaliacao"></div>
-              <div>
-                <span class="price">R$ 89,90</span>
-              </div>
-            </article>
-          </a>
-        </div>
-
-      </div> <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div> </div>
 
 <script>
   // --- 1. RECUPERAÇÃO DE DADOS E SELETORES ---
@@ -417,110 +337,6 @@
   // Define o estado inicial (mostra o carrinho e seu resumo)
   mostrarCarrinho();
 </script>
-</script> 
 
-
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-  <script>
-    // Espera o DOM carregar (usamos um listener separado)
-    document.addEventListener('DOMContentLoaded', function () {
-      
-      // --- A. INICIALIZA O SWIPER DE RECOMENDAÇÕES ---
-      const swiper = new Swiper('.recomendacoes-swiper', {
-        loop: false, // Carrossel não-infinito
-        spaceBetween: 18, // Mesmo 'gap' do .grid
-
-        // Define quantos slides aparecem (em telas PEQUENAS)
-        slidesPerView: 2, // <-- MUDANÇA AQUI (Padrão para mobile)
-        
-        // Ajustes para responsividade (telas MAIORES)
-        breakpoints: {
-          // >= 600px
-          600: { slidesPerView: 3, spaceBetween: 10 },
-          // >= 900px
-          900: { slidesPerView: 4, spaceBetween: 15 },
-          // >= 1100px
-          1100: { slidesPerView: 5, spaceBetween: 15 } // <-- MUDANÇA AQUI
-        },
-
-        // Navegação (setas)
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
-      });
-
-      // --- B. LÓGICA DE CLIQUE DO CARD (Copiado de script.js) ---
-      //
-      // Seleciona APENAS os links dentro do container de recomendações
-      document.querySelectorAll(".recomendacoes-container a.card-link").forEach(link => {
-        link.addEventListener("click", (event) => {
-          
-          const card = link.querySelector(".card");
-          if (!card) return; 
-
-          const title = card.querySelector(".title").innerText;
-          const priceText = card.querySelector(".price").innerText;
-          const priceValue = card.dataset.price; 
-          const oldPrice = card.querySelector(".old")?.innerText || ""; 
-          const badge = card.querySelector(".badge")?.innerText || ""; 
-          
-          const bgImg = card.querySelector(".thumb").style.backgroundImage;
-          const imgMatch = bgImg.match(/url\(["']?(.*?)["']?\)/);
-          const img = imgMatch ? imgMatch[1] : "";
-
-          const produtoSelecionado = {
-            title: title,
-            price: priceText,
-            priceValue: parseFloat(priceValue),
-            oldPrice: oldPrice,
-            badge: badge,
-            img: img
-          };
-          
-          // Salva o novo produto
-          localStorage.setItem("produtoSelecionado", JSON.stringify(produtoSelecionado));
-
-          // A navegação padrão do link <a> (href="tela_produto.html")
-          // cuidará de levar o usuário para a página correta.
-        });
-      });
-      
-      // --- C. LÓGICA DAS ESTRELAS (Copiado de script.js) ---
-      //
-      // Pega todos os cards *dentro do container de recomendações*
-      const allCards = document.querySelectorAll(".recomendacoes-container .card");
-
-      allCards.forEach(card => {
-        const titleElement = card.querySelector(".title");
-        const avaliacaoContainer = card.querySelector(".card-avaliacao");
-
-        if (!titleElement || !avaliacaoContainer || !titleElement.innerText) {
-          return; // Pula cards de modelo
-        }
-        
-        const title = titleElement.innerText;
-        // Chave idêntica à de tela_produto.html
-        const ratingKey = "rating_" + title; 
-        const savedRating = localStorage.getItem(ratingKey);
-
-        if (savedRating) {
-          const rating = parseInt(savedRating);
-          let starsHTML = "";
-          for (let i = 1; i <= 5; i++) {
-            if (i <= rating) {
-              starsHTML += '<span class="star filled">&#9733;</span>'; // Cheia
-            } else {
-              starsHTML += '<span class="star">&#9734;</span>'; // Vazia
-            }
-          }
-          // Insere as estrelas (o CSS delas vem do style.css)
-          avaliacaoContainer.innerHTML = starsHTML;
-        }
-      });
-
-    });
-  </script>
-  </body>
+</body>
 </html>
