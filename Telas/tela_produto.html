@@ -308,32 +308,43 @@
   // Botão "Comprar agora" (Verifica login, Adiciona e Redireciona)
   btnComprar.addEventListener("click", () => {
     
-    // 1. Verifica se o usuário está logado (lógica do tela_carrinho.html)
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
-
-    if (!usuarioLogado) {
-      // 2. Se NÃO estiver logado, redireciona para login
-      alert("Você precisa estar logado para continuar. Redirecionando...");
-      window.location.href = "tela_login.html";
+    // 1. Pega os dados do produto atual (incluindo a quantidade)
+    const produto = getDadosProduto();
     
-    } else {
-      // 3. Se ESTIVER logado, executa a ação original
-      const produto = getDadosProduto();
-      let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-      
-      const existente = carrinho.find(p => p.title === produto.title);
+    // 2. Calcula o total APENAS para este item
+    const totalDaCompra = produto.price * produto.quantidade;
 
-      if (existente) {
-        existente.quantidade += produto.quantidade;
-      } else {
-        carrinho.push(produto);
-      }
+    // 3. Salva esse total no localStorage para a tela_entrega ler
+    // (usa a mesma chave que o 'tela_carrinho.html' usa)
+    localStorage.setItem("totalCompra", totalDaCompra.toFixed(2));
+    
+    // 4. Redireciona para a tela de entrega
+      window.location.href = "tela_entrega.html";
 
-      localStorage.setItem("carrinho", JSON.stringify(carrinho));
+    // Lógica de verificação de login (DESATIVADA) - Ainda é necessário a criação de tela_login
+    // if (!usuarioLogado) {
+    //   // 2. Se NÃO estiver logado, redireciona para login
+    //   alert("Você precisa estar logado para continuar. Redirecionando...");
+    //   window.location.href = "tela_login.html";
+    
+    // } else {
+    //   // 3. Se ESTIVER logado, executa a ação original
+    //   const produto = getDadosProduto();
+    //   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
       
-      // Redireciona imediatamente para o carrinho
-      window.location.href = "tela_carrinho.html";
-    }
+    //   const existente = carrinho.find(p => p.title === produto.title);
+
+    //   if (existente) {
+    //     existente.quantidade += produto.quantidade;
+    //   } else {
+    //     carrinho.push(produto);
+    //   }
+
+    //   localStorage.setItem("carrinho", JSON.stringify(carrinho));
+      
+    //   // Redireciona imediatamente para o carrinho
+    //   window.location.href = "tela_carrinho.html";
+    // }
   });
 
   // Botão "Favoritar" (Alterna Salvar/Remover)

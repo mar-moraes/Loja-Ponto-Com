@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="estilo_carrinho.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-
   <style>
+    /* ... (seu style inline permanece o mesmo) ... */
     .carrinho-tabs {
       display: flex;
       gap: 10px;
@@ -26,7 +26,6 @@
       border-bottom: 3px solid transparent;
     }
     .carrinho-tab.active {
-      /* Cor azul do botão 'continuar' */
       color: #2968C8; 
       border-bottom: 3px solid #2968C8;
     }
@@ -87,7 +86,8 @@
       </div>
     
     </div>
-<div class="carrinho-layout-container">
+
+    <div class="carrinho-layout-container">
     </div>
   <div class="recomendacoes-container">
     <h2>Produtos que podem interessar</h2>
@@ -191,7 +191,7 @@
   const btnContinuar = document.querySelector(".btn-continuar");
 
   // --- 2. FUNÇÕES DE RENDERIZAÇÃO ---
-
+  // ... (funções renderCarrinho() e renderSalvos() permanecem as mesmas) ...
   // Renderiza os itens do CARRINHO (CORRIGIDA)
   function renderCarrinho() {
     if (carrinho.length === 0) {
@@ -273,8 +273,9 @@
     }
   }
 
-  // --- 3. FUNÇÕES DE ATUALIZAÇÃO (Total e Contadores) ---
 
+  // --- 3. FUNÇÕES DE ATUALIZAÇÃO (Total e Contadores) ---
+  // ... (funções atualizarTotal() e atualizarContadoresTabs() permanecem as mesmas) ...
   // Atualiza o TOTAL (bloco de resumo)
   function atualizarTotal() {
     if (carrinho.length === 0) {
@@ -297,7 +298,7 @@
   }
 
   // --- 4. FUNÇÕES DE AÇÃO DOS PRODUTOS ---
-
+  // ... (funções alterarContador(), removerProduto(), removerDosSalvos(), comprarAgora(), salvarDepois(), moverParaCarrinho() permanecem as mesmas) ...
   function alterarContador(index, valor) {
     const item = carrinho[index];
     item.quantidade += valor;
@@ -332,8 +333,17 @@
   }
 
   function comprarAgora(index) {
+    // 1. Pega o produto específico do carrinho
     const produto = carrinho[index];
-    alert("Iniciando a compra de: " + produto.title);
+    
+    // 2. Calcula o total APENAS para este item (preço * quantidade)
+    const totalDoProduto = produto.price * produto.quantidade;
+    
+    // 3. Salva esse total no localStorage (mesma chave que a tela_entrega usa)
+    localStorage.setItem("totalCompra", totalDoProduto.toFixed(2));
+    
+    // 4. Redireciona para a tela de entrega
+    window.location.href = "tela_entrega.html";
   }
 
   // "Salvar para depois" (ATUALIZADA)
@@ -375,7 +385,7 @@
   }
 
   // --- 5. LÓGICA DAS ABAS (Funções principais de visão) ---
-
+  // ... (funções mostrarCarrinho() e mostrarSalvos() permanecem as mesmas) ...
   function mostrarCarrinho() {
     painelCarrinho.style.display = "block"; // Mostra painel carrinho
     painelSalvos.style.display = "none";   // Esconde painel salvos
@@ -405,13 +415,30 @@
   btnContinuar.addEventListener("click", function() {
       const usuarioLogado = localStorage.getItem("usuarioLogado");
 
-      if (!usuarioLogado) {
-        alert("Você precisa estar logado para continuar. Redirecionando...");
-        window.location.href = "tela_login.html";
-      } else {
-        alert("Usuário logado! Prosseguindo para o checkout...");
-        // window.location.href = "tela_checkout.html";
-      }
+      // 1. Calcula o total final com base no array 'carrinho'
+      const totalCompra = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
+      
+      // 2. Salva o valor no localStorage para a próxima página ler
+      localStorage.setItem("totalCompra", totalCompra.toFixed(2));
+      
+      // 3. Redireciona o usuário para a tela de entrega
+      window.location.href = "tela_entrega.html";
+
+      // Lógica de verificação de login (DESATIVADA) - Ainda é necessário a criação de tela_login
+      // if (!usuarioLogado) {
+      //   alert("Você precisa estar logado para continuar. Redirecionando...");
+      //   window.location.href = "tela_login.html";
+      
+      // } else {
+      //   // 1. Calcula o total final com base no array 'carrinho'
+      //   const totalCompra = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
+        
+      //   // 2. Salva o valor no localStorage para a próxima página ler
+      //   localStorage.setItem("totalCompra", totalCompra.toFixed(2));
+        
+      //   // 3. Redireciona o usuário para a tela de entrega
+      //   window.location.href = "tela_entrega.html";
+      // }
   });
 
 
@@ -425,32 +452,21 @@
 </script>
 </script> 
 
-
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
   <script>
-    // Espera o DOM carregar (usamos um listener separado)
     document.addEventListener('DOMContentLoaded', function () {
       
       // --- A. INICIALIZA O SWIPER DE RECOMENDAÇÕES ---
       const swiper = new Swiper('.recomendacoes-swiper', {
-        loop: false, // Carrossel não-infinito
-        spaceBetween: 18, // Mesmo 'gap' do .grid
-
-        // Define quantos slides aparecem (em telas PEQUENAS)
-        slidesPerView: 2, // <-- MUDANÇA AQUI (Padrão para mobile)
-        
-        // Ajustes para responsividade (telas MAIORES)
+        loop: false,
+        spaceBetween: 18, 
+        slidesPerView: 2, 
         breakpoints: {
-          // >= 600px
           600: { slidesPerView: 3, spaceBetween: 10 },
-          // >= 900px
           900: { slidesPerView: 4, spaceBetween: 15 },
-          // >= 1100px
-          1100: { slidesPerView: 5, spaceBetween: 15 } // <-- MUDANÇA AQUI
+          1100: { slidesPerView: 5, spaceBetween: 15 } 
         },
-
-        // Navegação (setas)
         navigation: {
           nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev',
@@ -458,8 +474,6 @@
       });
 
       // --- B. LÓGICA DE CLIQUE DO CARD (Copiado de script.js) ---
-      //
-      // Seleciona APENAS os links dentro do container de recomendações
       document.querySelectorAll(".recomendacoes-container a.card-link").forEach(link => {
         link.addEventListener("click", (event) => {
           
@@ -485,17 +499,11 @@
             img: img
           };
           
-          // Salva o novo produto
           localStorage.setItem("produtoSelecionado", JSON.stringify(produtoSelecionado));
-
-          // A navegação padrão do link <a> (href="tela_produto.html")
-          // cuidará de levar o usuário para a página correta.
         });
       });
       
       // --- C. LÓGICA DAS ESTRELAS (Copiado de script.js) ---
-      //
-      // Pega todos os cards *dentro do container de recomendações*
       const allCards = document.querySelectorAll(".recomendacoes-container .card");
 
       allCards.forEach(card => {
@@ -507,7 +515,6 @@
         }
         
         const title = titleElement.innerText;
-        // Chave idêntica à de tela_produto.html
         const ratingKey = "rating_" + title; 
         const savedRating = localStorage.getItem(ratingKey);
 
@@ -521,7 +528,6 @@
               starsHTML += '<span class="star">&#9734;</span>'; // Vazia
             }
           }
-          // Insere as estrelas (o CSS delas vem do style.css)
           avaliacaoContainer.innerHTML = starsHTML;
         }
       });
