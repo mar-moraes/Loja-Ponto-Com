@@ -100,3 +100,62 @@ document.querySelectorAll("a.card-link").forEach(link => {
     // 4. O link <a> fará a navegação automaticamente.
   });
 });
+
+// ... (fim do seu script.js atual, após o evento de clique nos links)
+
+
+// ========================================================
+// NOVO: Carregar Avaliações (Estrelas) nos Cards
+// ========================================================
+// Roda assim que o HTML da página é carregado
+document.addEventListener("DOMContentLoaded", () => {
+  
+  // 1. Pega todos os cards da página
+  const allCards = document.querySelectorAll(".card");
+
+  allCards.forEach(card => {
+    // 2. Pega os elementos de título e o novo container de estrelas
+    const titleElement = card.querySelector(".title");
+    const avaliacaoContainer = card.querySelector(".card-avaliacao");
+
+    // Pula se for um card-template sem título ou container
+    if (!titleElement || !avaliacaoContainer) {
+      return; 
+    }
+
+    const title = titleElement.innerText;
+
+    // Pula se o título estiver vazio (cards modelo)
+    if (!title) {
+      return;
+    }
+
+    // 3. Monta a chave do localStorage (DEVE ser idêntica à de tela_produto.html)
+    //
+    const ratingKey = "rating_" + title; 
+
+    // 4. Busca a nota salva
+    const savedRating = localStorage.getItem(ratingKey);
+
+    if (savedRating) {
+      const rating = parseInt(savedRating);
+      let starsHTML = "";
+
+      // 5. Gera o HTML das estrelas (cheias e vazias)
+      for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+          // Estrela cheia (&#9733;)
+          starsHTML += '<span class="star filled">&#9733;</span>'; 
+        } else {
+          // Estrela vazia (&#9734;)
+          starsHTML += '<span class="star">&#9734;</span>'; 
+        }
+      }
+
+      // 6. Insere o HTML no container
+      avaliacaoContainer.innerHTML = starsHTML;
+    }
+    // Se não houver 'savedRating', o <div>.card-avaliacao ficará vazio
+    // e o 'min-height: 18px' do CSS cuidará do alinhamento.
+  });
+});

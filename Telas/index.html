@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Loja Ponto Com</title>
 
-  <!-- Importa o arquivo de estilos -->
   <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
 </head>
 
 <body>
@@ -39,12 +41,26 @@
     </header>
 
   <!-- Logotipo (imagem central) -->
-  <section class="hero">
-    <img class="logo" src="" alt="Logo da Loja">
-  </section>
 
-  <!-- Conteúdo principal -->
+
+  <section class="hero">
+    <div class="swiper hero-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide" style="background-image:url('imagens/Zane lego.jpg')"></div>
+        
+        <div class="swiper-slide" style="background-image:url('imagens/Zane lego - 1.jpg')"></div>
+        
+        <div class="swiper-slide" style="background-image:url('imagens/Zane lego - 2.jpg')"></div>
+      </div>
+      
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
   <main class="container">
+
 
     <!-- Controle de "ordenação" -->
     <div class="controls">
@@ -76,6 +92,7 @@
         <article class="card" data-price="159.79">
           <div class="thumb" style="background-image:url('imagens/Zane lego.jpg')"></div>
           <div class="title">LEGO NINJAGO!!</div>
+          <div class="card-avaliacao"></div>
           <div>
             <span class="old">R$ 199,99</span>
             <span class="price">R$ 159,79</span>
@@ -89,6 +106,7 @@
       <article class="card" data-price="">
         <div class="thumb" style="background-image:url('')"></div>
         <div class="title"></div>
+        <div class="card-avaliacao"></div>
         <div>
           <span class="old"></span>
           <span class="price"></span>
@@ -102,6 +120,7 @@
       <article class="card" data-price="">
         <div class="thumb" style="background-image:url('')"></div>
         <div class="title"></div>
+        <div class="card-avaliacao"></div>
         <div>
           <span class="old"></span>
           <span class="price"></span>
@@ -115,6 +134,7 @@
       <article class="card" data-price="">
         <div class="thumb" style="background-image:url('')"></div>
         <div class="title"></div>
+        <div class="card-avaliacao"></div>
         <div>
           <span class="old"></span>
           <span class="price"></span>
@@ -128,6 +148,7 @@
       <article class="card" data-price="">
         <div class="thumb" style="background-image:url('')"></div>
         <div class="title"></div>
+        <div class="card-avaliacao"></div>
         <div>
           <span class="old"></span>
           <span class="price"></span>
@@ -143,6 +164,33 @@
   <footer></footer>
 
   <!-- Importa o JavaScript -->
-  <script src="script.js"></script>
-</body>
+<script src="script.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const swiper = new Swiper('.hero-swiper', {
+        // Opções
+        loop: true,           // Faz o carrossel ser infinito
+        autoplay: {
+          delay: 3000,        // Muda de slide a cada 3 segundos
+          disableOnInteraction: false,
+        },
+        
+        // Paginação (bolinhas)
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+
+        // Navegação (setas)
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      });
+    });
+  </script>
+  </body>
 </html>
