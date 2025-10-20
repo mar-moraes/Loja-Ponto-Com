@@ -71,6 +71,7 @@
   height: 100%;
 }
 
+/* ISSO É O QUE VOCÊ QUER DE VOLTA (USAR) */
 .hero-swiper .swiper-slide {
   text-align: center;
   font-size: 18px;
@@ -78,9 +79,8 @@
 
   /* Centraliza a imagem de fundo */
   background-position: center;
-  background-size: cover;
+  background-size: cover; /* <-- VOLTAMOS PARA 'COVER' */
 }
-
 /* Estiliza as setas e bolinhas com a cor 
   amarela principal do seu site (var(--yellow))
  
