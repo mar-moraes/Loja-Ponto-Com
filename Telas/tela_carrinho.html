@@ -346,20 +346,33 @@
     window.location.href = "tela_entrega.html";
   }
 
-  // "Salvar para depois" (ATUALIZADA)
+// "Salvar para depois" (ATUALIZADA)
   function salvarDepois(index) {
     const item = carrinho[index];
     
-    salvos.push(item);
-    carrinho.splice(index, 1);
+    // --- INÍCIO DA VERIFICAÇÃO ---
+    // Pega a lista de salvos atual
+    let salvos = JSON.parse(localStorage.getItem("salvos")) || []; 
+    
+    // Verifica se o item já existe na lista de salvos (pelo título)
+    const existenteEmSalvos = salvos.find(p => p.title === item.title);
+
+    if (!existenteEmSalvos) {
+      // Se NÃO existe, adiciona
+      salvos.push(item);
+    }
+    // Se JÁ existe, não fazemos nada, o item só será removido do carrinho
+    // --- FIM DA VERIFICAÇÃO ---
+
+    carrinho.splice(index, 1); // Remove do carrinho em ambos os casos
     
     localStorage.setItem("carrinho", JSON.stringify(carrinho));
-    localStorage.setItem("salvos", JSON.stringify(salvos));
+    localStorage.setItem("salvos", JSON.stringify(salvos)); // Salva a lista 'salvos' atualizada
     
     renderCarrinho();
     renderSalvos();
     atualizarContadoresTabs();
-    mostrarCarrinho(); // Garante que a visão (painel + resumo) é atualizada
+    mostrarCarrinho(); 
   }
 
   // Mover dos Salvos para o Carrinho (ATUALIZADA)

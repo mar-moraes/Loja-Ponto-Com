@@ -335,13 +335,17 @@ body {
 }
 
 .checkbox-container {
-    position: absolute;
-    right: 0;
-    top: 35px; /* Ajuste manual */
+    /* As 3 linhas abaixo foram removidas */
+    /* position: absolute; */
+    /* right: 0; */
+    /* top: 35px; */ 
+
     display: flex;
     align-items: center;
     gap: 5px;
+    white-space: nowrap; /* Garante que "Sem número" não quebre a linha */
 }
+
 .checkbox-container label {
     margin: 0;
 }
@@ -406,10 +410,11 @@ body {
     flex: 1; /* Ocupa o resto do espaço */
     padding-left: 15px;
 }
-.mapa-container iframe {
+.mapa-container #mapa {
+    width: 100%;
+    height: 100%; /* O 'height' vem da classe .retirada-layout */
     border-radius: 6px;
 }
-
 .resultado-busca {
     font-size: 14px;
     color: #777;

@@ -7,10 +7,13 @@
   <link rel="stylesheet" href="estilo_entrega.css">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
 
-    <header class="topbar-entrega">
+     <header class="topbar-entrega">
       <nav class="actions-entrega">
         <div class="logo-container">
           <a href="index.html">
@@ -41,10 +44,11 @@
                             <span>Enviar no meu endereço</span>
                             <span class="preco-gratis">Grátis</span>
                         </div>
+                        
                         <div class="opcao-detalhes">
-                            <p>Rua Exemplo Fictício, 123 - Jd. Amanda</p>
-                            <p>CEP 13180-000 - Hortolândia, São Paulo</p>
-                            <p class="tipo-endereco">Residencial</p>
+                            <p style="font-weight: 600; font-size: 15px;">Exemplo Fictício, 123 - Centro</p>
+                            <p style="margin: 5px 0;">13180-000 - Hortolândia - SP</p>
+                            <p class="tipo-endereco">Recebe: Fulano de Tal</p>
                             <a href="#" class="link-acao" onclick="mostrarModal('modal-editar-endereco')">Alterar ou escolher outro endereço</a>
                         </div>
                     </label>
@@ -57,7 +61,8 @@
                             <span>Retirada na Agência</span>
                             <span class="preco">R$ 7,99</span>
                         </div>
-                        <div class="opcao-detalhes">
+                        
+                        <div class="opcao-detalhes" id="detalhes-agencia-selecionada">
                             <p class="distancia">A 450 m do seu endereço</p>
                             <p>Agência - LOJA 1 - (Centro)</p>
                             <p>Segunda à sexta das 9 às 17:30 hs. - Sábado das 9 às 15 hs.</p>
@@ -105,15 +110,18 @@
                     <div class="form-grupo" style="flex: 2;">
                         <label for="rua">Rua / Avenida</label>
                         <input type="text" id="rua" placeholder="Ex.: Avenida Los Leones, 4563">
+                        <span class="msg-erro" id="erro-rua" style="display: none;">Você deve inserir o nome da rua.</span>
                     </div>
                     <div class="form-grupo" style="flex: 1;">
                         <label for="numero">Número</label>
-                        <input type="text" id="numero" placeholder="Ex.: 45607052">
-                        <div class="checkbox-container">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="text" id="numero" placeholder="Ex.: 45607052" style="flex: 1; min-width: 50px;">
+                        <div class="checkbox-container" style="white-space: nowrap;">
                             <input type="checkbox" id="sem-numero">
                             <label for="sem-numero">Sem número</label>
                         </div>
                     </div>
+                </div>
                 </div>
 
                 <div class="form-grupo">
@@ -143,10 +151,13 @@
                     <p>Dados de contato</p>
                     <span>Se houver algum problema no envio, você receberá uma ligação neste número.</span>
                     <label for="nome" style="margin-top: 10px;">Nome e sobrenome</label>
-                    <input type="text" id="nome" class="input-erro">
-                    <span class="msg-erro">Você deve inserir nome e sobrenome.</span>
+                    <input type="text" id="nome"> <span class="msg-erro" id="erro-nome" style="display: none;">Você deve inserir nome e sobrenome.</span>
                 </div>
-                
+
+                <div class="form-grupo" style="margin-top: 15px;">
+                    <button type="button" id="btn-salvar-endereco" class="btn-continuar-entrega">Ok</button>
+                </div>
+
             </form>
         </div>
     </div>
@@ -185,83 +196,92 @@
                     </div>
                 </div>
                 <div class="mapa-container">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14704.512437314232!2d-47.19298736839293!3d-22.871725497468567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbr!4v1760985459396!5m2!1sen!2sbr" 
-                        width="100%" 
-                        height="100%" 
-                        style="border:0;" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+                    <div id="mapa"></div>
                 </div>
             </div>
         </div>
     </div>
 
-
     <script>
         // --- Variável global para guardar o subtotal vindo do carrinho ---
         let subtotalCompra = 0.0;
+        
+        // --- NOVO: Variável global para guardar o objeto do mapa (começa nula) ---
+        let map = null; 
 
         // --- Funções para controlar os Modais (Subtelas) ---
         function mostrarModal(modalId) {
             document.getElementById(modalId).style.display = 'flex';
+            
+            if (modalId === 'modal-retirar-agencia' && !map) {
+                // ... (Todo o seu código de inicialização do mapa - está correto) ...
+                const locais = [
+                    { 
+                        nome: 'LOJA 1',
+                        endereco: 'RUA LUIZ CAMILO DE CAMARGO, 581, Centro, Hortolândia (13184-230)',
+                        coords: { lat: -22.85848, lng: -47.22129 }
+                    },
+                    { 
+                        nome: 'PONTO EXTRA HORTOLÂNDIA',
+                        endereco: 'AV. DA EMACIPAÇÃO, 1200, Jardim Santa Rita de Cássia, Hortolândia (13186-505)',
+                        coords: { lat: -22.86985, lng: -47.21461 }
+                    }
+                ];
+                const centroDoMapa = [-22.864, -47.218]; 
+                map = L.map('mapa').setView(centroDoMapa, 14); 
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                locais.forEach(local => {
+                    L.marker([local.coords.lat, local.coords.lng]) 
+                     .addTo(map)
+                     .bindPopup(`<b>${local.nome}</b><br>${local.endereco}`);
+                });
+            }
         }
 
         function fecharModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
 
-        // --- NOVA FUNÇÃO: Atualiza o Resumo da Compra ---
+        // --- FUNÇÃO: Atualiza o Resumo da Compra ---
         function atualizarResumoEntrega() {
-            // Verifica qual opção de entrega está selecionada
+            // ... (Seu código de atualização de resumo - está correto) ...
             const freteSelecionado = document.querySelector('input[name="forma-entrega"]:checked').value;
             const freteSpan = document.getElementById("resumo-frete-preco");
-
             let valorFrete = 0.0;
             let textoFrete = "GRÁTIS";
-            
-            // Define o valor do frete baseado na seleção
             if (freteSelecionado === 'agencia') {
-                valorFrete = 7.99; // Valor da agência (de Hortolândia)
+                valorFrete = 7.99;
                 textoFrete = "R$ 7,99";
                 freteSpan.classList.remove("preco-gratis");
             } else {
-                valorFrete = 0.0; // Valor do endereço (Grátis)
+                valorFrete = 0.0;
                 textoFrete = "GRÁTIS";
                 freteSpan.classList.add("preco-gratis");
             }
-
-            // Calcula o total final
             const valorTotal = subtotalCompra + valorFrete;
-
-            // Atualiza os valores no HTML
             document.getElementById("resumo-produto-preco").innerText = "R$ " + subtotalCompra.toFixed(2).replace(".", ",");
             freteSpan.innerText = textoFrete;
             document.getElementById("resumo-total-preco").innerText = "R$ " + valorTotal.toFixed(2).replace(".", ",");
         }
 
 
-        // --- Lógica para selecionar as opções de entrega (MODIFICADA) ---
+        // --- Lógica para selecionar as opções de entrega ---
         document.querySelectorAll('input[name="forma-entrega"]').forEach(radio => {
             radio.addEventListener('change', function() {
-                // Remove a classe 'selecionado' de todos
+                // ... (Seu código de seleção de rádio - está correto) ...
                 document.querySelectorAll('.opcao-bloco').forEach(bloco => {
                     bloco.classList.remove('selecionado');
                 });
-
-                // Adiciona a classe 'selecionado' apenas ao 'pai' do radio checado
                 if (this.checked) {
                     this.closest('.opcao-bloco').classList.add('selecionado');
                 }
-
-                // ATUALIZA O RESUMO QUANDO A OPÇÃO MUDA
                 atualizarResumoEntrega();
             });
         });
 
-        // --- NOVO: Roda quando a página carrega ---
+        // --- Roda quando a página carrega ---
         document.addEventListener("DOMContentLoaded", () => {
             // 1. Pega o valor total salvo no localStorage
             const totalSalvo = localStorage.getItem("totalCompra");
@@ -272,9 +292,73 @@
             }
             
             // 3. Roda a função de atualização para mostrar os valores corretos
-            // (Isso vai usar o subtotal salvo e o frete padrão que está 'checked')
             atualizarResumoEntrega();
-        });
+
+            // --- BLOCO 1: LÓGICA PARA "ESCOLHER" UMA AGÊNCIA ---
+            document.querySelectorAll('.btn-escolher').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    
+                    const itemAgencia = e.target.closest('.agencia-item');
+                    const nomeAgencia = itemAgencia.querySelector('h4').innerText;
+                    const horarioAgencia = itemAgencia.querySelector('i.fa-regular.fa-clock').parentElement.innerText;
+                    const targetDetalhes = document.getElementById('detalhes-agencia-selecionada');
+                    
+                    targetDetalhes.innerHTML = `
+                        <p style="font-weight: 600; font-size: 15px;">${nomeAgencia}</p>
+                        <p style="margin: 5px 0;">${horarioAgencia}</p>
+                        <a href="#" class="link-acao" onclick="mostrarModal('modal-retirar-agencia')">Ver agência no mapa ou selecionar outra</a>
+                    `;
+
+                    const radioAgencia = document.getElementById('retirar-agencia');
+                    radioAgencia.checked = true;
+                    radioAgencia.dispatchEvent(new Event('change'));
+                    
+                    // Fecha o modal de agência
+                    fecharModal('modal-retirar-agencia');
+                });
+            });
+            // --- FIM DO BLOCO 1 ---
+
+            
+            // --- BLOCO 2: LÓGICA DE VALIDAÇÃO DO MODAL DE ENDEREÇO ---
+            // (Este é o bloco que foi movido para fora do Bloco 1)
+            const btnSalvarEndereco = document.getElementById('btn-salvar-endereco');
+            const inputRua = document.getElementById('rua');
+            const erroRua = document.getElementById('erro-rua');
+            const inputNome = document.getElementById('nome');
+            const erroNome = document.getElementById('erro-nome');
+
+            btnSalvarEndereco.addEventListener('click', () => {
+                let isValid = true; 
+
+                // 1. Limpa erros anteriores
+                erroRua.style.display = 'none';
+                inputRua.classList.remove('input-erro');
+                erroNome.style.display = 'none';
+                inputNome.classList.remove('input-erro');
+
+                // 2. Valida o campo "Rua"
+                if (inputRua.value.trim() === '') {
+                    erroRua.style.display = 'block'; 
+                    inputRua.classList.add('input-erro'); 
+                    isValid = false;
+                }
+
+                // 3. Valida o campo "Nome"
+                if (inputNome.value.trim() === '') {
+                    erroNome.style.display = 'block'; 
+                    inputNome.classList.add('input-erro'); 
+                    isValid = false;
+                }
+
+                // 4. Se tudo estiver válido, fecha o modal
+                if (isValid) {
+                    fecharModal('modal-editar-endereco');
+                }
+            });
+            // --- FIM DO BLOCO 2 ---
+
+        }); // <-- Fim do DOMContentLoaded
 
     </script>
 </body>
