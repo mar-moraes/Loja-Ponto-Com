@@ -59,7 +59,7 @@
                     <label for="retirar-agencia" class="opcao-label">
                         <div class="opcao-titulo">
                             <span>Retirada na Agência</span>
-                            <span class="preco">R$ 7,99</span>
+                            <span class="preco">R$ 5,99</span>
                         </div>
                         
                         <div class="opcao-detalhes" id="detalhes-agencia-selecionada">
@@ -161,14 +161,16 @@
             </form>
         </div>
     </div>
+    
     <div class="modal-overlay" id="modal-retirar-agencia" onclick="fecharModal('modal-retirar-agencia')">
         <div class="modal-conteudo modal-grande" onclick="event.stopPropagation()">
             <button class="modal-fechar" onclick="fecharModal('modal-retirar-agencia')"><i class="fa-solid fa-xmark"></i></button>
             <h3>Selecione um ponto de retirada</h3>
             <span class="subtitulo-modal">A agência deve estar localizada no mesmo estado do seu endereço de faturamento.</span>
 
-            <div class="form-grupo" style="margin-top: 15px;">
-                <input type="search" id="busca-local" placeholder="Busque uma localização">
+            <div class="form-grupo form-grupo-com-icone" style="margin-top: 15px;">
+                <input type="search" id="busca-local" placeholder="Busque uma localização (Ex: Av. Paulista, São Paulo)">
+                <i class="fa-solid fa-magnifying-glass icone-busca" id="btn-busca-local"></i>
             </div>
 
             <div class="retirada-layout">
@@ -206,7 +208,7 @@
         // --- Variável global para guardar o subtotal vindo do carrinho ---
         let subtotalCompra = 0.0;
         
-        // --- NOVO: Variável global para guardar o objeto do mapa (começa nula) ---
+        // --- Variável global para guardar o objeto do mapa (começa nula) ---
         let map = null; 
 
         // --- Funções para controlar os Modais (Subtelas) ---
@@ -214,7 +216,6 @@
             document.getElementById(modalId).style.display = 'flex';
             
             if (modalId === 'modal-retirar-agencia' && !map) {
-                // ... (Todo o seu código de inicialização do mapa - está correto) ...
                 const locais = [
                     { 
                         nome: 'LOJA 1',
@@ -237,6 +238,10 @@
                      .addTo(map)
                      .bindPopup(`<b>${local.nome}</b><br>${local.endereco}`);
                 });
+                
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 100); 
             }
         }
 
@@ -246,31 +251,44 @@
 
         // --- FUNÇÃO: Atualiza o Resumo da Compra ---
         function atualizarResumoEntrega() {
-            // ... (Seu código de atualização de resumo - está correto) ...
             const freteSelecionado = document.querySelector('input[name="forma-entrega"]:checked').value;
             const freteSpan = document.getElementById("resumo-frete-preco");
             let valorFrete = 0.0;
             let textoFrete = "GRÁTIS";
+            
             if (freteSelecionado === 'agencia') {
-                valorFrete = 7.99;
-                textoFrete = "R$ 7,99";
+                // PREÇO ATUALIZADO AQUI (JS)
+                valorFrete = 5.99;
+                textoFrete = "R$ 5,99";
                 freteSpan.classList.remove("preco-gratis");
             } else {
                 valorFrete = 0.0;
                 textoFrete = "GRÁTIS";
                 freteSpan.classList.add("preco-gratis");
             }
+            
             const valorTotal = subtotalCompra + valorFrete;
             document.getElementById("resumo-produto-preco").innerText = "R$ " + subtotalCompra.toFixed(2).replace(".", ",");
             freteSpan.innerText = textoFrete;
             document.getElementById("resumo-total-preco").innerText = "R$ " + valorTotal.toFixed(2).replace(".", ",");
+
+            // ==========================================================
+            // === CORREÇÃO: Salvar valores no localStorage           ===
+            // ==========================================================
+            // Salva o subtotal, o frete e o total final
+            localStorage.setItem("totalCompra", subtotalCompra.toFixed(2));
+            localStorage.setItem("valorFrete", valorFrete.toFixed(2));
+            localStorage.setItem("valorFinal", valorTotal.toFixed(2));
+            // ==========================================================
+            // === FIM DA CORREÇÃO                                    ===
+            // ==========================================================
         }
 
 
         // --- Lógica para selecionar as opções de entrega ---
         document.querySelectorAll('input[name="forma-entrega"]').forEach(radio => {
             radio.addEventListener('change', function() {
-                // ... (Seu código de seleção de rádio - está correto) ...
+                // ... (código idêntico) ...
                 document.querySelectorAll('.opcao-bloco').forEach(bloco => {
                     bloco.classList.remove('selecionado');
                 });
@@ -297,7 +315,7 @@
             // --- BLOCO 1: LÓGICA PARA "ESCOLHER" UMA AGÊNCIA ---
             document.querySelectorAll('.btn-escolher').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    
+                    // ... (código idêntico) ...
                     const itemAgencia = e.target.closest('.agencia-item');
                     const nomeAgencia = itemAgencia.querySelector('h4').innerText;
                     const horarioAgencia = itemAgencia.querySelector('i.fa-regular.fa-clock').parentElement.innerText;
@@ -313,7 +331,6 @@
                     radioAgencia.checked = true;
                     radioAgencia.dispatchEvent(new Event('change'));
                     
-                    // Fecha o modal de agência
                     fecharModal('modal-retirar-agencia');
                 });
             });
@@ -321,7 +338,6 @@
 
             
             // --- BLOCO 2: LÓGICA DE VALIDAÇÃO DO MODAL DE ENDEREÇO ---
-            // (Este é o bloco que foi movido para fora do Bloco 1)
             const btnSalvarEndereco = document.getElementById('btn-salvar-endereco');
             const inputRua = document.getElementById('rua');
             const erroRua = document.getElementById('erro-rua');
@@ -329,36 +345,148 @@
             const erroNome = document.getElementById('erro-nome');
 
             btnSalvarEndereco.addEventListener('click', () => {
+                // ... (código idêntico) ...
                 let isValid = true; 
 
-                // 1. Limpa erros anteriores
                 erroRua.style.display = 'none';
                 inputRua.classList.remove('input-erro');
                 erroNome.style.display = 'none';
                 inputNome.classList.remove('input-erro');
 
-                // 2. Valida o campo "Rua"
                 if (inputRua.value.trim() === '') {
                     erroRua.style.display = 'block'; 
                     inputRua.classList.add('input-erro'); 
                     isValid = false;
                 }
 
-                // 3. Valida o campo "Nome"
                 if (inputNome.value.trim() === '') {
                     erroNome.style.display = 'block'; 
                     inputNome.classList.add('input-erro'); 
                     isValid = false;
                 }
 
-                // 4. Se tudo estiver válido, fecha o modal
                 if (isValid) {
                     fecharModal('modal-editar-endereco');
                 }
             });
             // --- FIM DO BLOCO 2 ---
 
-        }); // <-- Fim do DOMContentLoaded
+
+            const inputCep = document.getElementById('cep');
+            // ... (código idêntico) ...
+
+            // 1. Função reutilizável para buscar o CEP
+            function buscarCep() {
+                const cep = inputCep.value.replace(/\D/g, ''); 
+
+                erroRua.style.display = 'none';
+                inputRua.classList.remove('input-erro');
+
+                if (cep.length === 8) {
+                    inputRua.value = "Buscando..."; 
+
+                    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.erro) {
+                                inputRua.value = "";
+                                inputRua.focus();
+                            } else {
+                                inputRua.value = data.logradouro;
+                                document.getElementById('numero').focus();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erro ao consultar a API ViaCEP:', error);
+                            inputRua.value = "";
+                        });
+                } else if (cep.length > 0) {
+                    inputRua.value = "";
+                }
+            }
+
+            // 2. Adiciona o listener para 'blur' (quando clica fora)
+            inputCep.addEventListener('blur', buscarCep);
+
+            // 3. Adiciona o listener para 'keydown' (quando pressiona uma tecla)
+            inputCep.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); 
+                    buscarCep(); 
+                }
+            });
+            const inputBuscaLocal = document.getElementById('busca-local');
+            const btnBuscaLocal = document.getElementById('btn-busca-local'); // Pega o ícone
+
+            // 1. Função reutilizável para buscar a localização
+            function buscarLocalizacao() {
+                const query = inputBuscaLocal.value;
+
+                if (query.trim() === '') return;
+
+                // Dica: &countrycodes=br limita a busca ao Brasil
+                const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=br`;
+                
+                const originalPlaceholder = inputBuscaLocal.placeholder;
+                inputBuscaLocal.placeholder = "Buscando...";
+                inputBuscaLocal.disabled = true;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        inputBuscaLocal.placeholder = originalPlaceholder;
+                        inputBuscaLocal.disabled = false;
+
+                        if (data && data.length > 0) {
+                            const result = data[0];
+                            const lat = result.lat;
+                            const lon = result.lon;
+                            
+                            // Apenas move o mapa para a nova localização
+                            map.setView([lat, lon], 16); // Zoom 16 para ver ruas
+
+                        } else {
+                            alert("Localização não encontrada.");
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Erro ao buscar localização:", err);
+                        alert("Não foi possível realizar a busca no momento.");
+                        inputBuscaLocal.placeholder = originalPlaceholder;
+                        inputBuscaLocal.disabled = false;
+                    });
+            }
+
+            // 2. Adiciona o listener para 'keydown' (Enter)
+            inputBuscaLocal.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    buscarLocalizacao(); // Chama a função
+                }
+            });
+
+            // 3. Adiciona o listener para 'click' (Ícone de Lupa)
+            btnBuscaLocal.addEventListener('click', () => {
+                buscarLocalizacao(); // Chama a mesma função
+            });
+
+            // ==========================================================
+            // === INÍCIO DA ALTERAÇÃO: Evento do botão Continuar       ===
+            // ==========================================================
+            const btnContinuar = document.querySelector('.btn-continuar-entrega');
+            if (btnContinuar) {
+                btnContinuar.addEventListener('click', () => {
+                    // A função 'atualizarResumoEntrega' já salvou os dados mais recentes.
+                    // Apenas redirecionamos para a página de pagamento.
+                    window.location.href = 'tela_pagamento.html';
+                });
+            }
+            // ==========================================================
+            // === FIM DA ALTERAÇÃO                                   ===
+            // ==========================================================
+
+
+            }); // <-- Fim do DOMContentLoaded
 
     </script>
 </body>

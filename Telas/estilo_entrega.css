@@ -469,3 +469,34 @@ body {
 .btn-escolher:hover {
     background-color: rgba(41, 104, 200, 0.2);
 }
+
+
+/* =================================== */
+/* NOVOS ESTILOS (ÍCONE DE BUSCA)      */
+/* =================================== */
+
+/* Define o container do input como relativo para posicionar o ícone dentro dele */
+.form-grupo-com-icone {
+    position: relative; 
+}
+
+/* Adiciona um padding à direita no input para o texto não ficar atrás do ícone */
+.form-grupo-com-icone input[type="search"] {
+    padding-right: 45px; /* Espaço para o ícone da lupa */
+}
+
+/* Estilos do ícone de busca (lupa) */
+.icone-busca {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #888;
+    cursor: pointer;
+    padding: 8px; /* Aumenta a área de clique */
+    transition: color 0.2s;
+}
+.icone-busca:hover {
+    color: #333; /* Cor mais escura no hover */
+}
