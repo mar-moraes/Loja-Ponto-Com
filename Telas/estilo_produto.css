@@ -344,3 +344,39 @@
   align-self: flex-end; /* Alinha o botão à direita */
   width: 200px; /* Define uma largura fixa */
 }
+
+/* ===========================
+   REGRAS DE RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+    /* Ajusta os paddings principais */
+    .produto-container,
+    .detalhes-produto-container {
+        width: calc(100% - 20px);
+        margin: 15px auto;
+        padding: 15px;
+    }
+
+    /* Reduz fontes para caber */
+    .produto-titulo {
+        font-size: 22px;
+    }
+    .produto-preco .price {
+        font-size: 28px;
+    }
+    
+    /* Na página de produto, as colunas já usam 'flex-wrap: wrap',
+       então elas vão empilhar automaticamente.
+       Vamos apenas ajustar a tabela de características. */
+    .caracteristica-item {
+        /* Define 2 colunas: 120px para o Nome, 1fr (resto) para o Valor */
+        grid-template-columns: 120px 1fr; 
+    }
+
+    /* Ajusta o botão de enviar opinião */
+    .opiniao-form .btn-acao {
+        width: 100%; /* Ocupa a largura toda */
+        align-self: center;
+    }
+}

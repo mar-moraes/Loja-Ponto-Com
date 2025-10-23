@@ -500,3 +500,62 @@ body {
 .icone-busca:hover {
     color: #333; /* Cor mais escura no hover */
 }
+
+/* ===========================
+   REGRAS DE RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+    .entrega-layout-container {
+        padding: 10px;
+        gap: 15px;
+    }
+
+    /* Faz as opções de entrega ocuparem 100% da largura */
+    .opcoes-entrega {
+        min-width: 100%;
+        order: 1; /* Garante que venha primeiro */
+    }
+    
+    /* Faz o resumo ocupar 100% e desativa o "sticky" */
+    .resumo-compra {
+        flex-basis: 100%;
+        position: static; /* Desativa o "sticky" */
+        order: 2; /* Vem depois das opções */
+    }
+
+    /* --- Modal de Retirada (Mapa) --- */
+    
+    /* Faz a lista e o mapa empilharem verticalmente */
+    .retirada-layout {
+        flex-direction: column;
+        height: auto; /* Remove altura fixa */
+    }
+
+    /* Lista de agências */
+    .lista-agencias {
+        flex-basis: auto; /* Remove largura de 40% */
+        border-right: none; /* Remove borda lateral */
+        border-bottom: 1px solid #eee; /* Adiciona borda inferior */
+        padding-right: 0;
+        margin-bottom: 15px;
+        max-height: 40vh; /* Limita altura da lista */
+    }
+
+    /* Contêiner do mapa */
+    .mapa-container {
+        flex: 1;
+        padding-left: 0; /* Remove padding lateral */
+        min-height: 300px; /* Garante altura mínima para o mapa */
+    }
+    
+    /* --- Formulário de Novo Cartão (Tela de Pagamento) --- */
+    
+    /* O formulário de cartão já usa 'flex-wrap: wrap', 
+       então ele vai empilhar naturalmente. 
+       Podemos esconder a imagem do cartão para ganhar espaço.
+    */
+    .form-coluna-direita {
+        display: none;
+    }
+}

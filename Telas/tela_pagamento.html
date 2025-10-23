@@ -4,7 +4,6 @@
   <meta charset="UTF-TRF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escolha como pagar</title>
-  
   <link rel="stylesheet" href="estilo_entrega.css">
   
   <link rel="stylesheet" href="estilo_pagamento.css">
@@ -176,16 +175,18 @@
         </aside>
 
     </main>
+    
+    <div id="success-notification" class="notification success hidden">
+        <i class="fas fa-check-circle notification-icon"></i>
+        <span class="notification-message">Pagamento bem-sucedido! Gerando nota fiscal...</span>
+        <button class="notification-close" aria-label="Fechar">&times;</button>
+    </div>
 
     <script>
-        // ... (Função gerarNotaFiscalPDF() - sem alteração) ...
+        // --- Função para gerar a Nota Fiscal (PDF) ---
         function gerarNotaFiscalPDF() {
-            // Pega a biblioteca jsPDF que importamos no <head>
             const { jsPDF } = window.jspdf;
-            // Cria um novo documento PDF em orientação "retrato" (p), unidades "mm", formato "a4"
-            const doc = new jsPDF('p', 'mm', 'a4'); 
-
-            // --- Pega os dados do localStorage (Compra) ---
+            const doc = new jsPDF('p', 'mm', 'a4');
             const subtotal = localStorage.getItem("totalCompra") || "0.00";
             const frete = localStorage.getItem("valorFrete") || "0.00";
             const total = localStorage.getItem("valorFinal") || "0.00";
@@ -193,36 +194,22 @@
             const fSubtotal = parseFloat(subtotal).toFixed(2).replace(".", ",");
             const fFrete = parseFloat(frete).toFixed(2).replace(".", ",");
             const fTotal = parseFloat(total).toFixed(2).replace(".", ",");
-            
-            
-            // --- Pega os Dados de Entrega do localStorage ---
+
             const dadosEntregaJSON = localStorage.getItem('dadosEntrega');
-            const fallbackEntrega = {
-                tipo: 'endereco',
-                nome: 'Fulano Silva',
-                documento: '123.456.789-00',
-                endereco: 'Exemplo Fictício, 123',
-                bairro: 'Centro',
-                cep: '13180-000',
-                municipio: 'Hortolândia',
-                uf: 'SP',
-                fone: '(19) 99999-9999'
-            };
+            const fallbackEntrega = { tipo: 'endereco', nome: 'Fulano Silva', documento: '123.456.789-00', endereco: 'Exemplo Fictício, 123', bairro: 'Centro', cep: '13180-000', municipio: 'Hortolândia', uf: 'SP', fone: '(19) 99999-9999' };
             let entrega;
             try {
                 entrega = dadosEntregaJSON ? JSON.parse(dadosEntregaJSON) : fallbackEntrega;
-                if (!entrega.nome || !entrega.endereco) {
-                     entrega = fallbackEntrega;
-                }
+                if (!entrega.nome || !entrega.endereco) entrega = fallbackEntrega;
             } catch (e) {
                 console.error("Erro ao ler dadosEntrega do localStorage:", e);
                 entrega = fallbackEntrega;
             }
 
-            // --- Define margens e colunas ---
             const margemEsq = 10;
-            const margemDir = 200; 
+            const margemDir = 200;
             const colCentro = 105;
+            let y = 70; // Posição inicial Y para a seção de entrega
 
             // --- Cabeçalho e Dados (Emitente/Destinatário) ---
             doc.setFontSize(18);
@@ -237,32 +224,26 @@
             doc.setFont("helvetica", "bold");
             doc.text("DADOS DO DESTINATÁRIO", colCentro, 35);
             doc.setFont("helvetica", "normal");
-            doc.text("Nome: Fulano Silva", colCentro, 42); 
-            doc.text("CPF: 123.456.789-00", colCentro, 49);
+            doc.text(`Nome: ${entrega.nome || 'Não informado'}`, colCentro, 42); // Usando nome da entrega
+            doc.text(`CPF/CNPJ: ${entrega.documento || 'Não informado'}`, colCentro, 49); // Usando doc da entrega
             doc.text("Inscrição Estadual: ISENTO", colCentro, 56);
 
-            
+
             // --- INFORMAÇÕES DO LOCAL DE ENTREGA (DINÂMICO) ---
-            let y = 70; 
             doc.setFontSize(10);
             doc.setFont("helvetica", "bold");
-            
-            const tituloEntrega = entrega.tipo === 'agencia' ?
-                "INFORMAÇÕES DO LOCAL DE RETIRADA (AGÊNCIA)" :
-                "INFORMAÇÕES DO LOCAL DE ENTREGA / RETIRADA";
+            const tituloEntrega = entrega.tipo === 'agencia' ? "INFORMAÇÕES DO LOCAL DE RETIRADA (AGÊNCIA)" : "INFORMAÇÕES DO LOCAL DE ENTREGA / RETIRADA";
             doc.text(tituloEntrega, margemEsq, y);
-            y += 3; 
+            y += 3;
 
-            // Caixas
-            doc.rect(margemEsq, y, 190, 30); 
-            doc.line(margemEsq, y + 10, margemDir, y + 10); 
-            doc.line(margemEsq, y + 20, margemDir, y + 20); 
-            doc.line(120, y, 120, y + 20); // Linha vertical (divide col 1 e 2)
-            doc.line(160, y, 160, y + 20); // Linha vertical (divide col 2 e 3)
-            doc.line(120, y + 20, 120, y + 30); // Linha vertical (divide col 1 e 2)
-            doc.line(160, y + 20, 160, y + 30); // Linha vertical (divide col 2 e 3)
+            // Caixas e Linhas da Seção de Entrega
+            doc.rect(margemEsq, y, 190, 30); // Caixa externa
+            doc.line(margemEsq, y + 10, margemDir, y + 10); // Linha horizontal 1
+            doc.line(margemEsq, y + 20, margemDir, y + 20); // Linha horizontal 2
+            doc.line(120, y, 120, y + 30); // Linha vertical 1 (depois de Nome/Endereço/Município)
+            doc.line(160, y, 160, y + 30); // Linha vertical 2 (depois de CPF/Bairro/UF)
 
-            // Títulos
+            // Títulos dos Campos da Seção de Entrega
             doc.setFontSize(7);
             doc.setFont("helvetica", "normal");
             doc.text("NOME/RAZÃO SOCIAL", margemEsq + 1, y + 3);
@@ -272,123 +253,115 @@
             doc.text("BAIRRO/DISTRITO", 121, y + 13);
             doc.text("CEP", 161, y + 13);
             doc.text("MUNICÍPIO", margemEsq + 1, y + 23);
-            doc.text("UF", 121, y + 23); 
-            doc.text("FONE/FAX", 161, y + 23); 
-            
-            
-            // ==========================================================
-            // === INÍCIO DA CORREÇÃO (Dados Dinâmicos com Truncamento) ===
-            // ==========================================================
+            doc.text("UF", 121, y + 23);
+            doc.text("FONE/FAX", 161, y + 23);
+
+            // Dados Dinâmicos da Seção de Entrega (com Truncamento)
             doc.setFontSize(10);
-            
-            // --- Cálculo da Largura das Colunas (em mm) ---
-            // Coluna 1 (Nome/Endereço/Município): Início: 11 (margemEsq + 1), Fim: 120. Largura: 109mm
-            // Coluna 2 (CPF/Bairro/UF): Início: 121, Fim: 160. Largura: 39mm
-            // Coluna 3 (IE/CEP/Fone): Início: 161, Fim: 200. Largura: 39mm
-            
-            const col1_largura = 109; // (120 - (margemEsq + 1))
-            const col2_largura = 39;  // (160 - 121)
-            const col3_largura = 39;  // (200 - 161)
+            const col1_largura = 109; // Largura da primeira coluna
+            const col2_largura = 39;  // Largura da segunda coluna
+            const col3_largura = 39;  // Largura da terceira coluna
 
-            // --- LINHA 1 ---
-            // Trunca o texto se for maior que a coluna
+            // LINHA 1
             let nomeSplit = doc.splitTextToSize(entrega.nome || '', col1_largura);
-            doc.text(nomeSplit[0], margemEsq + 1, y + 7); 
-            
+            doc.text(nomeSplit[0], margemEsq + 1, y + 7);
             let docSplit = doc.splitTextToSize(entrega.documento || '', col2_largura);
-            doc.text(docSplit[0], 121, y + 7);      
-            
-            doc.text("ISENTO", 161, y + 7);
+            doc.text(docSplit[0], 121, y + 7);
+            doc.text("ISENTO", 161, y + 7); // Assumindo isento para IE de entrega
 
-            // --- LINHA 2 (A CORREÇÃO PRINCIPAL) ---
-            // Trunca o texto do endereço se for maior que a coluna
+            // LINHA 2
             let enderecoSplit = doc.splitTextToSize(entrega.endereco || '', col1_largura);
-            doc.text(enderecoSplit[0], margemEsq + 1, y + 17); // Pega apenas a primeira linha
-            
+            doc.text(enderecoSplit[0], margemEsq + 1, y + 17);
             let bairroSplit = doc.splitTextToSize(entrega.bairro || '', col2_largura);
             doc.text(bairroSplit[0], 121, y + 17);
-            
             let cepSplit = doc.splitTextToSize(entrega.cep || '', col3_largura);
             doc.text(cepSplit[0], 161, y + 17);
 
-            // --- LINHA 3 ---
+            // LINHA 3
             let municipioSplit = doc.splitTextToSize(entrega.municipio || '', col1_largura);
             doc.text(municipioSplit[0], margemEsq + 1, y + 27);
-            
-            doc.text(entrega.uf || '', 121, y + 27); // UF é curto, não precisa de split
-            
+            doc.text(entrega.uf || '', 121, y + 27);
             let foneSplit = doc.splitTextToSize(entrega.fone || '', col3_largura);
-            doc.text(foneSplit[0], 161, y + 27); 
-            
-            // ==========================================================
-            // === FIM DA CORREÇÃO ===
-            // ==========================================================
+            doc.text(foneSplit[0], 161, y + 27);
 
-            y += 35; 
-            
+            y += 35; // Avança Y para a próxima seção
+
             // --- Descrição dos Produtos ---
-            doc.setFontSize(10);
             doc.setFont("helvetica", "bold");
             doc.text("DESCRIÇÃO DOS PRODUTOS", margemEsq, y);
             y += 5;
             doc.setFont("helvetica", "normal");
+            // Cabeçalhos da tabela de produtos
             doc.text("Qtd.", margemEsq, y);
             doc.text("Un.", margemEsq + 15, y);
             doc.text("Descrição", margemEsq + 30, y);
-            doc.text("Valor Unit.", margemEsq + 140, y);
-            doc.text("Valor Total", margemEsq + 170, y);
-            doc.line(margemEsq, y + 2, margemDir, y + 2);
+            doc.text("Valor Unit.", margemEsq + 140, y, { align: 'right' }); // Alinhado à direita
+            doc.text("Valor Total", margemEsq + 170, y, { align: 'right' }); // Alinhado à direita
+            doc.line(margemEsq, y + 2, margemDir, y + 2); // Linha abaixo dos cabeçalhos
             y += 7;
+            // Linha do Produto
             doc.text("1", margemEsq, y);
             doc.text("UN", margemEsq + 15, y);
             doc.text("Produto Exemplo Comprado no Site", margemEsq + 30, y);
-            doc.text(fSubtotal, margemEsq + 140, y);
-            doc.text(fSubtotal, margemEsq + 170, y);
+            doc.text(fSubtotal, margemEsq + 140, y, { align: 'right' });
+            doc.text(fSubtotal, margemEsq + 170, y, { align: 'right' });
             y += 7;
-            doc.text("1", margemEsq, y);
-            doc.text("UN", margemEsq + 15, y);
-            doc.text("Serviço de Entrega (Frete)", margemEsq + 30, y);
-            doc.text(fFrete, margemEsq + 140, y);
-            doc.text(fFrete, margemEsq + 170, y);
-            y += 10;
-            
+            // Linha do Frete (se houver)
+            if (parseFloat(frete) > 0) {
+                 doc.text("1", margemEsq, y);
+                 doc.text("UN", margemEsq + 15, y);
+                 doc.text("Serviço de Entrega (Frete)", margemEsq + 30, y);
+                 doc.text(fFrete, margemEsq + 140, y, { align: 'right' });
+                 doc.text(fFrete, margemEsq + 170, y, { align: 'right' });
+                 y += 7;
+            }
+             y += 3; // Espaço antes da próxima seção
+
             // --- CÁLCULO DO IMPOSTO ---
-            doc.setFontSize(10);
             doc.setFont("helvetica", "bold");
             doc.text("CÁLCULO DO IMPOSTO", margemEsq, y);
             y += 3;
-            doc.rect(margemEsq, y, 190, 20); 
-            doc.line(margemEsq, y + 10, margemDir, y + 10); 
+            // Caixas e Linhas da Seção de Imposto
+            doc.rect(margemEsq, y, 190, 20); // Caixa externa
+            doc.line(margemEsq, y + 10, margemDir, y + 10); // Linha horizontal
+            // Linhas verticais da primeira linha de títulos
             doc.line(48, y, 48, y + 10);
             doc.line(73, y, 73, y + 10);
-            doc.line(145, y, 145, y + 10); 
+            doc.line(145, y, 145, y + 10);
+            // Linhas verticais da segunda linha de títulos
             doc.line(48, y + 10, 48, y + 20);
             doc.line(74, y + 10, 74, y + 20);
             doc.line(105, y + 10, 105, y + 20);
-            doc.line(159, y + 10, 159, y + 20); 
+            doc.line(159, y + 10, 159, y + 20);
+            // Títulos dos Campos da Seção de Imposto
             doc.setFontSize(7);
             doc.setFont("helvetica", "normal");
+            // Primeira linha de títulos
             doc.text("BASE DE CÁLCULO DO ICMS", margemEsq + 1, y + 3);
             doc.text("VALOR DO ICMS", 49, y + 3);
             doc.text("BASE DE CÁLCULO DO ICMS SUBSTITUIÇÃO", 74, y + 3);
-            doc.text("VALOR TOTAL DOS PRODUTOS", 146, y + 3); 
+            doc.text("VALOR TOTAL DOS PRODUTOS", 146, y + 3);
+            // Segunda linha de títulos
             doc.text("VALOR DO FRETE", margemEsq + 1, y + 13);
             doc.text("VALOR DO SEGURO", 49, y + 13);
             doc.text("DESCONTO", 75, y + 13);
             doc.text("OUTRAS DESPESAS ACESSÓRIAS", 106, y + 13);
-            doc.text("VALOR TOTAL DA NOTA", 160, y + 13); 
+            doc.text("VALOR TOTAL DA NOTA", 160, y + 13);
+            // Valores da Seção de Imposto
             doc.setFontSize(10);
+            // Primeira linha de valores (alinhados à direita antes da linha vertical)
             doc.text("0,00", 47, y + 7, { align: 'right' });
             doc.text("0,00", 72, y + 7, { align: 'right' });
             doc.text("0,00", 144, y + 7, { align: 'right' });
-            doc.text(fSubtotal, 199, y + 7, { align: 'right' }); 
-            doc.text(fFrete, 47, y + 17, { align: 'right' }); 
+            doc.text(fSubtotal, 199, y + 7, { align: 'right' }); // Total Produtos
+            // Segunda linha de valores
+            doc.text(fFrete, 47, y + 17, { align: 'right' }); // Valor Frete
             doc.text("0,00", 72, y + 17, { align: 'right' });
             doc.text("0,00", 104, y + 17, { align: 'right' });
             doc.text("0,00", 158, y + 17, { align: 'right' });
-            doc.text(fTotal, 199, y + 17, { align: 'right' }); 
-            y += 25; 
-            
+            doc.text(fTotal, 199, y + 17, { align: 'right' }); // Valor Total Nota
+            y += 25; // Avança Y para a próxima seção
+
             // --- Datas ---
             doc.setFont("helvetica", "bold");
             doc.text("Data de Emissão:", margemEsq, y);
@@ -397,16 +370,71 @@
             doc.setFont("helvetica", "bold");
             doc.text("Data de Saída:", colCentro, y);
             doc.setFont("helvetica", "normal");
-            doc.text(dataEmissao, colCentro + 30, y);
+            doc.text(dataEmissao, colCentro + 30, y); // Usando a mesma data por exemplo
 
             // --- Salva o arquivo ---
             doc.save("nota_fiscal_simulada.pdf");
         }
-        
-        // --- Carregar dados do localStorage ---
+
+        // --- Variáveis Globais para Notificação ---
+        let notificationTimeout; // Guarda a referência do timeout
+
+        // --- Funções para Notificação ---
+        function showNotification(message, type = 'success', duration = 3000) {
+            const notification = document.getElementById('success-notification');
+            if (!notification) {
+                console.error("Elemento de notificação não encontrado!");
+                return;
+            }
+            const messageSpan = notification.querySelector('.notification-message');
+            if (!messageSpan) {
+                console.error("Elemento de mensagem da notificação não encontrado!");
+                return;
+            }
+
+            clearTimeout(notificationTimeout); // Limpa timeout anterior se houver
+
+            messageSpan.textContent = message;
+            notification.className = 'notification hidden'; // Reseta classes
+            notification.classList.add(type);
+            notification.style.display = 'flex'; // Garante que está visível antes de animar
+            // Força reflow para garantir que a transição ocorra
+            void notification.offsetWidth;
+            notification.classList.remove('hidden');
+            notification.classList.add('show');
+
+            notificationTimeout = setTimeout(() => {
+                hideNotification();
+            }, duration);
+
+            const closeButton = notification.querySelector('.notification-close');
+            if (closeButton) {
+                 // Remove listener antigo para evitar duplicação
+                 closeButton.removeEventListener('click', hideNotification);
+                 // Adiciona novo listener
+                 closeButton.addEventListener('click', hideNotification);
+            }
+        }
+
+        function hideNotification() {
+            const notification = document.getElementById('success-notification');
+             if (!notification) return;
+
+            clearTimeout(notificationTimeout);
+            notification.classList.remove('show');
+             // Adiciona 'hidden' após a transição CSS para poder usar display: none se necessário
+             // (o CSS atual usa visibility/opacity, então não é estritamente necessário)
+             setTimeout(() => {
+                 notification.classList.add('hidden');
+                 notification.style.display = 'none'; // Esconde após animação
+             }, 400); // Deve ser igual à duração da transição no CSS (0.4s)
+        }
+
+
+        // --- Código que Roda Após Carregar o DOM ---
         document.addEventListener("DOMContentLoaded", function() {
 
-            // ... (Funções formatarMoeda e formatarFrete - sem alteração) ...
+            // --- Funções Auxiliares (Formatação) ---
             function formatarMoeda(valorStr) {
                 const numero = parseFloat(valorStr);
                 if (isNaN(numero)) return "R$ 0,00";
@@ -414,34 +442,33 @@
             }
             function formatarFrete(valorStr) {
                 const numero = parseFloat(valorStr);
-                if (isNaN(numero) || numero === 0) {
-                    return "GRÁTIS";
-                }
-                return formatarMoeda(valorStr); 
+                if (isNaN(numero) || numero === 0) return "GRÁTIS";
+                return formatarMoeda(valorStr);
             }
 
-            // ... (Carregamento dos valores do Resumo - sem alteração) ...
-            const subtotal = localStorage.getItem("totalCompra"); 
+            // --- Carregamento Inicial do Resumo ---
+            const subtotal = localStorage.getItem("totalCompra");
             const frete = localStorage.getItem("valorFrete");
             const totalFinal = localStorage.getItem("valorFinal");
             const elProduto = document.getElementById("resumo-produto-valor");
             const elFrete = document.getElementById("resumo-frete-valor");
             const elTotal = document.getElementById("resumo-total-valor");
-            if (elProduto && subtotal !== null) { elProduto.innerText = formatarMoeda(subtotal); }
+
+            if (elProduto && subtotal !== null) elProduto.innerText = formatarMoeda(subtotal);
             if (elFrete && frete !== null) {
                 elFrete.innerText = formatarFrete(frete);
-                if (parseFloat(frete) === 0) { elFrete.classList.add("preco-gratis"); } 
-                else { elFrete.classList.remove("preco-gratis"); }
+                elFrete.classList.toggle("preco-gratis", parseFloat(frete) === 0);
             }
-            if (elTotal && totalFinal !== null) { elTotal.innerText = formatarMoeda(totalFinal); }
-            
-            // ... (Referências aos elementos do formulário - sem alteração) ...
+            if (elTotal && totalFinal !== null) elTotal.innerText = formatarMoeda(totalFinal);
+
+            // --- Referências aos Elementos do Formulário ---
             const formNovoCartao = document.getElementById('formulario-novo-cartao');
             const radioNovoCartao = document.getElementById('novo-cartao');
             const radioLinhaCredito = document.getElementById('linha-credito');
             const radioPix = document.getElementById('pix');
             const radioBoleto = document.getElementById('boleto');
-            const radioNubank = document.getElementById('nubank'); 
+            const radioNubank = document.getElementById('nubank');
+            // Inputs e Grupos do Cartão
             const grupoNumero = document.getElementById('grupo-numero-cartao');
             const grupoNome = document.getElementById('grupo-nome-titular');
             const grupoVencimento = document.getElementById('grupo-vencimento');
@@ -452,140 +479,180 @@
             const inputVencimento = document.getElementById('vencimento');
             const inputCvv = document.getElementById('cvv');
             const inputDocumento = document.getElementById('documento');
-            const selectTipoDocumento = document.getElementById('tipo-documento'); 
+            const selectTipoDocumento = document.getElementById('tipo-documento');
+            const btnContinuarPagina = document.querySelector('.btn-continuar-entrega');
 
+            // --- Lógica das Máscaras de Input ---
+            if (inputNumero) {
+                inputNumero.setAttribute('maxlength', '19'); // 16 digitos + 3 espaços
+                inputNumero.addEventListener('input', (e) => {
+                    let valor = e.target.value.replace(/\D/g, '').substring(0, 16);
+                    e.target.value = valor.replace(/(\d{4})(?=\d)/g, '$1 '); // Adiciona espaço a cada 4 dígitos
+                });
+            }
+            if (inputVencimento) {
+                 inputVencimento.setAttribute('maxlength', '5'); // MM/AA
+                 inputVencimento.addEventListener('input', (e) => {
+                     let valor = e.target.value.replace(/\D/g, '').substring(0, 4);
+                     if (valor.length > 2) valor = valor.substring(0, 2) + '/' + valor.substring(2);
+                     e.target.value = valor;
+                 });
+            }
+             if (inputCvv) {
+                 inputCvv.setAttribute('maxlength', '4'); // Alguns cartões têm 4 dígitos
+                 inputCvv.addEventListener('input', (e) => {
+                     e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+                 });
+            }
+             if (inputDocumento && selectTipoDocumento) {
+                 const aplicarMascaraDocumento = () => {
+                     let valor = inputDocumento.value.replace(/\D/g, '');
+                     const tipo = selectTipoDocumento.value;
+                     if (tipo === 'CPF') {
+                         inputDocumento.placeholder = '000.000.000-00';
+                         inputDocumento.setAttribute('maxlength', '14');
+                         valor = valor.substring(0, 11);
+                         valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+                         valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+                         valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                     } else { // CNPJ
+                         inputDocumento.placeholder = '00.000.000/0000-00';
+                         inputDocumento.setAttribute('maxlength', '18');
+                         valor = valor.substring(0, 14);
+                         valor = valor.replace(/(\d{2})(\d)/, '$1.$2');
+                         valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+                         valor = valor.replace(/(\d{3})(\d)/, '$1/$2');
+                         valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
+                     }
+                     inputDocumento.value = valor;
+                 };
+                 inputDocumento.addEventListener('input', aplicarMascaraDocumento);
+                 selectTipoDocumento.addEventListener('change', () => {
+                     inputDocumento.value = ''; // Limpa ao trocar o tipo
+                     aplicarMascaraDocumento(); // Aplica placeholder e maxlength corretos
+                 });
+                 // Define placeholder inicial
+                 aplicarMascaraDocumento();
+             }
 
-            // ... (LÓGICA DAS MÁSCARAS DE INPUT - sem alteração) ...
-            inputNumero.setAttribute('maxlength', '19'); 
-            inputVencimento.setAttribute('maxlength', '5'); 
-            inputCvv.setAttribute('maxlength', '3'); 
-            inputDocumento.setAttribute('maxlength', '14'); 
-            inputNumero.addEventListener('input', (e) => {
-                let valor = e.target.value.replace(/\D/g, ''); 
-                valor = valor.substring(0, 16); 
-                const grupos = valor.match(/.{1,4}/g); 
-                e.target.value = grupos ? grupos.join(' ') : '';
-            });
-            inputVencimento.addEventListener('input', (e) => {
-                let valor = e.target.value.replace(/\D/g, ''); 
-                valor = valor.substring(0, 4); 
-                if (valor.length > 2) {
-                    valor = valor.substring(0, 2) + '/' + valor.substring(2);
-                }
-                e.target.value = valor;
-            });
-            inputCvv.addEventListener('input', (e) => {
-                let valor = e.target.value.replace(/\D/g, ''); 
-                valor = valor.substring(0, 3); 
-                e.target.value = valor;
-            });
-            inputDocumento.addEventListener('input', (e) => {
-                let valor = e.target.value.replace(/\D/g, ''); 
-                const tipo = selectTipoDocumento.value;
-                if (tipo === 'CPF') {
-                    valor = valor.substring(0, 11); 
-                    valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-                    valor = valor.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
-                    valor = valor.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
-                } else { 
-                    valor = valor.substring(0, 14); 
-                    valor = valor.replace(/(\d{2})(\d)/, '$1.$2');
-                    valor = valor.replace(/(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-                    valor = valor.replace(/(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3/$4');
-                    valor = valor.replace(/(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/, '$1.$2.$3/$4-$5');
-                }
-                e.target.value = valor;
-            });
-            selectTipoDocumento.addEventListener('change', (e) => {
-                inputDocumento.value = ''; 
-                if (e.target.value === 'CPF') {
-                    inputDocumento.placeholder = '999.999.999-99';
-                    inputDocumento.setAttribute('maxlength', '14');
-                } else {
-                    inputDocumento.placeholder = '99.999.999/0001-99';
-                    inputDocumento.setAttribute('maxlength', '18');
-                }
-            });
-            
-            // ... (Lógica de seleção dos blocos e exibição do formulário - sem alteração) ...
+            // --- Lógica de Seleção dos Blocos e Exibição do Formulário ---
             document.querySelectorAll('input[name="forma-pagamento"]').forEach(radio => {
                 radio.addEventListener('change', function() {
+                    // Atualiza a classe 'selecionado' em todos os blocos
                     document.querySelectorAll('.opcao-bloco').forEach(bloco => {
-                        if (!bloco.classList.contains('combinar-pagamento')) {
-                             bloco.classList.remove('selecionado');
-                        }
+                        const inputInterno = bloco.querySelector('input[name="forma-pagamento"]');
+                        bloco.classList.toggle('selecionado', inputInterno && inputInterno.checked);
                     });
-                    if (this.checked) {
-                        this.closest('.opcao-bloco').classList.add('selecionado');
-                    }
-                    if (radioNovoCartao.checked) {
-                        formNovoCartao.style.display = 'flex'; 
-                    } else {
-                        formNovoCartao.style.display = 'none'; 
-                        resetarErrosCartao(); 
+
+                    // Mostra ou esconde o formulário de novo cartão
+                    if (formNovoCartao) {
+                         formNovoCartao.style.display = radioNovoCartao && radioNovoCartao.checked ? 'flex' : 'none';
+                         if (!(radioNovoCartao && radioNovoCartao.checked)) {
+                             resetarErrosCartao(); // Limpa erros se esconder o form
+                         }
                     }
                 });
             });
+             // Garante estado inicial correto do formulário de cartão
+             if (formNovoCartao) {
+                 formNovoCartao.style.display = radioNovoCartao && radioNovoCartao.checked ? 'flex' : 'none';
+             }
 
-            // ... (Função validarFormularioCartao - sem alteração) ...
+            // --- Funções de Validação e Reset ---
             function validarFormularioCartao() {
                 let isValid = true;
-                resetarErrosCartao(); 
-                if (inputNumero.value.trim() === '') { grupoNumero.classList.add('campo-com-erro'); isValid = false; }
-                if (inputNome.value.trim() === '') { grupoNome.classList.add('campo-com-erro'); isValid = false; }
-                if (inputVencimento.value.trim() === '') { grupoVencimento.classList.add('campo-com-erro'); isValid = false; }
-                if (inputCvv.value.trim() === '') { grupoCvv.classList.add('campo-com-erro'); isValid = false; }
-                 if (inputDocumento.value.trim() === '') { grupoDocumento.classList.add('campo-com-erro'); isValid = false; }
-                return isValid; 
+                resetarErrosCartao(); // Limpa erros antigos
+                const campos = [
+                    { input: inputNumero, grupo: grupoNumero, minLength: 19 }, // 16 digitos + 3 espaços
+                    { input: inputNome, grupo: grupoNome },
+                    { input: inputVencimento, grupo: grupoVencimento, minLength: 5 }, // MM/AA
+                    { input: inputCvv, grupo: grupoCvv, minLength: 3 },
+                    { input: inputDocumento, grupo: grupoDocumento, minLength: (selectTipoDocumento.value === 'CPF' ? 14 : 18) }
+                ];
+
+                campos.forEach(campo => {
+                     if (!campo.input || !campo.grupo) return; // Pula se elemento não existe
+
+                     const valor = campo.input.value.trim();
+                     let invalido = valor === '';
+                     if (campo.minLength && valor.length < campo.minLength) {
+                         invalido = true;
+                     }
+                     // Adicionar validações mais específicas aqui se necessário (ex: data de vencimento válida)
+
+                     if (invalido) {
+                         campo.grupo.classList.add('campo-com-erro');
+                         isValid = false;
+                     }
+                });
+                return isValid;
             }
-            
-            // ... (Função resetarErrosCartao - sem alteração) ...
+
             function resetarErrosCartao() {
-                [grupoNumero, grupoNome, grupoVencimento, grupoCvv, grupoDocumento].forEach(grupo => {
-                    if(grupo) grupo.classList.remove('campo-com-erro');
+                const grupos = [grupoNumero, grupoNome, grupoVencimento, grupoCvv, grupoDocumento];
+                grupos.forEach(grupo => {
+                    if (grupo) grupo.classList.remove('campo-com-erro');
                 });
             }
 
+            // --- Lógica do Botão "Continuar" (Principal) ---
+            if (btnContinuarPagina) {
+                btnContinuarPagina.addEventListener('click', function() {
+                    let pagamentoSucesso = false; // Flag para controlar se o pagamento foi OK
+                    const radioSelecionado = document.querySelector('input[name="forma-pagamento"]:checked');
 
-            // =============================================
-            // === LÓGICA DO BOTÃO "CONTINUAR" (MODIFICADA)
-            // =============================================
-            const btnContinuarPagina = document.querySelector('.btn-continuar-entrega');
-            
-            btnContinuarPagina.addEventListener('click', function() {
-                
-                // --- Caso 1: Pagamento com "Novo Cartão" ---
-                if (radioNovoCartao.checked) {
-                    const isCartaoValido = validarFormularioCartao();
-                    if (isCartaoValido) {
-                        alert("Pagamento (com novo cartão) processado! Gerando nota fiscal...");
-                        // Chama a função que cria o PDF
-                        gerarNotaFiscalPDF(); 
-                    } else {
-                        // Se o formulário for inválido, apenas loga no console e não faz nada.
-                        console.log("Formulário de cartão inválido. Por favor, corrija os campos.");
+                    if (!radioSelecionado) {
+                        alert("Por favor, selecione um método de pagamento.");
+                        return; // Sai da função se nada estiver selecionado
                     }
-                
-                // --- Caso 2: Pagamento com "Cartão Salvo" (Nubank) ---
-                } else if (radioNubank.checked) {
-                     alert("Pagamento (com cartão salvo) processado! Gerando nota fiscal...");
-                     // Chama a função que cria o PDF
-                     gerarNotaFiscalPDF(); 
 
-                // --- Caso 3: Outros pagamentos (Linha de Crédito, Pix ou Boleto) ---
-                } else if (radioLinhaCredito.checked || radioPix.checked || radioBoleto.checked) {
-                    
-                    alert("Pagamento processado! Gerando sua nota fiscal...");
-                    // Chama a função que cria o PDF
-                    gerarNotaFiscalPDF();
+                    const metodoPagamento = radioSelecionado.value;
 
-                } else {
-                    // Nenhuma opção válida selecionada
-                    alert("Por favor, selecione um método de pagamento.");
-                }
-            });
+                    switch(metodoPagamento) {
+                        case 'novo-cartao':
+                            if (validarFormularioCartao()) {
+                                console.log("Pagamento (com novo cartão) validado!");
+                                pagamentoSucesso = true;
+                            } else {
+                                console.log("Formulário de cartão inválido. Por favor, corrija os campos.");
+                            }
+                            break;
+                        case 'nubank': // Assumindo 'nubank' como o value do cartão salvo
+                            console.log("Pagamento (com cartão salvo) selecionado.");
+                            pagamentoSucesso = true;
+                            break;
+                        case 'linha-credito':
+                        case 'pix':
+                        case 'boleto':
+                            console.log(`Método de pagamento '${metodoPagamento}' selecionado.`);
+                            pagamentoSucesso = true;
+                            break;
+                        default:
+                             console.warn("Método de pagamento desconhecido:", metodoPagamento);
+                             alert("Método de pagamento inválido selecionado.");
+                    }
 
-        }); // <-- Fim do DOMContentLoaded
+                    // Se o pagamento foi considerado bem-sucedido
+                    if (pagamentoSucesso) {
+                        // 1. Define a duração da notificação + animação
+                        const notificationDuration = 3000; // Tempo que a notificação fica visível
+                        const animationDuration = 400;  // Tempo da animação de saída (do CSS transition)
+                        const totalDelay = notificationDuration + animationDuration;
+
+                        // 2. Mostra a notificação
+                        showNotification("Pagamento bem-sucedido! Gerando nota fiscal...", 'success', notificationDuration);
+
+                        // 3. Agenda a geração do PDF para DEPOIS que a notificação sumir
+                        console.log(`Agendando geração do PDF para daqui a ${totalDelay}ms.`);
+                        setTimeout(gerarNotaFiscalPDF, totalDelay); // <-- SUBSTITUIÇÃO APLICADA
+
+                    }
+                });
+            } else {
+                 console.error("Botão '.btn-continuar-entrega' não encontrado.");
+            }
+
+        }); // <-- FIM do DOMContentLoaded
     </script>
     </body>
 </html>

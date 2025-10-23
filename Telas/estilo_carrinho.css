@@ -165,7 +165,7 @@ body {
 .resumo-container {
   /* Estilos copiados do <div> inline que existia antes */
   background-color: #FFFFFF;
-  border-radius: 4px;
+  border-radius: 8px; /* <-- MUDADO (era 4px) */
   padding: 20px;
   
   /* Define uma largura fixa para o painel de resumo */
@@ -175,10 +175,13 @@ body {
   
   /* Efeito "sticky" para o painel acompanhar a rolagem */
   position: sticky;
-  /* 64px (altura da topbar) + 20px (padding do container) */
-  top: 84px; 
+  /* 28px (padding do container da tela_entrega) */
+  top: 28px; /* <-- MUDADO (era 84px) */
+
+  border: 1px solid #ddd; /* <-- ADICIONADO */
 }
 
+/* ESTILO DO BOTÃO "CONTINUAR" MANTIDO CONFORME ORIGINAL */
 .btn-continuar {
   width: 100%;
   padding: 12px 15px;
@@ -197,27 +200,28 @@ body {
 .btn-continuar:hover {
   opacity: 0.9; /* Efeito simples ao passar o mouse */
 }
+/* ... (seu código .btn-continuar) ... */
 
 /* =================================== */
 /* NOVOS ESTILOS - Resumo da Compra   */
 /* =================================== */
 
-/* Estilo para o título "resumo da compra" que agora é fixo */
-.resumo-titulo-fixo {
-  color: black;
-  font-size: 20px;
+/* Estilo para o título "resumo da compra" */
+.resumo-container h3 {
+  color: #333; /* <-- MUDADO (era black) */
+  font-size: 18px; /* <-- MUDADO (era 20px) */
   font-weight: 500;
-  margin: 0 0 15px 0; /* Remove margem de cima, adiciona embaixo */
-  text-align: center; /* Alinha o texto ao centro */
-  /* text-transform: capitalize; Deixa "Resumo da compra" */
+  margin-top: 0; /* <-- MUDADO */
+  margin-bottom: 20px; /* <-- MUDADO (era margin: 0 0 15px 0) */
+  /* text-align: center; <-- REMOVIDO */
 }
 
 /* A borda separadora */
 #resumo-separador {
-  width: 100%;
+  /* width: 100%; <-- REMOVIDO */
   height: 1px;
-  background-color: #e0e0e0; /* Cor da borda suave */
-  margin-bottom: 15px;
+  background-color: #eee; /* <-- MUDADO (era #e0e0e0) */
+  margin: 15px 0; /* <-- MUDADO (era margin-bottom: 15px) */
   display: none; /* Começa escondido, JS vai mostrar */
 }
 
@@ -227,8 +231,9 @@ body {
   justify-content: space-between;
   align-items: center;
   font-size: 18px;
-  font-weight: bold;
-  color: black;
+  font-weight: 600; /* <-- MUDADO (era bold) */
+  color: #333; /* <-- MUDADO (era black) */
+  margin-bottom: 10px; /* <-- ADICIONADO (para bater com .resumo-linha) */
 }
 
 /* =================================== */
@@ -294,4 +299,59 @@ body {
 }
 .recomendacoes-swiper .swiper-button-next {
   right: -5px; /* Posição seta direita */
+}
+/* ===========================
+   REGRAS DE RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+    .carrinho-layout-container {
+        padding: 10px;
+    }
+    
+    /* Faz o resumo ocupar 100% e desativa o "sticky" */
+    .resumo-container {
+        flex-basis: 100%;
+        position: static; /* Desativa o "sticky" */
+    }
+
+    /* Ajusta o padding do contêiner de recomendações */
+    .recomendacoes-container {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    /* --- Regras para o produto gerado por JavaScript --- */
+    
+    /* Força o produto no carrinho a empilhar verticalmente */
+    /* Usamos !important para sobrescrever o "style" inline do JS */
+    .produto[style*="display: flex"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    
+    /* Faz a imagem ocupar 100% da largura do card */
+    .produto img {
+        width: 100%;
+        height: 150px;
+        margin-bottom: 10px;
+    }
+    
+    /* Força o container (título, contador, preço) a empilhar */
+    div[style*="display: flex; justify-content: space-between;"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+        width: 100%;
+    }
+    
+    /* Ajusta o contador para não ter margem excessiva */
+    .contador-container {
+        margin-right: 0;
+    }
+
+    /* Permite que os botões (Comprar, Salvar, Excluir) quebrem a linha */
+    div[style*="display: flex; align-items: center; gap: 15px;"] {
+        flex-wrap: wrap;
+    }
 }

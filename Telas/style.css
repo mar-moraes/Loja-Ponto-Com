@@ -22,23 +22,42 @@
   /* barra fixa */
   .topbar {
     background: var(--yellow);
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 0 24px;
-    position: sticky;/* faz a barra ser fixa  no topo da página*/
+    padding: 10px 0; /* Define altura pelo padding vertical */
+    border-bottom: 1px solid #ddd;
+    position: sticky;
     top: 0;
     z-index: 5;
   }
-  
+
+  /* Container principal dentro da barra */
   .topbar .actions {
+    max-width: 1100px; /* Largura máxima do conteúdo */
+    margin: 0 auto;     /* Centraliza o container */
+    padding: 0 20px;  /* Padding horizontal DE 20px (define o recuo do logo) */
+    height: auto;       
+
     display: flex;
-    gap: 18px;
+    justify-content: space-between; /* Empurra logo e resto para as pontas */
     align-items: center;
-    font-size: 14px;
+    /* Sem gap aqui */
   }
-  
+
+  /* Container específico do logo (opcional, mas bom para consistência) */
+  .topbar .logo-container {
+    /* Estilos específicos se precisar */
+  }
+
+  /* Espaçamento APENAS para os itens da direita */
+  .topbar .actions > form { /* Adiciona espaçamento antes do form se ele não for o primeiro item (caso logo exista)*/
+      margin-left: 20px; /* Ou use gap no container dos itens da direita */
+  }
+
+  .topbar .actions > div:last-child { /* Seleciona a div dos links "Crie sua conta", "Entre", "Carrinho" */
+    display: flex;
+    gap: 30px; /* Mantém o gap entre os links da direita */
+    align-items: center;
+  }
+
   .topbar a {
     color: #000;
     text-decoration: none;
@@ -264,4 +283,45 @@ a.card-link {
 /* Cor da estrela preenchida (mesma de estilo_produto.css) */
 .card-avaliacao .star.filled {
   color: #FFC107; 
+}
+
+/* ===========================
+   REGRAS DE RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+    /* Ajusta o cabeçalho */
+    .topbar .actions {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 15px; /* Menos padding lateral */
+    }
+    
+    /* Faz a barra de pesquisa ocupar 100% e ir para baixo */
+    .topbar .actions form {
+        width: 100%;
+        order: 3; /* Coloca o form por último */
+        margin-left: 0;
+    }
+    
+    /* Alinha o logo e os links de conta/carrinho */
+    .topbar .actions .logo-container {
+        flex-grow: 1; /* Ocupa espaço à esquerda */
+    }
+    .topbar .actions > div:last-child {
+        width: auto; /* Links de "Entre", "Carrinho" */
+        gap: 15px; /* Menos espaço entre os links */
+    }
+    
+    /* Reduz o padding do container principal */
+    .container {
+        width: calc(100% - 20px);
+        margin: 15px auto;
+    }
+
+    /* Ajusta a grade para uma coluna em telas muito pequenas */
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+    }
 }
