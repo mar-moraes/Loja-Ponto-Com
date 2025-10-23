@@ -43,9 +43,8 @@
   }
 
   /* Container específico do logo (opcional, mas bom para consistência) */
-  .topbar .logo-container {
-    /* Estilos específicos se precisar */
-  }
+  /* .topbar .logo-container {
+  } */
 
   /* Espaçamento APENAS para os itens da direita */
   .topbar .actions > form { /* Adiciona espaçamento antes do form se ele não for o primeiro item (caso logo exista)*/
@@ -245,7 +244,7 @@ a.card-link:hover .thumb {
 a.card-link .card {
   /* transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; */ /* <-- REMOVA OU COMENTE ESTA LINHA */
   flex-grow: 1; 
-}
+} 
 
 a.card-link:hover .card {
   transform: translateY(-4px);

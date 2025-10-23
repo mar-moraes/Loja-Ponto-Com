@@ -11,7 +11,7 @@ body {
 
 /* Cabeçalho inspirado no ML */
 .topbar-entrega {
-    background-color: #FFDF00; /* Amarelo ML */
+    background-color: #FFDF00; 
     padding: 10px 0;
     border-bottom: 1px solid #ddd;
 }
@@ -38,12 +38,15 @@ body {
 
 .user-menu a {
     text-decoration: none;
-    color: #555;
-    font-size: 14px;
+    color: #000;
+    font-size: 16px;
     display: flex;
     align-items: center;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+
     gap: 5px;
 }
+
 
 .user-menu i {
     font-size: 16px;
@@ -311,6 +314,7 @@ body {
 
 .form-grupo input[type="text"],
 .form-grupo input[type="search"],
+.form-grupo input[type="tel"], 
 .form-grupo textarea {
     width: 100%;
     padding: 12px;

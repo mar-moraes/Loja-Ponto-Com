@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Forma de Entrega</title>
 
-
+  <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="estilo_entrega.css">
   <link rel="stylesheet" href="estilo_entrega.css">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -104,7 +104,7 @@
                 <div class="form-grupo">
                     <label for="cep">CEP</label>
                     <input type="text" id="cep" placeholder="Ex.: 13184-000">
-                    <a href="#" class="link-form">Não sei meu CEP</a>
+                    <!-- <a href="#" class="link-form">Não sei meu CEP</a> -->
                 </div>
                 
                 <div class="form-linha">
@@ -151,9 +151,16 @@
                 <div class="form-grupo">
                     <p>Dados de contato</p>
                     <span>Se houver algum problema no envio, você receberá uma ligação neste número.</span>
+
                     <label for="nome" style="margin-top: 10px;">Nome e sobrenome</label>
-                    <input type="text" id="nome"> <span class="msg-erro" id="erro-nome" style="display: none;">Você deve inserir nome e sobrenome.</span>
+                    <input type="text" id="nome"> 
+                    <span class="msg-erro" id="erro-nome" style="display: none;">Você deve inserir nome e sobrenome.</span>
+
+                    <label for="telefone" style="margin-top: 10px;">Telefone</label>
+                    <input type="tel" id="telefone" placeholder="(99) 99999-9999" maxlength="15"> 
+                    <span class="msg-erro" id="erro-telefone" style="display: none;">Você deve inserir um telefone válido.</span>
                 </div>
+
 
                 <div class="form-grupo" style="margin-top: 15px;">
                     <button type="button" id="btn-salvar-endereco" class="btn-continuar-entrega">Ok</button>
@@ -176,7 +183,7 @@
 
             <div class="retirada-layout">
                 <div class="lista-agencias">
-                    <span class="resultado-busca">Mostrando 15 resultados</span>
+                    <span class="resultado-busca">Mostrando 2 resultados</span>
                     <div class="agencia-item">
                         <h4>LOJA 1</h4>
                         <p>Agência</p>
@@ -403,10 +410,16 @@
              const inputRua = document.getElementById('rua');
              const inputNome = document.getElementById('nome');
 
+             const inputTelefone = document.getElementById('telefone');
+             const erroTelefone = document.getElementById('erro-telefone');
+
              if(erroRua) erroRua.style.display = 'none';
              if(erroNome) erroNome.style.display = 'none';
              if(inputRua) inputRua.classList.remove('input-erro');
              if(inputNome) inputNome.classList.remove('input-erro');
+
+             if(erroTelefone) erroTelefone.style.display = 'none';
+             if(inputTelefone) inputTelefone.classList.remove('input-erro');             
         }
 
         // --- Roda quando a página carrega ---
@@ -530,6 +543,14 @@
                     if (inputNome && inputNome.value.trim() === '') {
                         if(erroNome) erroNome.style.display = 'block';
                         inputNome.classList.add('input-erro');
+                        isValid = false;
+                    }
+
+                    // Valida Telefone (deve ter 10 ou 11 dígitos)
+                    // O formato (99) 9999-9999 tem 14 caracteres.
+                    if (inputTelefone && inputTelefone.value.length < 14) { 
+                        if(erroTelefone) erroTelefone.style.display = 'block';
+                        inputTelefone.classList.add('input-erro');
                         isValid = false;
                     }
 
@@ -756,7 +777,30 @@
                  contadorSpan.textContent = `${textareaInfo.value.length} / 128`;
              }
 
-        }); // <-- FIM do DOMContentLoaded
+        // --- Lógica da Máscara de Telefone ---
+         const inputTelefone = document.getElementById('telefone');
+         if (inputTelefone) {
+             inputTelefone.addEventListener('input', (e) => {
+                 let valor = e.target.value.replace(/\D/g, ''); // Permite apenas números
+
+                 if (valor.length > 10) { 
+                     // Celular (11 dígitos): (99) 99999-9999
+                     valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+                 } else if (valor.length > 6) {
+                     // Fixo (10 dígitos) ou Celular incompleto: (99) 9999-9999
+                     valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+                 } else if (valor.length > 2) {
+                     // (99) 9999
+                     valor = valor.replace(/^(\d{2})(\d{0,4}).*/, '($1) $2');
+                 } else if (valor.length > 0) {
+                     // (99
+                     valor = valor.replace(/^(\d{0,2}).*/, '($1');
+                 }
+                 e.target.value = valor;
+             });
+         }
+
+    }); // <-- FIM do DOMContentLoaded
 
     </script>
 </body>
