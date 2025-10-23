@@ -209,3 +209,71 @@
 .campo-com-erro .msg-erro-pagamento {
     display: block; /* Mostra a mensagem de erro */
 }
+
+/* =================================== */
+/* ESTILOS DA NOTIFICAÇÃO DE SUCESSO   */
+/* =================================== */
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 1001; /* Garante que fique acima de outros elementos */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(100%); /* Começa fora da tela à direita */
+    transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.notification.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0); /* Entra na tela */
+}
+
+.notification.hidden {
+    /* Mantém hidden para o estado inicial e para esconder via JS */
+     display: none;
+     /* OU se quiser animação de saída:
+     opacity: 0;
+     visibility: hidden;
+     transform: translateX(100%);
+     */
+}
+
+
+/* Estilo de Sucesso (Verde) */
+.notification.success {
+    background-color: #4CAF50; /* Verde sucesso */
+    color: #ffffff;
+}
+
+.notification-icon {
+    font-size: 20px;
+}
+
+.notification-message {
+    flex-grow: 1; /* Ocupa espaço disponível */
+    font-size: 14px;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: inherit; /* Usa a cor do texto da notificação */
+    font-size: 22px;
+    line-height: 1;
+    opacity: 0.8;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.notification-close:hover {
+    opacity: 1;
+}

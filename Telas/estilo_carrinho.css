@@ -165,7 +165,7 @@ body {
 .resumo-container {
   /* Estilos copiados do <div> inline que existia antes */
   background-color: #FFFFFF;
-  border-radius: 4px;
+  border-radius: 8px; /* <-- MUDADO (era 4px) */
   padding: 20px;
   
   /* Define uma largura fixa para o painel de resumo */
@@ -175,10 +175,13 @@ body {
   
   /* Efeito "sticky" para o painel acompanhar a rolagem */
   position: sticky;
-  /* 64px (altura da topbar) + 20px (padding do container) */
-  top: 84px; 
+  /* 28px (padding do container da tela_entrega) */
+  top: 28px; /* <-- MUDADO (era 84px) */
+
+  border: 1px solid #ddd; /* <-- ADICIONADO */
 }
 
+/* ESTILO DO BOTÃO "CONTINUAR" MANTIDO CONFORME ORIGINAL */
 .btn-continuar {
   width: 100%;
   padding: 12px 15px;
@@ -197,27 +200,28 @@ body {
 .btn-continuar:hover {
   opacity: 0.9; /* Efeito simples ao passar o mouse */
 }
+/* ... (seu código .btn-continuar) ... */
 
 /* =================================== */
 /* NOVOS ESTILOS - Resumo da Compra   */
 /* =================================== */
 
-/* Estilo para o título "resumo da compra" que agora é fixo */
-.resumo-titulo-fixo {
-  color: black;
-  font-size: 20px;
+/* Estilo para o título "resumo da compra" */
+.resumo-container h3 {
+  color: #333; /* <-- MUDADO (era black) */
+  font-size: 18px; /* <-- MUDADO (era 20px) */
   font-weight: 500;
-  margin: 0 0 15px 0; /* Remove margem de cima, adiciona embaixo */
-  text-align: center; /* Alinha o texto ao centro */
-  /* text-transform: capitalize; Deixa "Resumo da compra" */
+  margin-top: 0; /* <-- MUDADO */
+  margin-bottom: 20px; /* <-- MUDADO (era margin: 0 0 15px 0) */
+  /* text-align: center; <-- REMOVIDO */
 }
 
 /* A borda separadora */
 #resumo-separador {
-  width: 100%;
+  /* width: 100%; <-- REMOVIDO */
   height: 1px;
-  background-color: #e0e0e0; /* Cor da borda suave */
-  margin-bottom: 15px;
+  background-color: #eee; /* <-- MUDADO (era #e0e0e0) */
+  margin: 15px 0; /* <-- MUDADO (era margin-bottom: 15px) */
   display: none; /* Começa escondido, JS vai mostrar */
 }
 
@@ -227,8 +231,9 @@ body {
   justify-content: space-between;
   align-items: center;
   font-size: 18px;
-  font-weight: bold;
-  color: black;
+  font-weight: 600; /* <-- MUDADO (era bold) */
+  color: #333; /* <-- MUDADO (era black) */
+  margin-bottom: 10px; /* <-- ADICIONADO (para bater com .resumo-linha) */
 }
 
 /* =================================== */
