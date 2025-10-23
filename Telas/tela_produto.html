@@ -61,7 +61,7 @@
 
         <h1 class="produto-titulo" id="produto-titulo">Carregando...</h1>
         
-        <div class="produto-preco">
+        <div class="produto-preco">?
           <span class="old" id="produto-preco-antigo"></span>
           <span class="price" id="produto-preco"></span>
           <span class="badge" id="produto-badge"></span>
@@ -101,8 +101,65 @@
           <button class="btn-acao btn-adicionar" id="btn-adicionar-carrinho">Adicionar ao carrinho</button>
         </div>
       </div>
-    </main>
-<script>
+</main>
+    <div class="detalhes-produto-container">
+
+      <section id="caracteristicas" class="detalhe-bloco">
+        <h2>Características principais</h2>
+        
+        <div class="caracteristicas-tabela">
+          <div class="caracteristica-item">
+            <span>Marca</span>
+            <span>LEGO</span>
+          </div>
+          <div class="caracteristica-item">
+            <span>Linha</span>
+            <span>NINJAGO</span>
+          </div>
+          <div class="caracteristica-item">
+            <span>Modelo</span>
+            <span>71741</span>
+          </div>
+          <div class="caracteristica-item">
+            <span>Tipo de alimentação</span>
+            <span>N/A</span>
+          </div>
+          <div class="caracteristica-item">
+            <span>Cor</span>
+            <span>Colorido</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="descricao" class="detalhe-bloco">
+        <h2>Descrição do produto</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. 
+          Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu 
+          tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus 
+          molestie magna non est bibendum non venenatis nisl tempor. Suspendisse 
+          dictum feugiat nisl ut dapibus.
+        </p>
+        <p>
+          Maecenas porta, nisl et consequat vestibulum, ex nulla laoreet odio, 
+          nec tempor justo urna in neque. Cras id nisl nec erat ultrices 
+          condimentum.
+        </p>
+      </section>
+
+      <section id="opinioes" class="detalhe-bloco">
+        <h2>Opiniões do produto</h2>
+        
+        <div class="opiniao-form">
+          <textarea placeholder="Escreva sua opinião aqui... (Esta é uma demonstração visual, o botão não salva os dados)"></textarea>
+          <button type="button" class="btn-acao btn-comprar">Enviar</button>
+        </div>
+      </section>
+
+    </div>
+  <script>
+  // --- 0. PREENCHIMENTO DA PÁGINA (NOVO BLOCO) ---
+  // ... (o restante do seu script javascript) ...
 
   // --- 0. PREENCHIMENTO DA PÁGINA (NOVO BLOCO) ---
   // Este script roda assim que a página termina de carregar
@@ -251,32 +308,43 @@
   // Botão "Comprar agora" (Verifica login, Adiciona e Redireciona)
   btnComprar.addEventListener("click", () => {
     
-    // 1. Verifica se o usuário está logado (lógica do tela_carrinho.html)
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
-
-    if (!usuarioLogado) {
-      // 2. Se NÃO estiver logado, redireciona para login
-      alert("Você precisa estar logado para continuar. Redirecionando...");
-      window.location.href = "tela_login.html";
+    // 1. Pega os dados do produto atual (incluindo a quantidade)
+    const produto = getDadosProduto();
     
-    } else {
-      // 3. Se ESTIVER logado, executa a ação original
-      const produto = getDadosProduto();
-      let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-      
-      const existente = carrinho.find(p => p.title === produto.title);
+    // 2. Calcula o total APENAS para este item
+    const totalDaCompra = produto.price * produto.quantidade;
 
-      if (existente) {
-        existente.quantidade += produto.quantidade;
-      } else {
-        carrinho.push(produto);
-      }
+    // 3. Salva esse total no localStorage para a tela_entrega ler
+    // (usa a mesma chave que o 'tela_carrinho.html' usa)
+    localStorage.setItem("totalCompra", totalDaCompra.toFixed(2));
+    
+    // 4. Redireciona para a tela de entrega
+      window.location.href = "tela_entrega.html";
 
-      localStorage.setItem("carrinho", JSON.stringify(carrinho));
+    // Lógica de verificação de login (DESATIVADA) - Ainda é necessário a criação de tela_login
+    // if (!usuarioLogado) {
+    //   // 2. Se NÃO estiver logado, redireciona para login
+    //   alert("Você precisa estar logado para continuar. Redirecionando...");
+    //   window.location.href = "tela_login.html";
+    
+    // } else {
+    //   // 3. Se ESTIVER logado, executa a ação original
+    //   const produto = getDadosProduto();
+    //   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
       
-      // Redireciona imediatamente para o carrinho
-      window.location.href = "tela_carrinho.html";
-    }
+    //   const existente = carrinho.find(p => p.title === produto.title);
+
+    //   if (existente) {
+    //     existente.quantidade += produto.quantidade;
+    //   } else {
+    //     carrinho.push(produto);
+    //   }
+
+    //   localStorage.setItem("carrinho", JSON.stringify(carrinho));
+      
+    //   // Redireciona imediatamente para o carrinho
+    //   window.location.href = "tela_carrinho.html";
+    // }
   });
 
   // Botão "Favoritar" (Alterna Salvar/Remover)

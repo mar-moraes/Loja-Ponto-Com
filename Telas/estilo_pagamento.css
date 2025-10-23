@@ -1,0 +1,211 @@
+/* =================================== */
+/* ESTILOS ESPECÍFICOS (PAGAMENTO)     */
+/* =================================== */
+
+/* Subtítulos ("Recomendados", "Cartões", etc.) */
+.subtitulo-pagamento {
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    padding-left: 5px; /* Alinhamento sutil */
+}
+
+/* Bloco especial "Combinar 2 meios de pagamento" */
+.combinar-pagamento {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.combinar-pagamento .opcao-label {
+    /* Remove o margin-bottom do .opcao-titulo */
+    flex: 1; 
+}
+.combinar-pagamento .opcao-titulo {
+     margin-bottom: 0; 
+     font-size: 16px;
+     font-weight: 500;
+     color: #2968C8; /* Azul do link */
+}
+/* Ícone para o bloco "Combinar" */
+.combinar-pagamento i {
+    margin-top: 2px;
+    margin-right: 15px;
+    width: 20px;
+    height: 20px;
+    font-size: 18px;
+    text-align: center;
+    color: #2968C8; /* Azul do link */
+}
+
+/* Ícones das formas de pagamento (Pix, Boleto, etc.) */
+.icone-pagamento {
+    margin-top: 2px;
+    margin-right: 15px;
+    width: 20px;
+    height: 20px;
+    font-size: 18px;
+    text-align: center;
+    color: #555; /* Cor padrão do ícone */
+}
+.icone-pagamento.fa-pix {
+    font-size: 22px; /* Ajuste fino para o ícone do Pix */
+}
+
+/* Ícone especial "Linha de Crédito" (círculo amarelo) */
+.icone-linha-credito {
+    margin-top: 2px;
+    margin-right: 15px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #FFDF00; /* Amarelo ML */
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    
+    /* Centraliza o $ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ajustes no resumo da compra para esta tela */
+.resumo-compra .link-cupom {
+    color: #2968C8; /* Azul */
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+.resumo-compra .link-cupom:hover {
+    text-decoration: underline;
+}
+
+
+/*
+ * Força os labels de opção a serem contêineres flex 
+ * e empilhar seu conteúdo (título, detalhes, formulário)
+ * verticalmente. Isso corrige o layout do "Novo Cartão".
+ */
+.opcao-label {
+    display: flex;
+    flex-direction: column;
+}
+
+/* =================================== */
+/* ESTILOS DO FORMULÁRIO DE NOVO CARTÃO */
+/* =================================== */
+
+/* O contêiner do formulário, que começa escondido */
+.formulario-novo-cartao {
+    display: none; /* Começa escondido */
+    padding-top: 20px;
+    margin-top: 15px;
+    border-top: 1px solid #eee; /* Linha divisória */
+    
+    /* O layout de 2 colunas será aplicado pelo JS (display: flex) */
+    flex-wrap: wrap; 
+    gap: 25px;
+}
+
+/* Coluna da esquerda (campos do formulário) */
+.form-coluna-esquerda {
+    flex: 1; /* Ocupa o espaço disponível */
+    min-width: 300px; /* Largura mínima */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaço entre os grupos de formulário */
+}
+
+/* Coluna da direita (imagem do cartão) */
+.form-coluna-direita {
+    flex-basis: 200px; /* Largura fixa */
+    display: flex;
+    align-items: flex-start; /* Alinha no topo */
+    justify-content: center;
+    padding-top: 10px;
+}
+.form-coluna-direita img {
+    width: 100%;
+    max-width: 180px;
+    opacity: 0.6;
+}
+
+/*
+ * Reutilização de estilos do 'estilo_entrega.css' 
+ * para os grupos de formulário
+ */
+.form-grupo {
+    display: flex;
+    flex-direction: column;
+}
+.form-linha {
+    display: flex;
+    gap: 15px;
+}
+.form-grupo label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #333;
+}
+/* Ícone de ajuda (?) */
+.form-grupo label i {
+    color: #2968C8; /* Azul */
+    font-size: 13px;
+    cursor: help;
+}
+.form-grupo input[type="text"],
+.form-grupo select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box; /* Garante que o padding não estoure */
+}
+
+/* Linha específica para "Documento" (Select + Input) */
+.form-linha-documento {
+    display: flex;
+    gap: 10px;
+}
+.form-linha-documento select {
+    width: auto;
+    flex-basis: 90px; /* Largura para "CPF" */
+}
+/* Texto de ajuda "Conforme aparece no cartão" */
+.helper-text {
+    font-size: 12px;
+    color: #777;
+    margin-top: 4px;
+}
+
+
+/* --- ESTILOS DE VALIDAÇÃO (ERRO) --- */
+
+/* Mensagem de erro (Ex: "Preencha este campo.") */
+.msg-erro-pagamento {
+    display: none; /* Escondido por padrão */
+    font-size: 13px;
+    color: #d93025; /* Vermelho erro */
+    margin-top: 5px;
+}
+/* Ícone de exclamação */
+.msg-erro-pagamento i {
+    margin-right: 4px;
+    font-size: 12px;
+}
+
+/* Quando o grupo PAI tem o erro, aplica estilos nos filhos */
+.campo-com-erro label {
+    color: #d93025; /* Deixa o label vermelho */
+}
+.campo-com-erro input[type="text"],
+.campo-com-erro select {
+    border-color: #d93025; /* Deixa a borda vermelha */
+}
+.campo-com-erro .msg-erro-pagamento {
+    display: block; /* Mostra a mensagem de erro */
+}

@@ -6,8 +6,10 @@
 
   <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="estilo_carrinho.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
   <style>
+    /* ... (seu style inline permanece o mesmo) ... */
     .carrinho-tabs {
       display: flex;
       gap: 10px;
@@ -24,7 +26,6 @@
       border-bottom: 3px solid transparent;
     }
     .carrinho-tab.active {
-      /* Cor azul do botão 'continuar' */
       color: #2968C8; 
       border-bottom: 3px solid #2968C8;
     }
@@ -86,6 +87,91 @@
     
     </div>
 
+    <div class="carrinho-layout-container">
+    </div>
+  <div class="recomendacoes-container">
+    <h2>Produtos que podem interessar</h2>
+    
+<div class="swiper recomendacoes-swiper">
+      <div class="swiper-wrapper">
+        
+        <div class="swiper-slide">
+          <a href="tela_produto.html" class="card-link">
+            <article class="card" data-price="159.79">
+              <div class="thumb" style="background-image:url('imagens/Zane lego.jpg')"></div>
+              <div class="title">LEGO NINJAGO!!</div>
+              <div class="card-avaliacao"></div> <div>
+                <span class="old">R$ 199,99</span>
+                <span class="price">R$ 159,79</span>
+                <span class="badge">21% OFF</span>
+              </div>
+            </article>
+          </a>
+        </div>
+
+        <div class="swiper-slide">
+          <article class="card" data-price="">
+            <div class="thumb" style="background-image:url('')"></div>
+            <div class="title"></div>
+            <div class="card-avaliacao"></div>
+            <div>
+              <span class="old"></span>
+              <span class="price"></span>
+              <span class="badge"></span>
+              <span class="parcel"></span>
+              <div><di/v>
+            </div>
+          </article>
+        </div>
+        
+        <div class="swiper-slide">
+          <article class="card" data-price="">
+            <div class="thumb" style="background-image:url('')"></div>
+            <div class="title"></div>
+            <div class="card-avaliacao"></div>
+            <div>
+              <span class="old"></span>
+              <span class="price"></span>
+              <span class="badge"></span>
+              <span class="parcel"></span>
+              <div><di/v>
+            </div>
+          </article>
+        </div>
+
+        <div class="swiper-slide">
+          <article class="card" data-price="">
+            <div class="thumb" style="background-image:url('')"></div>
+            <div class="title"></div>
+            <div class="card-avaliacao"></div>
+            <div>
+              <span class="old"></span>
+              <span class="price"></span>
+              <span class="badge"></span>
+              <span class="parcel"></span>
+              <div><di/v>
+            </div>
+          </article>
+        </div>
+
+        <div class="swiper-slide">
+          <article class="card" data-price="">
+            <div class="thumb" style="background-image:url('')"></div>
+            <div class="title"></div>
+            <div class="card-avaliacao"></div>
+            <div>
+              <span class="old"></span>
+              <span class="price"></span>
+              <span class="badge"></span>
+              <span class="parcel"></span>
+              <div><di/v>
+            </div>
+          </article>
+        </div>
+
+      </div> <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
 
 <script>
   // --- 1. RECUPERAÇÃO DE DADOS E SELETORES ---
@@ -105,7 +191,7 @@
   const btnContinuar = document.querySelector(".btn-continuar");
 
   // --- 2. FUNÇÕES DE RENDERIZAÇÃO ---
-
+  // ... (funções renderCarrinho() e renderSalvos() permanecem as mesmas) ...
   // Renderiza os itens do CARRINHO (CORRIGIDA)
   function renderCarrinho() {
     if (carrinho.length === 0) {
@@ -187,8 +273,9 @@
     }
   }
 
-  // --- 3. FUNÇÕES DE ATUALIZAÇÃO (Total e Contadores) ---
 
+  // --- 3. FUNÇÕES DE ATUALIZAÇÃO (Total e Contadores) ---
+  // ... (funções atualizarTotal() e atualizarContadoresTabs() permanecem as mesmas) ...
   // Atualiza o TOTAL (bloco de resumo)
   function atualizarTotal() {
     if (carrinho.length === 0) {
@@ -211,7 +298,7 @@
   }
 
   // --- 4. FUNÇÕES DE AÇÃO DOS PRODUTOS ---
-
+  // ... (funções alterarContador(), removerProduto(), removerDosSalvos(), comprarAgora(), salvarDepois(), moverParaCarrinho() permanecem as mesmas) ...
   function alterarContador(index, valor) {
     const item = carrinho[index];
     item.quantidade += valor;
@@ -246,26 +333,49 @@
   }
 
   function comprarAgora(index) {
+    // 1. Pega o produto específico do carrinho
     const produto = carrinho[index];
-    alert("Iniciando a compra de: " + produto.title);
+    
+    // 2. Calcula o total APENAS para este item (preço * quantidade)
+    const totalDoProduto = produto.price * produto.quantidade;
+    
+    // 3. Salva esse total no localStorage (mesma chave que a tela_entrega usa)
+    localStorage.setItem("totalCompra", totalDoProduto.toFixed(2));
+    
+    // 4. Redireciona para a tela de entrega
+    window.location.href = "tela_entrega.html";
   }
 
-  // "Salvar para depois" (ATUALIZADA)
+  // "Salvar para depois" (CORRIGIDA)
   function salvarDepois(index) {
     const item = carrinho[index];
     
-    salvos.push(item);
-    carrinho.splice(index, 1);
+    // --- INÍCIO DA CORREÇÃO ---
+    // A linha "let salvos = ..." FOI REMOVIDA.
+    // Agora, o código abaixo usa a variável 'salvos' GLOBAL,
+    // que foi declarada no topo do seu script.
+    
+    // Verifica se o item já existe na lista de salvos (pelo título)
+    const existenteEmSalvos = salvos.find(p => p.title === item.title);
+
+    if (!existenteEmSalvos) {
+      // Adiciona ao array GLOBAL 'salvos'
+      salvos.push(item);
+    }
+    // Se JÁ existe, não fazemos nada, o item só será removido do carrinho
+    // --- FIM DA CORREÇÃO ---
+
+    carrinho.splice(index, 1); // Remove do carrinho (array global 'carrinho')
     
     localStorage.setItem("carrinho", JSON.stringify(carrinho));
-    localStorage.setItem("salvos", JSON.stringify(salvos));
+    localStorage.setItem("salvos", JSON.stringify(salvos)); // Salva o array GLOBAL 'salvos'
     
-    renderCarrinho();
-    renderSalvos();
+    renderCarrinho(); // Renderiza o 'carrinho' global (correto)
+    renderSalvos();   // AGORA renderiza o 'salvos' global (que acabamos de atualizar)
     atualizarContadoresTabs();
-    mostrarCarrinho(); // Garante que a visão (painel + resumo) é atualizada
+    mostrarCarrinho(); 
   }
-
+  
   // Mover dos Salvos para o Carrinho (ATUALIZADA)
   function moverParaCarrinho(index) {
     const item = salvos[index];
@@ -289,7 +399,7 @@
   }
 
   // --- 5. LÓGICA DAS ABAS (Funções principais de visão) ---
-
+  // ... (funções mostrarCarrinho() e mostrarSalvos() permanecem as mesmas) ...
   function mostrarCarrinho() {
     painelCarrinho.style.display = "block"; // Mostra painel carrinho
     painelSalvos.style.display = "none";   // Esconde painel salvos
@@ -319,13 +429,30 @@
   btnContinuar.addEventListener("click", function() {
       const usuarioLogado = localStorage.getItem("usuarioLogado");
 
-      if (!usuarioLogado) {
-        alert("Você precisa estar logado para continuar. Redirecionando...");
-        window.location.href = "tela_login.html";
-      } else {
-        alert("Usuário logado! Prosseguindo para o checkout...");
-        // window.location.href = "tela_checkout.html";
-      }
+      // 1. Calcula o total final com base no array 'carrinho'
+      const totalCompra = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
+      
+      // 2. Salva o valor no localStorage para a próxima página ler
+      localStorage.setItem("totalCompra", totalCompra.toFixed(2));
+      
+      // 3. Redireciona o usuário para a tela de entrega
+      window.location.href = "tela_entrega.html";
+
+      // Lógica de verificação de login (DESATIVADA) - Ainda é necessário a criação de tela_login
+      // if (!usuarioLogado) {
+      //   alert("Você precisa estar logado para continuar. Redirecionando...");
+      //   window.location.href = "tela_login.html";
+      
+      // } else {
+      //   // 1. Calcula o total final com base no array 'carrinho'
+      //   const totalCompra = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
+        
+      //   // 2. Salva o valor no localStorage para a próxima página ler
+      //   localStorage.setItem("totalCompra", totalCompra.toFixed(2));
+        
+      //   // 3. Redireciona o usuário para a tela de entrega
+      //   window.location.href = "tela_entrega.html";
+      // }
   });
 
 
@@ -337,6 +464,89 @@
   // Define o estado inicial (mostra o carrinho e seu resumo)
   mostrarCarrinho();
 </script>
+</script> 
 
-</body>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      
+      // --- A. INICIALIZA O SWIPER DE RECOMENDAÇÕES ---
+      const swiper = new Swiper('.recomendacoes-swiper', {
+        loop: false,
+        spaceBetween: 18, 
+        slidesPerView: 2, 
+        breakpoints: {
+          600: { slidesPerView: 3, spaceBetween: 10 },
+          900: { slidesPerView: 4, spaceBetween: 15 },
+          1100: { slidesPerView: 5, spaceBetween: 15 } 
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      });
+
+      // --- B. LÓGICA DE CLIQUE DO CARD (Copiado de script.js) ---
+      document.querySelectorAll(".recomendacoes-container a.card-link").forEach(link => {
+        link.addEventListener("click", (event) => {
+          
+          const card = link.querySelector(".card");
+          if (!card) return; 
+
+          const title = card.querySelector(".title").innerText;
+          const priceText = card.querySelector(".price").innerText;
+          const priceValue = card.dataset.price; 
+          const oldPrice = card.querySelector(".old")?.innerText || ""; 
+          const badge = card.querySelector(".badge")?.innerText || ""; 
+          
+          const bgImg = card.querySelector(".thumb").style.backgroundImage;
+          const imgMatch = bgImg.match(/url\(["']?(.*?)["']?\)/);
+          const img = imgMatch ? imgMatch[1] : "";
+
+          const produtoSelecionado = {
+            title: title,
+            price: priceText,
+            priceValue: parseFloat(priceValue),
+            oldPrice: oldPrice,
+            badge: badge,
+            img: img
+          };
+          
+          localStorage.setItem("produtoSelecionado", JSON.stringify(produtoSelecionado));
+        });
+      });
+      
+      // --- C. LÓGICA DAS ESTRELAS (Copiado de script.js) ---
+      const allCards = document.querySelectorAll(".recomendacoes-container .card");
+
+      allCards.forEach(card => {
+        const titleElement = card.querySelector(".title");
+        const avaliacaoContainer = card.querySelector(".card-avaliacao");
+
+        if (!titleElement || !avaliacaoContainer || !titleElement.innerText) {
+          return; // Pula cards de modelo
+        }
+        
+        const title = titleElement.innerText;
+        const ratingKey = "rating_" + title; 
+        const savedRating = localStorage.getItem(ratingKey);
+
+        if (savedRating) {
+          const rating = parseInt(savedRating);
+          let starsHTML = "";
+          for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+              starsHTML += '<span class="star filled">&#9733;</span>'; // Cheia
+            } else {
+              starsHTML += '<span class="star">&#9734;</span>'; // Vazia
+            }
+          }
+          avaliacaoContainer.innerHTML = starsHTML;
+        }
+      });
+
+    });
+  </script>
+  </body>
 </html>
