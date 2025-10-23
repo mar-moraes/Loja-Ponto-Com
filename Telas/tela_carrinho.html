@@ -346,35 +346,36 @@
     window.location.href = "tela_entrega.html";
   }
 
-// "Salvar para depois" (ATUALIZADA)
+  // "Salvar para depois" (CORRIGIDA)
   function salvarDepois(index) {
     const item = carrinho[index];
     
-    // --- INÍCIO DA VERIFICAÇÃO ---
-    // Pega a lista de salvos atual
-    let salvos = JSON.parse(localStorage.getItem("salvos")) || []; 
+    // --- INÍCIO DA CORREÇÃO ---
+    // A linha "let salvos = ..." FOI REMOVIDA.
+    // Agora, o código abaixo usa a variável 'salvos' GLOBAL,
+    // que foi declarada no topo do seu script.
     
     // Verifica se o item já existe na lista de salvos (pelo título)
     const existenteEmSalvos = salvos.find(p => p.title === item.title);
 
     if (!existenteEmSalvos) {
-      // Se NÃO existe, adiciona
+      // Adiciona ao array GLOBAL 'salvos'
       salvos.push(item);
     }
     // Se JÁ existe, não fazemos nada, o item só será removido do carrinho
-    // --- FIM DA VERIFICAÇÃO ---
+    // --- FIM DA CORREÇÃO ---
 
-    carrinho.splice(index, 1); // Remove do carrinho em ambos os casos
+    carrinho.splice(index, 1); // Remove do carrinho (array global 'carrinho')
     
     localStorage.setItem("carrinho", JSON.stringify(carrinho));
-    localStorage.setItem("salvos", JSON.stringify(salvos)); // Salva a lista 'salvos' atualizada
+    localStorage.setItem("salvos", JSON.stringify(salvos)); // Salva o array GLOBAL 'salvos'
     
-    renderCarrinho();
-    renderSalvos();
+    renderCarrinho(); // Renderiza o 'carrinho' global (correto)
+    renderSalvos();   // AGORA renderiza o 'salvos' global (que acabamos de atualizar)
     atualizarContadoresTabs();
     mostrarCarrinho(); 
   }
-
+  
   // Mover dos Salvos para o Carrinho (ATUALIZADA)
   function moverParaCarrinho(index) {
     const item = salvos[index];

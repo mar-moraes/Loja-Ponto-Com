@@ -49,8 +49,7 @@
                             <p style="font-weight: 600; font-size: 15px;">Exemplo Fictício, 123 - Centro</p>
                             <p style="margin: 5px 0;">13180-000 - Hortolândia - SP</p>
                             <p class="tipo-endereco">Recebe: Fulano de Tal</p>
-                            <a href="#" class="link-acao" onclick="mostrarModal('modal-editar-endereco')">Alterar ou escolher outro endereço</a>
-                        </div>
+                            <a href="#" class="link-acao" onclick="abrirModalEnderecoComLocalizacao()">Alterar ou escolher outro endereço</a>                        </div>
                     </label>
                 </div>
 
@@ -206,41 +205,54 @@
 
 
     <script>
-        // ... (Variáveis globais 'subtotalCompra' e 'map' - sem alteração) ...
+        // --- Variáveis globais ---
         let subtotalCompra = 0.0;
-        let map = null; 
+        let map = null; // Referência global para o mapa Leaflet
 
-        // ... (Funções 'mostrarModal' e 'fecharModal' - sem alteração) ...
+        // --- Funções para Modais ---
         function mostrarModal(modalId) {
             document.getElementById(modalId).style.display = 'flex';
-            
+
+            // Inicializa o mapa apenas quando o modal de agência é aberto pela primeira vez
             if (modalId === 'modal-retirar-agencia' && !map) {
                 const locais = [
-                    { 
+                    {
                         nome: 'LOJA 1',
                         endereco: 'RUA LUIZ CAMILO DE CAMARGO, 581, Centro, Hortolândia (13184-230)',
                         coords: { lat: -22.85848, lng: -47.22129 }
                     },
-                    { 
+                    {
                         nome: 'PONTO EXTRA HORTOLÂNDIA',
                         endereco: 'AV. DA EMACIPAÇÃO, 1200, Jardim Santa Rita de Cássia, Hortolândia (13186-505)',
                         coords: { lat: -22.86985, lng: -47.21461 }
                     }
                 ];
-                const centroDoMapa = [-22.864, -47.218]; 
-                map = L.map('mapa').setView(centroDoMapa, 14); 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(map);
-                locais.forEach(local => {
-                    L.marker([local.coords.lat, local.coords.lng]) 
-                     .addTo(map)
-                     .bindPopup(`<b>${local.nome}</b><br>${local.endereco}`);
-                });
-                
-                setTimeout(() => {
-                    map.invalidateSize();
-                }, 100); 
+                const centroDoMapa = [-22.864, -47.218]; // Coordenadas aproximadas do centro de Hortolândia
+
+                // Verifica se o elemento 'mapa' existe antes de inicializar
+                const mapContainer = document.getElementById('mapa');
+                if (mapContainer) {
+                    map = L.map(mapContainer).setView(centroDoMapa, 14); // Zoom inicial 14
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+
+                    // Adiciona marcadores para cada local
+                    locais.forEach(local => {
+                        L.marker([local.coords.lat, local.coords.lng])
+                         .addTo(map)
+                         .bindPopup(`<b>${local.nome}</b><br>${local.endereco}`);
+                    });
+
+                    // Força o redimensionamento do mapa após um pequeno atraso (necessário quando o mapa está escondido)
+                    setTimeout(() => {
+                        if (map) {
+                            map.invalidateSize();
+                        }
+                    }, 100); // 100 milissegundos
+                } else {
+                    console.error("Elemento 'mapa' não encontrado para inicialização do Leaflet.");
+                }
             }
         }
 
@@ -248,272 +260,501 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        // ... (Função 'atualizarResumoEntrega' - sem alteração) ...
+        // --- Função para Atualizar Resumo ---
         function atualizarResumoEntrega() {
-            const freteSelecionado = document.querySelector('input[name="forma-entrega"]:checked').value;
+            const freteSelecionadoRadio = document.querySelector('input[name="forma-entrega"]:checked');
+            if (!freteSelecionadoRadio) return; // Sai se nenhum radio estiver selecionado
+
+            const freteSelecionado = freteSelecionadoRadio.value;
             const freteSpan = document.getElementById("resumo-frete-preco");
             let valorFrete = 0.0;
             let textoFrete = "GRÁTIS";
-            
+
             if (freteSelecionado === 'agencia') {
                 valorFrete = 5.99;
                 textoFrete = "R$ 5,99";
-                freteSpan.classList.remove("preco-gratis");
-            } else {
+                if(freteSpan) freteSpan.classList.remove("preco-gratis");
+            } else { // 'endereco'
                 valorFrete = 0.0;
                 textoFrete = "GRÁTIS";
-                freteSpan.classList.add("preco-gratis");
+                if(freteSpan) freteSpan.classList.add("preco-gratis");
             }
-            
-            const valorTotal = subtotalCompra + valorFrete;
-            document.getElementById("resumo-produto-preco").innerText = "R$ " + subtotalCompra.toFixed(2).replace(".", ",");
-            freteSpan.innerText = textoFrete;
-            document.getElementById("resumo-total-preco").innerText = "R$ " + valorTotal.toFixed(2).replace(".", ",");
 
+            const valorTotal = subtotalCompra + valorFrete;
+
+            const elProduto = document.getElementById("resumo-produto-preco");
+            const elTotal = document.getElementById("resumo-total-preco");
+
+            if(elProduto) elProduto.innerText = "R$ " + subtotalCompra.toFixed(2).replace(".", ",");
+            if(freteSpan) freteSpan.innerText = textoFrete;
+            if(elTotal) elTotal.innerText = "R$ " + valorTotal.toFixed(2).replace(".", ",");
+
+            // Salva no localStorage para a próxima página
             localStorage.setItem("totalCompra", subtotalCompra.toFixed(2));
             localStorage.setItem("valorFrete", valorFrete.toFixed(2));
             localStorage.setItem("valorFinal", valorTotal.toFixed(2));
         }
 
+        // --- Funções Relacionadas à Geolocalização e Preenchimento ---
+        function abrirModalEnderecoComLocalizacao() {
+            const modalId = 'modal-editar-endereco';
 
-        // ... (Lógica para selecionar as opções de entrega - sem alteração) ...
-        document.querySelectorAll('input[name="forma-entrega"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                document.querySelectorAll('.opcao-bloco').forEach(bloco => {
-                    bloco.classList.remove('selecionado');
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        console.log(`Localização obtida: Lat ${lat}, Lon ${lon}`);
+                        buscarEnderecoPorCoords(lat, lon, modalId);
+                    },
+                    (error) => {
+                        console.warn(`Erro ao obter localização (${error.code}): ${error.message}`);
+                        limparFormularioEndereco();
+                        mostrarModal(modalId);
+                    },
+                    { // Opções para getCurrentPosition
+                        enableHighAccuracy: false, // Pode tentar 'true' se a precisão for baixa
+                        timeout: 10000,         // Tempo máximo para obter a posição (10 segundos)
+                        maximumAge: 0           // Força obter uma posição nova
+                    }
+                );
+            } else {
+                console.warn("Geolocalização não suportada pelo navegador.");
+                limparFormularioEndereco();
+                mostrarModal(modalId);
+            }
+        }
+
+        function buscarEnderecoPorCoords(latitude, longitude, modalId) {
+            // Usando API Nominatim para geocodificação reversa
+            const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&addressdetails=1`; // addressdetails=1 para mais detalhes
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erro na API Nominatim: ${response.statusText}`);
+                    }
+                    return response.json();
+                 })
+                .then(data => {
+                    console.log("Dados do endereço (Nominatim):", data);
+                    if (data && data.address) {
+                        preencherFormularioComDados(data.address);
+                    } else {
+                         console.warn("Não foi possível obter detalhes do endereço a partir das coordenadas.");
+                         limparFormularioEndereco();
+                    }
+                    mostrarModal(modalId); // Mostra o modal DEPOIS de tentar preencher
+                })
+                .catch(error => {
+                    console.error('Erro na geocodificação reversa:', error);
+                    limparFormularioEndereco();
+                    mostrarModal(modalId); // Mostra o modal mesmo se a busca falhar
                 });
-                if (this.checked) {
-                    this.closest('.opcao-bloco').classList.add('selecionado');
+        }
+
+        function preencherFormularioComDados(addressData) {
+            // Mapeia os campos da resposta do Nominatim para os IDs do seu formulário
+            // Atenção: Os nomes dos campos no Nominatim podem variar (road, postcode, city, suburb, etc.)
+            const campos = {
+                'cep': addressData.postcode,
+                'rua': addressData.road,
+                'numero': addressData.house_number, // Tenta pegar o número, se disponível
+                // Adicione outros campos se necessário, mapeando do addressData
+                // 'bairro': addressData.suburb || addressData.neighbourhood || addressData.city_district,
+                // 'cidade': addressData.city || addressData.town || addressData.village,
+                // 'uf': addressData.state,
+            };
+
+            for (const id in campos) {
+                const input = document.getElementById(id);
+                const valor = campos[id];
+                if (input && valor) {
+                    if (id === 'cep') {
+                        input.value = valor.replace(/\D/g, ''); // Limpa CEP
+                    } else {
+                        input.value = valor;
+                    }
+                } else if (input) {
+                    // Limpa o campo se não houver valor correspondente
+                    // input.value = ''; // Descomente se quiser limpar campos não encontrados
                 }
-                atualizarResumoEntrega();
+            }
+             // Foca no campo número se a rua foi preenchida, ou no complemento se o número também foi
+             if (campos['rua'] && campos['numero']) {
+                 document.getElementById('complemento')?.focus();
+             } else if (campos['rua']) {
+                 document.getElementById('numero')?.focus();
+             }
+        }
+
+        function limparFormularioEndereco() {
+            const idsInputs = ['cep', 'rua', 'numero', 'complemento', 'info-adicional', 'nome'];
+            idsInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) input.value = '';
             });
-        });
+
+            // Reseta também as mensagens de erro
+             const erroRua = document.getElementById('erro-rua');
+             const erroNome = document.getElementById('erro-nome');
+             const inputRua = document.getElementById('rua');
+             const inputNome = document.getElementById('nome');
+
+             if(erroRua) erroRua.style.display = 'none';
+             if(erroNome) erroNome.style.display = 'none';
+             if(inputRua) inputRua.classList.remove('input-erro');
+             if(inputNome) inputNome.classList.remove('input-erro');
+        }
 
         // --- Roda quando a página carrega ---
         document.addEventListener("DOMContentLoaded", () => {
-            // ... (Lógica de carregar o subtotal - sem alteração) ...
+
+            // Carrega subtotal do localStorage
             const totalSalvo = localStorage.getItem("totalCompra");
             if (totalSalvo) {
-                subtotalCompra = parseFloat(totalSalvo);
+                try {
+                    subtotalCompra = parseFloat(totalSalvo);
+                    if (isNaN(subtotalCompra)) subtotalCompra = 0.0; // Garante que é um número
+                } catch (e) {
+                    subtotalCompra = 0.0;
+                    console.error("Erro ao converter totalCompra do localStorage:", e);
+                }
             }
-            atualizarResumoEntrega();
+            atualizarResumoEntrega(); // Atualiza o resumo inicial
 
-            
-            // ==========================================================
-            // === INÍCIO DA CORREÇÃO: Lógica "Escolher" Agência       ===
-            // ==========================================================
+            // --- Lógica para selecionar as opções de entrega (Radios) ---
+            document.querySelectorAll('input[name="forma-entrega"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Remove 'selecionado' de todos os blocos
+                    document.querySelectorAll('.opcao-bloco').forEach(bloco => {
+                        bloco.classList.remove('selecionado');
+                    });
+                    // Adiciona 'selecionado' ao bloco pai do radio clicado
+                    if (this.checked) {
+                        this.closest('.opcao-bloco').classList.add('selecionado');
+                    }
+                    atualizarResumoEntrega(); // Atualiza o resumo sempre que a opção muda
+                });
+            });
+
+            // --- Lógica do botão "Escolher" dentro do Modal de Agências ---
             document.querySelectorAll('.btn-escolher').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    
                     const itemAgencia = e.target.closest('.agencia-item');
-                    const nomeAgencia = itemAgencia.querySelector('h4').innerText;
-                    const horarioAgencia = itemAgencia.querySelector('i.fa-regular.fa-clock').parentElement.innerText;
-                    
-                    // --- Captura e Análise de Endereço da Agência ---
-                    const pEndereco = itemAgencia.querySelector('i.fa-solid.fa-location-dot').parentElement.innerText;
-                    // Ex: "RUA LUIZ CAMILO DE CAMARGO, 581, Centro, Hortolândia (13184-230) - a 0 m"
-                    const regex = /^(.*?), (.*?), (.*?), (.*?) \((.*?)\)/;
+                    if (!itemAgencia) return;
+
+                    const nomeAgencia = itemAgencia.querySelector('h4')?.innerText || 'Agência selecionada';
+                    const horarioAgenciaElement = itemAgencia.querySelector('p > i.fa-regular.fa-clock');
+                    const horarioAgencia = horarioAgenciaElement ? horarioAgenciaElement.parentElement.innerText : 'Horário indisponível';
+
+                    // Captura e Análise de Endereço da Agência
+                    const pEnderecoElement = itemAgencia.querySelector('p > i.fa-solid.fa-location-dot');
+                    const pEndereco = pEnderecoElement ? pEnderecoElement.parentElement.innerText : '';
+                    const regex = /^(.*?), (.*?), (.*?), (.*?) \((.*?)\)/; // Ajuste regex se necessário
                     const match = pEndereco.match(regex);
-                    
-                    let dadosAgencia = {};
-                    if (match) {
+
+                    let dadosAgencia = { tipo: 'agencia', nome: nomeAgencia, endereco: pEndereco }; // Fallback
+                    if (match && match.length >= 6) {
                         dadosAgencia = {
                             tipo: 'agencia',
-                            nome: nomeAgencia, // Nome (Ex: "LOJA 1" ou "PONTO EXTRA HORTOLÂNDIA")
-                            documento: 'ISENTO', 
-                            endereco: `${match[1]}, ${match[2]}`, // "RUA LUIZ CAMILO DE CAMARGO, 581"
-                            bairro: match[3], // "Centro"
-                            municipio: match[4], // "Hortolândia"
-                            cep: match[5], // "13184-230"
-                            uf: 'SP', 
-                            fone: '(19) 3888-8888' // Telefone fictício da agência
+                            nome: nomeAgencia,
+                            documento: 'ISENTO', // Ou CNPJ se disponível
+                            endereco: `${match[1].trim()}, ${match[2].trim()}`, // Rua, Número
+                            bairro: match[3].trim(),
+                            municipio: match[4].trim(),
+                            cep: match[5].trim(),
+                            uf: 'SP', // Assumindo SP, idealmente viria da API/dados
+                            fone: '(19) 3888-8888' // Fictício
                         };
                     } else {
-                        // Fallback caso o regex falhe
-                         dadosAgencia = { tipo: 'agencia', nome: nomeAgencia, endereco: pEndereco };
+                        console.warn("Regex não capturou os dados do endereço da agência:", pEndereco);
                     }
-                    
-                    // ***** ESTA LINHA É A CORREÇÃO *****
+
                     // Salva os dados da agência escolhida no localStorage
                     localStorage.setItem('dadosEntrega', JSON.stringify(dadosAgencia));
-                    // ************************************
 
-                    // Atualiza a UI da tela de entrega
+                    // Atualiza a UI da tela de entrega (fora do modal)
                     const targetDetalhes = document.getElementById('detalhes-agencia-selecionada');
-                    targetDetalhes.innerHTML = `
-                        <p style="font-weight: 600; font-size: 15px;">${nomeAgencia}</p>
-                        <p style="margin: 5px 0;">${horarioAgencia}</p>
-                        <a href="#" class="link-acao" onclick="mostrarModal('modal-retirar-agencia')">Ver agência no mapa ou selecionar outra</a>
-                    `;
+                    if (targetDetalhes) {
+                        targetDetalhes.innerHTML = `
+                            <p style="font-weight: 600; font-size: 15px;">${nomeAgencia}</p>
+                            <p style="margin: 5px 0;">${horarioAgencia}</p>
+                            <a href="#" class="link-acao" onclick="mostrarModal('modal-retirar-agencia')">Ver agência no mapa ou selecionar outra</a>
+                        `;
+                    }
 
-                    // Seleciona o rádio 'retirar-agencia' e dispara o evento
+                    // Seleciona o rádio 'retirar-agencia', atualiza a classe e dispara o evento 'change'
                     const radioAgencia = document.getElementById('retirar-agencia');
-                    radioAgencia.checked = true;
-                    radioAgencia.dispatchEvent(new Event('change'));
-                    
+                    if (radioAgencia) {
+                        radioAgencia.checked = true;
+                         // Garante que o bloco correto fique selecionado visualmente
+                        document.querySelectorAll('.opcao-bloco').forEach(b => b.classList.remove('selecionado'));
+                        radioAgencia.closest('.opcao-bloco').classList.add('selecionado');
+                        // Dispara o evento para atualizar o resumo
+                        radioAgencia.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+
                     fecharModal('modal-retirar-agencia');
                 });
             });
-            // ==========================================================
-            // === FIM DA CORREÇÃO                                    ===
-            // ==========================================================
 
-            
-            // ... (Lógica de Validação do Modal de Endereço - sem alteração) ...
+
+            // --- Lógica de Validação do Modal de Endereço ---
             const btnSalvarEndereco = document.getElementById('btn-salvar-endereco');
             const inputRua = document.getElementById('rua');
             const erroRua = document.getElementById('erro-rua');
             const inputNome = document.getElementById('nome');
             const erroNome = document.getElementById('erro-nome');
 
-            btnSalvarEndereco.addEventListener('click', () => {
-                let isValid = true; 
-                erroRua.style.display = 'none';
-                inputRua.classList.remove('input-erro');
-                erroNome.style.display = 'none';
-                inputNome.classList.remove('input-erro');
-                if (inputRua.value.trim() === '') {
-                    erroRua.style.display = 'block'; 
-                    inputRua.classList.add('input-erro'); 
-                    isValid = false;
-                }
-                if (inputNome.value.trim() === '') {
-                    erroNome.style.display = 'block'; 
-                    inputNome.classList.add('input-erro'); 
-                    isValid = false;
-                }
-                if (isValid) {
-                    fecharModal('modal-editar-endereco');
-                }
-            });
+            if (btnSalvarEndereco) {
+                btnSalvarEndereco.addEventListener('click', () => {
+                    let isValid = true;
 
-            // ... (Lógica do ViaCEP - sem alteração) ...
+                    // Reset erros
+                    if(erroRua) erroRua.style.display = 'none';
+                    if(inputRua) inputRua.classList.remove('input-erro');
+                    if(erroNome) erroNome.style.display = 'none';
+                    if(inputNome) inputNome.classList.remove('input-erro');
+
+                    // Valida Rua
+                    if (inputRua && inputRua.value.trim() === '') {
+                        if(erroRua) erroRua.style.display = 'block';
+                        inputRua.classList.add('input-erro');
+                        isValid = false;
+                    }
+
+                    // Valida Nome
+                    if (inputNome && inputNome.value.trim() === '') {
+                        if(erroNome) erroNome.style.display = 'block';
+                        inputNome.classList.add('input-erro');
+                        isValid = false;
+                    }
+
+                    if (isValid) {
+                        // AQUI: Salvar os dados do endereço editado no localStorage (se necessário)
+                        // Poderia criar um objeto com os dados do form e salvar em 'dadosEntrega'
+                        fecharModal('modal-editar-endereco');
+                        // Poderia também atualizar a exibição do endereço na tela principal, se desejado
+                    }
+                });
+            } else {
+                 console.error("Botão 'btn-salvar-endereco' não encontrado.");
+            }
+
+            // --- Lógica do ViaCEP ---
             const inputCep = document.getElementById('cep');
             function buscarCep() {
-                const cep = inputCep.value.replace(/\D/g, ''); 
-                erroRua.style.display = 'none';
-                inputRua.classList.remove('input-erro');
+                if (!inputCep) return; // Verifica se o input existe
+
+                const cep = inputCep.value.replace(/\D/g, ''); // Remove não dígitos
+                if(erroRua) erroRua.style.display = 'none'; // Esconde erro anterior
+                if(inputRua) inputRua.classList.remove('input-erro');
+
                 if (cep.length === 8) {
-                    inputRua.value = "Buscando..."; 
+                    if(inputRua) inputRua.value = "Buscando..."; // Feedback visual
                     fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                        .then(response => response.json())
+                        .then(response => {
+                             if (!response.ok) { throw new Error('Erro na resposta da API ViaCEP'); }
+                             return response.json();
+                         })
                         .then(data => {
                             if (data.erro) {
-                                inputRua.value = "";
-                                inputRua.focus();
+                                console.warn("CEP não encontrado na base do ViaCEP.");
+                                if(inputRua) inputRua.value = "";
+                                inputRua?.focus(); // Foca na rua para preenchimento manual
                             } else {
-                                inputRua.value = data.logradouro;
-                                document.getElementById('numero').focus();
+                                if(inputRua) inputRua.value = data.logradouro || ""; // Preenche rua (ou vazio se não tiver)
+                                // Poderia preencher bairro, cidade, UF aqui também
+                                // document.getElementById('bairro').value = data.bairro || "";
+                                // document.getElementById('cidade').value = data.localidade || "";
+                                // document.getElementById('uf').value = data.uf || "";
+                                document.getElementById('numero')?.focus(); // Foca no número
                             }
                         })
                         .catch(error => {
                             console.error('Erro ao consultar a API ViaCEP:', error);
-                            inputRua.value = "";
+                            if(inputRua) inputRua.value = ""; // Limpa em caso de erro
                         });
-                } else if (cep.length > 0) {
-                    inputRua.value = "";
+                } else if (cep.length > 0 && cep.length < 8) {
+                     // CEP incompleto, limpa a rua se estava "Buscando..."
+                     if(inputRua && inputRua.value === "Buscando...") inputRua.value = "";
+                } else if (cep.length === 0) {
+                     // Campo CEP vazio, limpa a rua
+                     if(inputRua) inputRua.value = "";
                 }
             }
-            inputCep.addEventListener('blur', buscarCep);
-            inputCep.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault(); 
-                    buscarCep(); 
-                }
-            });
+            if (inputCep) {
+                inputCep.addEventListener('blur', buscarCep); // Busca quando perde o foco
+                inputCep.addEventListener('input', () => { // Limpa "Buscando..." se o usuário digitar mais
+                     if(inputRua && inputRua.value === "Buscando...") inputRua.value = "";
+                });
+                inputCep.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault(); // Evita submit do formulário (se houver)
+                        buscarCep(); // Busca ao pressionar Enter
+                    }
+                });
+            } else {
+                 console.error("Input 'cep' não encontrado.");
+            }
 
-            // ... (Lógica da Busca de Localização (Mapa) - sem alteração) ...
+             // --- Lógica da Busca de Localização (Mapa/Nominatim) ---
             const inputBuscaLocal = document.getElementById('busca-local');
-            const btnBuscaLocal = document.getElementById('btn-busca-local'); 
-            function buscarLocalizacao() {
+            const btnBuscaLocal = document.getElementById('btn-busca-local');
+
+            function buscarLocalizacaoMapa() {
+                if (!inputBuscaLocal || !map) return; // Verifica se input e mapa existem
+
                 const query = inputBuscaLocal.value;
                 if (query.trim() === '') return;
-                const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=br`;
+
+                // Adiciona ", Brasil" para melhorar a busca no Nominatim
+                const queryComPais = query.includes('Brasil') ? query : `${query}, Brasil`;
+                const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryComPais)}&format=json&limit=1&countrycodes=br&addressdetails=1`;
+
                 const originalPlaceholder = inputBuscaLocal.placeholder;
                 inputBuscaLocal.placeholder = "Buscando...";
                 inputBuscaLocal.disabled = true;
+
                 fetch(url)
-                    .then(response => response.json())
+                    .then(response => {
+                         if (!response.ok) { throw new Error('Erro na API Nominatim Search'); }
+                         return response.json();
+                     })
                     .then(data => {
                         inputBuscaLocal.placeholder = originalPlaceholder;
                         inputBuscaLocal.disabled = false;
                         if (data && data.length > 0) {
                             const result = data[0];
-                            const lat = result.lat;
-                            const lon = result.lon;
-                            map.setView([lat, lon], 16); 
+                            const lat = parseFloat(result.lat);
+                            const lon = parseFloat(result.lon);
+                            if (!isNaN(lat) && !isNaN(lon)) {
+                                map.setView([lat, lon], 16); // Move o mapa para o resultado com zoom 16
+                                // Poderia adicionar um marcador temporário aqui se quisesse
+                            } else {
+                                 console.warn("Coordenadas inválidas recebidas do Nominatim:", result);
+                                 alert("Localização encontrada, mas com coordenadas inválidas.");
+                            }
                         } else {
-                            alert("Localização não encontrada.");
+                            alert("Localização não encontrada. Tente termos mais específicos.");
                         }
                     })
                     .catch(err => {
-                        console.error("Erro ao buscar localização:", err);
-                        alert("Não foi possível realizar a busca no momento.");
+                        console.error("Erro ao buscar localização no Nominatim:", err);
+                        alert("Não foi possível realizar a busca no momento. Verifique sua conexão ou tente mais tarde.");
                         inputBuscaLocal.placeholder = originalPlaceholder;
                         inputBuscaLocal.disabled = false;
                     });
             }
-            inputBuscaLocal.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    buscarLocalizacao(); 
-                }
-            });
-            btnBuscaLocal.addEventListener('click', () => {
-                buscarLocalizacao(); 
-            });
 
-            // ... (Lógica do botão Continuar - sem alteração) ...
-            // (Esta lógica agora funciona, pois o localStorage estará correto)
+            if (inputBuscaLocal && btnBuscaLocal) {
+                inputBuscaLocal.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        buscarLocalizacaoMapa();
+                    }
+                });
+                btnBuscaLocal.addEventListener('click', buscarLocalizacaoMapa);
+            } else {
+                 console.error("Elementos 'busca-local' ou 'btn-busca-local' não encontrados.");
+            }
+
+            // --- Lógica do Botão Continuar (Navegação) ---
             const btnContinuar = document.querySelector('.btn-continuar-entrega');
             if (btnContinuar) {
                 btnContinuar.addEventListener('click', () => {
-                    
-                    const freteSelecionado = document.querySelector('input[name="forma-entrega"]:checked').value;
-                    
+                    const freteSelecionadoRadio = document.querySelector('input[name="forma-entrega"]:checked');
+                    if (!freteSelecionadoRadio) {
+                        alert("Por favor, selecione uma forma de entrega.");
+                        return;
+                    }
+                    const freteSelecionado = freteSelecionadoRadio.value;
+
+                    // Garante que 'dadosEntrega' está atualizado no localStorage
+                    // Se 'endereco' estiver selecionado, usa os dados padrão (ou os editados se implementado)
                     if (freteSelecionado === 'endereco') {
-                        const dadosHome = {
-                            tipo: 'endereco',
-                            nome: 'Fulano Silva', 
-                            documento: '123.456.789-00', 
-                            endereco: 'Exemplo Fictício, 123',
-                            bairro: 'Centro',
-                            cep: '13180-000',
-                            municipio: 'Hortolândia',
-                            uf: 'SP',
-                            fone: '(19) 99999-9999'
-                        };
-                        localStorage.setItem('dadosEntrega', JSON.stringify(dadosHome));
-                    
-                    } else { // freteSelecionado === 'agencia'
-                        
-                        const dadosAtuaisJSON = localStorage.getItem('dadosEntrega');
-                        let dadosAtuais = null;
-                        if (dadosAtuaisJSON) {
-                            try { dadosAtuais = JSON.parse(dadosAtuaisJSON); } catch(e) {}
+                        // Tenta pegar dados editados, se não, usa o padrão
+                        const dadosEditadosJSON = localStorage.getItem('dadosEntrega');
+                        let dadosEditados = null;
+                        try { dadosEditados = dadosEditadosJSON ? JSON.parse(dadosEditadosJSON) : null; } catch(e){}
+
+                        // Usa dados editados APENAS se o tipo for 'endereco', senão usa o default
+                        if(dadosEditados && dadosEditados.tipo === 'endereco') {
+                             // Já está salvo, não precisa fazer nada
+                        } else {
+                            // Salva os dados padrão de endereço se não houver edição ou se era agência antes
+                             const dadosHomeDefault = {
+                                tipo: 'endereco',
+                                nome: 'Fulano Silva', // Idealmente viria de um cadastro
+                                documento: '123.456.789-00', // Idealmente viria de um cadastro
+                                endereco: 'Exemplo Fictício, 123', // Padrão
+                                bairro: 'Centro',
+                                cep: '13180-000',
+                                municipio: 'Hortolândia',
+                                uf: 'SP',
+                                fone: '(19) 99999-9999' // Idealmente viria de um cadastro
+                            };
+                            localStorage.setItem('dadosEntrega', JSON.stringify(dadosHomeDefault));
                         }
 
-                        if (!dadosAtuais || dadosAtuais.tipo !== 'agencia') {
+                    } else { // freteSelecionado === 'agencia'
+                        // Verifica se uma agência foi realmente selecionada e salva no localStorage
+                        // A lógica no '.btn-escolher' já deve ter salvo os dados corretos.
+                        const dadosAgenciaJSON = localStorage.getItem('dadosEntrega');
+                        let dadosAgencia = null;
+                         try { dadosAgencia = dadosAgenciaJSON ? JSON.parse(dadosAgenciaJSON) : null; } catch(e){}
+
+                        // Se ainda não salvou (ex: carregou a página e clicou direto em continuar com agência selecionada por padrão)
+                        // salva a agência padrão
+                        if (!dadosAgencia || dadosAgencia.tipo !== 'agencia') {
                              const dadosDefaultAgencia = {
                                 tipo: 'agencia',
-                                nome: 'Agência - LOJA 1', 
-                                documento: 'ISENTO', 
-                                endereco: 'RUA LUIZ CAMILO DE CAMARGO, 581', 
+                                nome: 'Agência - LOJA 1', // Agência padrão
+                                documento: 'ISENTO',
+                                endereco: 'RUA LUIZ CAMILO DE CAMARGO, 581',
                                 bairro: 'Centro',
                                 municipio: 'Hortolândia',
                                 cep: '13184-230',
                                 uf: 'SP',
-                                fone: '(19) 3888-8888' 
+                                fone: '(19) 3888-8888'
                             };
                              localStorage.setItem('dadosEntrega', JSON.stringify(dadosDefaultAgencia));
                         }
                     }
-                    
+
+                    // Navega para a próxima página
                     window.location.href = 'tela_pagamento.html';
                 });
+            } else {
+                 console.error("Botão '.btn-continuar-entrega' não encontrado.");
             }
 
-            }); // <-- Fim do DOMContentLoaded
+             // --- Ajuste para checkbox "Sem número" ---
+             const checkboxSemNumero = document.getElementById('sem-numero');
+             const inputNumero = document.getElementById('numero');
+             if (checkboxSemNumero && inputNumero) {
+                 checkboxSemNumero.addEventListener('change', function() {
+                     inputNumero.disabled = this.checked;
+                     if (this.checked) {
+                         inputNumero.value = ''; // Limpa o número se marcar "sem número"
+                     }
+                 });
+             }
+
+             // --- Lógica contador de caracteres ---
+             const textareaInfo = document.getElementById('info-adicional');
+             const contadorSpan = document.querySelector('.char-contador');
+             if(textareaInfo && contadorSpan) {
+                 textareaInfo.addEventListener('input', () => {
+                     const currentLength = textareaInfo.value.length;
+                     contadorSpan.textContent = `${currentLength} / 128`;
+                 });
+                 // Inicializa contador
+                 contadorSpan.textContent = `${textareaInfo.value.length} / 128`;
+             }
+
+        }); // <-- FIM do DOMContentLoaded
 
     </script>
 </body>

@@ -257,10 +257,10 @@
             doc.rect(margemEsq, y, 190, 30); 
             doc.line(margemEsq, y + 10, margemDir, y + 10); 
             doc.line(margemEsq, y + 20, margemDir, y + 20); 
-            doc.line(120, y, 120, y + 20);
-            doc.line(160, y, 160, y + 20);
-            doc.line(120, y + 20, 120, y + 30);
-            doc.line(160, y + 20, 160, y + 30); 
+            doc.line(120, y, 120, y + 20); // Linha vertical (divide col 1 e 2)
+            doc.line(160, y, 160, y + 20); // Linha vertical (divide col 2 e 3)
+            doc.line(120, y + 20, 120, y + 30); // Linha vertical (divide col 1 e 2)
+            doc.line(160, y + 20, 160, y + 30); // Linha vertical (divide col 2 e 3)
 
             // Títulos
             doc.setFontSize(7);
@@ -275,17 +275,54 @@
             doc.text("UF", 121, y + 23); 
             doc.text("FONE/FAX", 161, y + 23); 
             
-            // Dados Dinâmicos
+            
+            // ==========================================================
+            // === INÍCIO DA CORREÇÃO (Dados Dinâmicos com Truncamento) ===
+            // ==========================================================
             doc.setFontSize(10);
-            doc.text(entrega.nome, margemEsq + 1, y + 7); 
-            doc.text(entrega.documento, 121, y + 7);      
+            
+            // --- Cálculo da Largura das Colunas (em mm) ---
+            // Coluna 1 (Nome/Endereço/Município): Início: 11 (margemEsq + 1), Fim: 120. Largura: 109mm
+            // Coluna 2 (CPF/Bairro/UF): Início: 121, Fim: 160. Largura: 39mm
+            // Coluna 3 (IE/CEP/Fone): Início: 161, Fim: 200. Largura: 39mm
+            
+            const col1_largura = 109; // (120 - (margemEsq + 1))
+            const col2_largura = 39;  // (160 - 121)
+            const col3_largura = 39;  // (200 - 161)
+
+            // --- LINHA 1 ---
+            // Trunca o texto se for maior que a coluna
+            let nomeSplit = doc.splitTextToSize(entrega.nome || '', col1_largura);
+            doc.text(nomeSplit[0], margemEsq + 1, y + 7); 
+            
+            let docSplit = doc.splitTextToSize(entrega.documento || '', col2_largura);
+            doc.text(docSplit[0], 121, y + 7);      
+            
             doc.text("ISENTO", 161, y + 7);
-            doc.text(entrega.endereco, margemEsq + 1, y + 17); 
-            doc.text(entrega.bairro, 121, y + 17);
-            doc.text(entrega.cep, 161, y + 17);
-            doc.text(entrega.municipio, margemEsq + 1, y + 27);
-            doc.text(entrega.uf, 121, y + 27); 
-            doc.text(entrega.fone, 161, y + 27); 
+
+            // --- LINHA 2 (A CORREÇÃO PRINCIPAL) ---
+            // Trunca o texto do endereço se for maior que a coluna
+            let enderecoSplit = doc.splitTextToSize(entrega.endereco || '', col1_largura);
+            doc.text(enderecoSplit[0], margemEsq + 1, y + 17); // Pega apenas a primeira linha
+            
+            let bairroSplit = doc.splitTextToSize(entrega.bairro || '', col2_largura);
+            doc.text(bairroSplit[0], 121, y + 17);
+            
+            let cepSplit = doc.splitTextToSize(entrega.cep || '', col3_largura);
+            doc.text(cepSplit[0], 161, y + 17);
+
+            // --- LINHA 3 ---
+            let municipioSplit = doc.splitTextToSize(entrega.municipio || '', col1_largura);
+            doc.text(municipioSplit[0], margemEsq + 1, y + 27);
+            
+            doc.text(entrega.uf || '', 121, y + 27); // UF é curto, não precisa de split
+            
+            let foneSplit = doc.splitTextToSize(entrega.fone || '', col3_largura);
+            doc.text(foneSplit[0], 161, y + 27); 
+            
+            // ==========================================================
+            // === FIM DA CORREÇÃO ===
+            // ==========================================================
 
             y += 35; 
             
