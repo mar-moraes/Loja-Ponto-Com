@@ -314,7 +314,8 @@ body {
 
 .form-grupo input[type="text"],
 .form-grupo input[type="search"],
-.form-grupo input[type="tel"], 
+.form-grupo input[type="tel"],
+.form-grupo input[type="number"],
 .form-grupo textarea {
     width: 100%;
     padding: 12px;
