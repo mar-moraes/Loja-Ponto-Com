@@ -1,0 +1,326 @@
+/* ===========================
+   VARIÁVEIS DE COR E PADRÕES
+   =========================== */
+   :root {
+    --yellow: #ffdf00;
+    --muted: #efefef;
+    --card-bg: #ffffff;
+    --text: #222;
+  }
+  
+  * {
+    box-sizing: border-box;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+  }
+  
+  body {
+    margin: 0;
+    background: var(--muted);
+    color: var(--text);
+  }
+  
+  /* barra fixa */
+  .topbar {
+    background: var(--yellow);
+    padding: 10px 0; /* Define altura pelo padding vertical */
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+
+  /* Container principal dentro da barra */
+  .topbar .actions {
+    max-width: 1100px; /* Largura máxima do conteúdo */
+    margin: 0 auto;     /* Centraliza o container */
+    padding: 0 20px;  /* Padding horizontal DE 20px (define o recuo do logo) */
+    height: auto;       
+
+    display: flex;
+    justify-content: space-between; /* Empurra logo e resto para as pontas */
+    align-items: center;
+    /* Sem gap aqui */
+  }
+
+  /* Container específico do logo (opcional, mas bom para consistência) */
+  /* .topbar .logo-container {
+  } */
+
+  /* Espaçamento APENAS para os itens da direita */
+  .topbar .actions > form { /* Adiciona espaçamento antes do form se ele não for o primeiro item (caso logo exista)*/
+      margin-left: 20px; /* Ou use gap no container dos itens da direita */
+  }
+
+  .topbar .actions > div:last-child { /* Seleciona a div dos links "Crie sua conta", "Entre", "Carrinho" */
+    display: flex;
+    gap: 30px; /* Mantém o gap entre os links da direita */
+    align-items: center;
+  }
+
+  .topbar a {
+    color: #000;
+    text-decoration: none;
+  }
+  
+  /* logotipo (imagem central)*/
+/* Swiper Hero (Carrossel) */
+.hero {
+  height: 350px; /* Altura do banner */
+  background: #f3f3f3; /* Fundo enquanto as imagens carregam */
+  border-bottom: 1px solid #e6e6e6;
+  
+  /* Remove o 'display: flex' para o swiper preencher */
+  display: block; 
+  align-items: initial;
+  justify-content: initial;
+  position: relative;
+}
+
+/* Você pode remover a regra .logo, ela não é mais usada */
+/* .logo {
+  display: none;
+} */
+
+/* =================================== */
+/* ADICIONE ESTES ESTILOS NOVOS        */
+/* =================================== */
+.hero-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+/* ISSO É O QUE VOCÊ QUER DE VOLTA (USAR) */
+.hero-swiper .swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Centraliza a imagem de fundo */
+  background-position: center;
+  background-size: cover; /* <-- VOLTAMOS PARA 'COVER' */
+}
+/* Estiliza as setas e bolinhas com a cor 
+  amarela principal do seu site (var(--yellow))
+ 
+*/
+.hero-swiper .swiper-button-prev,
+.hero-swiper .swiper-button-next {
+  color: var(--yellow);
+  font-weight: bold;
+
+  opacity: 0; /* Esconde as setas por padrão */
+  transition: opacity 0.2s ease-in-out; /* Adiciona um fade suave */
+}
+
+/* Mostra as setas quando o mouse passa sobre o container .hero */
+.hero:hover .swiper-button-prev,
+.hero:hover .swiper-button-next {
+  opacity: 1; /* Mostra as setas */
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+  background-color: var(--yellow);
+}
+  /* layout do container*/
+  .container {
+    width: 1100px;
+    max-width: calc(100% - 40px); /* posição dele na página */
+    margin: 28px auto; /* sua centralização na página*/
+  }
+  
+  /* "ordenar por"*/
+  .controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 18px;
+    color: #6b6b6b;
+  }
+  
+  .controls select { /* tamanho do botão respectivo ao "ordenar por" */
+    margin-left: 10px; /* sua posação na página*/
+    padding: 6px; /* largura do "botão" 'mais relevantes'*/
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+  
+  /* lista de produtos */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px; /* largura do container*/
+  }
+  
+  .card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* <-- ADICIONE ESTA LINHA */
+  }
+  
+  .thumb {
+    height: 170px; /* altura do container */
+    border-radius: 6px;
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 12px;
+    overflow: hidden; /* <-- ADICIONE ESTA LINHA */
+    /* transition: transform 0.2s ease-out; <-- ADICIONE ESTA LINHA */
+  }
+  
+  .title { /* nome do produto*/
+    font-size: 14px;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    font-weight: bolder;
+    color: #333;
+    min-height: 42px;
+  }
+  
+  .price {
+    font-weight: 700;
+    font-size: 18px;
+    color: #000;
+  }
+  
+  .old { /* se desejar adicionar um valor antigo */
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 8px;
+  }
+  
+  .badge {
+    color: #2a9d8f;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+  
+  .parcel {
+    font-size: 12px;
+    color: #777;
+  }
+  
+  /* responsividade */
+  @media (max-width: 600px) {
+    .hero {
+      height: 140px;
+    }
+  
+    .topbar {
+      height: 52px;
+      padding: 0 12px;
+    }
+  
+    .controls {
+      justify-content: flex-start;
+    }
+  }
+  
+/* --- ADIÇÃO PARA LINKS DE PRODUTO --- */
+
+/* Remove a decoração de link padrão dos cards */
+/* Substitua o bloco "a.card-link:hover .card { ... }" por este: */
+
+/* Efeito de levantar o card no hover (para todos os cards) */
+.card:hover,
+a.card-link:hover .card {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Efeito de zoom na imagem (thumb) no hover (para todos os cards) */
+/* .card:hover .thumb,
+a.card-link:hover .thumb {
+  transform: scale(1.05);
+} */
+
+/* E por fim, remova a 'transition' duplicada 
+  da regra 'a.card-link .card' 
+*/
+a.card-link .card {
+  /* transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; */ /* <-- REMOVA OU COMENTE ESTA LINHA */
+  flex-grow: 1; 
+} 
+
+a.card-link:hover .card {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Corrige o tamanho de cards que são links 
+  para que se alinhem com os outros.
+*/
+a.card-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none; /* Remove o sublinhado do link */
+}
+
+
+/* =================================== */
+/* ESTILOS DA AVALIAÇÃO (ESTRELAS) NO CARD */
+/* =================================== */
+
+.card-avaliacao {
+  /* Espaçamento entre o título e as estrelas, e as estrelas e o preço */
+  margin-top: 4px;
+  margin-bottom: 8px;
+  /* Garante que o layout não quebre mesmo se não houver estrelas */
+  min-height: 18px; 
+}
+
+.card-avaliacao .star {
+  font-size: 18px;    /* Tamanho menor para o card */
+  color: #ccc;       /* Cor da estrela vazia */
+  margin-right: 1px;
+}
+
+/* Cor da estrela preenchida (mesma de estilo_produto.css) */
+.card-avaliacao .star.filled {
+  color: #FFC107; 
+}
+
+/* ===========================
+   REGRAS DE RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+    /* Ajusta o cabeçalho */
+    .topbar .actions {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 15px; /* Menos padding lateral */
+    }
+    
+    /* Faz a barra de pesquisa ocupar 100% e ir para baixo */
+    .topbar .actions form {
+        width: 100%;
+        order: 3; /* Coloca o form por último */
+        margin-left: 0;
+    }
+    
+    /* Alinha o logo e os links de conta/carrinho */
+    .topbar .actions .logo-container {
+        flex-grow: 1; /* Ocupa espaço à esquerda */
+    }
+    .topbar .actions > div:last-child {
+        width: auto; /* Links de "Entre", "Carrinho" */
+        gap: 15px; /* Menos espaço entre os links */
+    }
+    
+    /* Reduz o padding do container principal */
+    .container {
+        width: calc(100% - 20px);
+        margin: 15px auto;
+    }
+
+    /* Ajusta a grade para uma coluna em telas muito pequenas */
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+    }
+}

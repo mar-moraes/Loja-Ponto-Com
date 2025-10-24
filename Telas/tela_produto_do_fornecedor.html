@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Novo Produto</title>
+
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="estilo_carrinho.css">
+  <link rel="stylesheet" href="estilo_produto.css">
+  <link rel="stylesheet" href="estilo_entrega.css"> 
+
+</head>
+
+<body>
+    <header class="topbar">
+      <nav class="actions"> 
+        <div class="logo-container"> 
+            <a href="index.html" style="display: flex; align-items: center;">
+              <img src="imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px;">
+            </a>
+          </div> 
+        
+        <form action="buscar.php" method="GET" style="position: relative; width: 600px; max-width: 100%;">
+          
+          <input type="search" id="pesquisa" name="q" placeholder="Digite sua pesquisa..." style="font-size: 16px; width: 100%; height: 40px; padding-left: 15px; padding-right: 45px; border-radius: 6px; border: none; box-sizing: border-box;">
+          
+          <button type="submit" style="position: absolute; right: 0; top: 0; height: 40px; width: 45px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <img src="imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px; opacity: 0.6;">
+          </button>
+        </form>
+        
+        <div style="display: flex; gap: 30px; align-items: center;">
+          <a href="#">Crie a sua conta</a>
+          <a href="#">Entre</a>
+          <a href="tela_carrinho.html" style="display: flex; align-items: center; gap: 5px;">
+            Carrinho
+            <img src="imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
+          </a>
+        </div>
+      </nav>
+    </header>
+
+      <main class="produto-container" 
+          data-title="" 
+          data-price="" 
+          data-img="">
+      
+      <div class="coluna-galeria" style="display: block;">
+        
+        <!-- <label for="produto-imagens" style="font-weight: 500; margin-bottom: 5px; display: block; font-size: 14px; color: #333;">Imagens do produto:</label> -->
+        
+        <div style="display: flex; gap: 15px;">
+            
+            <div class="thumbnails" id="thumbnails-container">
+              </div>
+            
+            <div class="imagem-principal-container" style="display: flex; flex-direction: column;">
+              
+              <img src="" alt="Imagem Principal do Produto" id="imagem-principal" style="background-color: #f0f0f0; border: 1px dashed #ccc; min-height: 400px; display: block; width: 100%;">
+              
+              <div class="form-grupo" style="margin-top: 15px;">
+                  <input type="file" id="produto-imagens" multiple accept="image/*" style="display: none;">
+                  <button type="button" class="btn-acao btn-adicionar" onclick="document.getElementById('produto-imagens').click();">
+                      Selecionar Imagens
+                  </button>
+              </div>
+              </div>
+        </div>
+        
+      </div>
+
+      <div class="coluna-info">
+ 
+        <div class="produto-preco">
+            
+            <div class="form-linha">
+                <div class="form-grupo" style="flex-basis: 60%;"> 
+                    <label for="produto-preco">Preço (Ex: 199.90)</label>
+                    <input type="number" class="price" id="produto-preco" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-grupo" style="flex-basis: 40%;">
+                    <label for="produto-badge" style="text-align: center;">Desconto (%)</label>
+                    <input type="number" class="badge" id="produto-badge" min="0" max="100" placeholder="Opcional">
+                </div>
+            </div>
+
+            <button onclick="calcular()" class="btn-acao btn-adicionar" style="width: calc(60% - 9px); padding: 8px 12px; margin-top: 10px;">Calcular desconto</button>
+            
+            <span class="old" id="produto-preco-antigo" style="display: block; margin-top: 10px;"></span>
+            <span class="new" id="produto-preco-novo" style="font-size: 18px;"></span>
+        </div>
+
+        <script>
+        // ... (Scripts 'calcular' e 'salvarProduto' permanecem iguais) ...
+        function calcular() {
+            let preco = parseFloat(document.getElementById("produto-preco").value);
+            let desconto = parseFloat(document.getElementById("produto-badge").value);
+
+            if (isNaN(preco) || preco <= 0) {
+                alert("Digite um preço válido."); return;
+            }
+            if (isNaN(desconto)) desconto = 0;
+            if (desconto < 0) desconto = 0;
+            if (desconto > 100) desconto = 100;
+
+            let precoFinal = preco * (1 - desconto / 100);
+            const formatar = (valor) => valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+            const precoAntigoEl = document.getElementById("produto-preco-antigo");
+            const precoNovoEl = document.getElementById("produto-preco-novo");
+
+            if (desconto > 0) {
+                precoAntigoEl.textContent = `De: ${formatar(preco)}`;
+                precoAntigoEl.style.textDecoration = "line-through";
+                precoNovoEl.textContent = `Por: ${formatar(precoFinal)} (${desconto}% OFF)`;
+            } else {
+                precoAntigoEl.textContent = "";
+                precoNovoEl.textContent = `Preço: ${formatar(preco)}`;
+            }
+            localStorage.setItem("precoComDesconto", precoFinal.toFixed(2));
+        }
+
+        function salvarProduto() {
+            const titulo = document.getElementById("produto-titulo")?.value || "Produto sem nome";
+            const preco = parseFloat(document.getElementById("produto-preco").value);
+            const desconto = parseFloat(document.getElementById("produto-badge").value) || 0;
+            const quantidade = parseInt(document.getElementById("produto-quantidade").value) || 0;
+            
+            const imagemSrc = document.getElementById("imagem-principal").src;
+
+            if (isNaN(preco) || preco <= 0) {
+                alert("Digite um preço válido para salvar."); return;
+            }
+            if (quantidade < 0) {
+                alert("A quantidade não pode ser negativa."); return;
+            }
+
+            const precoFinal = preco * (1 - desconto / 100);
+
+            const produto = {
+                titulo,
+                preco: preco.toFixed(2),
+                desconto: desconto.toFixed(2),
+                quantidade,
+                precoFinal: precoFinal.toFixed(2),
+                imagem: imagemSrc 
+            };
+
+            localStorage.setItem("produtoEditado", JSON.stringify(produto));
+            console.log("Produto salvo:", produto);
+        }
+        </script>
+
+        <div class="form-grupo" style="margin-top: 15px;">
+            <div class="form-linha" style="align-items: center;">
+                
+                <label class="label-quantidade" for="produto-quantidade" style="margin-bottom: 0; flex: 1; font-weight: 500; font-size: 16px;">Quantidade disponível:</label>
+                <div class="form-grupo" style="flex: 1; margin-bottom: 0;">
+                    <input type="number" id="produto-quantidade" min="0" placeholder="Ex: 50">
+                </div>
+            </div>
+        </div>
+        <div class="especificacoes-rapidas" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+            <div class="produto-avaliacao">
+                <span class="star" data-value="1">&#9734;</span>
+                <span class="star" data-value="2">&#9734;</span>
+                <span class="star" data-value="3">&#9734;</span>
+                <span class="star" data-value="4">&#9734;</span>
+                <span class="star" data-value="5">&#9734;</span>
+            </div>          
+
+            <div class="form-grupo">
+                <label for="descricao-rapida">O que você precisa saber (breve descrição):</label>
+                <textarea id="descricao-rapida" placeholder="Compatível com outros conjuntos LEGO..." style="min-height: 100px;"></textarea>
+            </div>
+        </div>
+
+        </div>
+    </main>
+    
+    <div class="detalhes-produto-container">
+      <section id="caracteristicas" class="detalhe-bloco">
+        <h2>Características principais</h2>
+        
+        <div class="caracteristicas-tabela">
+          <div class="caracteristica-item">
+            <span>Marca</span>
+            <input type="text" name="marca" required>
+          </div>
+          <div class="caracteristica-item">
+            <span>Linha</span>
+            <input type="text" name="linha" required>
+          </div>
+          <div class="caracteristica-item">
+            <span>Modelo</span>
+            <input type="text" name="modelo" required>
+          </div>
+          <div class="caracteristica-item">
+            <span>Tipo de alimentação</span>
+            <input type="text" name="tipo_alimentacao" required>
+          </div>
+          <div class="caracteristica-item">
+            <span>Cor</span>
+            <input type="text" name="cor" required>
+          </div>
+        </div>
+      </section>
+
+      <section id="descricao" class="detalhe-bloco">
+        <h2>Descrição do produto</h2>
+        <textarea name="descricao" required style="min-height: 150px; width: 100%;"></textarea>
+      </section>
+
+      <div class="botoes-acao" style="margin-top: 20px;">
+          <button class="btn-acao btn-comprar" id="btn-enviar">Enviar</button>
+      </div>
+
+    </div>
+
+  <script>
+    // ... (Scripts no final da página permanecem iguais) ...
+  
+  // --- 1. SELETORES DOS ELEMENTOS ---
+  const container = document.querySelector(".produto-container");
+  const imagemPrincipal = document.getElementById("imagem-principal");
+  
+  // Seletores para o upload de imagem
+  const thumbnailsContainer = document.getElementById("thumbnails-container");
+  const inputImagens = document.getElementById("produto-imagens");
+  
+  // Seletor do botão Enviar
+  const btnEnviar = document.getElementById("btn-enviar");
+
+  // --- 2. LÓGICA DA GALERIA ---
+  
+  // Função que troca a imagem principal ao passar o mouse no thumbnail
+  function mudarImagem(thumbElement) {
+    imagemPrincipal.src = thumbElement.src;
+    
+    const allThumbs = document.querySelectorAll(".thumb-img");
+    allThumbs.forEach(thumb => thumb.classList.remove("active"));
+    
+    thumbElement.classList.add("active");
+  }
+
+  // 3. NOVO: LÓGICA DE UPLOAD E PREVIEW DE IMAGEM
+  inputImagens.addEventListener("change", (event) => {
+      thumbnailsContainer.innerHTML = ""; 
+      imagemPrincipal.src = ""; 
+      
+      const files = event.target.files;
+      if (!files) return;
+
+      Array.from(files).forEach((file, index) => {
+          const reader = new FileReader();
+          
+          reader.onload = (e) => {
+              const imgUrl = e.target.result;
+              
+              const thumbImg = document.createElement("img");
+              thumbImg.src = imgUrl;
+              thumbImg.alt = `Thumb ${index + 1}`;
+              thumbImg.classList.add("thumb-img");
+              thumbImg.setAttribute("onmouseover", "mudarImagem(this)");
+              
+              if (index === 0) {
+                  imagemPrincipal.src = imgUrl;
+                  imagemPrincipal.style.background = 'none'; 
+                  thumbImg.classList.add("active");
+              }
+              
+              thumbnailsContainer.appendChild(thumbImg);
+          };
+          
+          reader.readAsDataURL(file);
+      });
+  });
+
+
+  // --- 4. LÓGICA DAS AÇÕES ---
+
+  btnEnviar.addEventListener("click", () => {
+    salvarProduto(); 
+    
+    alert("Produto enviado! Redirecionando para a página principal.");
+    window.location.href = "index.html";
+  });
+
+
+  // --- 5. LÓGICA DE AVALIAÇÃO (ESTRELAS) ---
+  const stars = document.querySelectorAll(".produto-avaliacao .star");
+  const starContainer = document.querySelector(".produto-avaliacao");
+  
+  let currentRating = 0; 
+
+  function drawStars(rating) {
+    stars.forEach(star => {
+      const starValue = parseInt(star.dataset.value);
+      
+      if (starValue <= rating) {
+        star.classList.add("filled");
+        star.innerHTML = "&#9733;";
+      } else {
+        star.classList.remove("filled");
+        star.innerHTML = "&#9734;";
+      }
+    });
+  }
+
+  stars.forEach(star => {
+    star.addEventListener("mouseover", () => {
+      const rating = parseInt(star.dataset.value);
+      drawStars(rating); 
+    });
+
+    star.addEventListener("click", () => {
+      currentRating = parseInt(star.dataset.value); 
+      const titulo = document.getElementById("produto-titulo").value || "novo_produto";
+      localStorage.setItem("rating_" + titulo, currentRating);
+      drawStars(currentRating);
+    });
+  });
+
+  starContainer.addEventListener("mouseleave", () => {
+    drawStars(currentRating);
+  });
+
+</script>
+</body>
+</html>
