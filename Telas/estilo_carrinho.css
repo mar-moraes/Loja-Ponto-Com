@@ -300,3 +300,58 @@ body {
 .recomendacoes-swiper .swiper-button-next {
   right: -5px; /* Posição seta direita */
 }
+/* ===========================
+   REGRAS DE RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+    .carrinho-layout-container {
+        padding: 10px;
+    }
+    
+    /* Faz o resumo ocupar 100% e desativa o "sticky" */
+    .resumo-container {
+        flex-basis: 100%;
+        position: static; /* Desativa o "sticky" */
+    }
+
+    /* Ajusta o padding do contêiner de recomendações */
+    .recomendacoes-container {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    /* --- Regras para o produto gerado por JavaScript --- */
+    
+    /* Força o produto no carrinho a empilhar verticalmente */
+    /* Usamos !important para sobrescrever o "style" inline do JS */
+    .produto[style*="display: flex"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    
+    /* Faz a imagem ocupar 100% da largura do card */
+    .produto img {
+        width: 100%;
+        height: 150px;
+        margin-bottom: 10px;
+    }
+    
+    /* Força o container (título, contador, preço) a empilhar */
+    div[style*="display: flex; justify-content: space-between;"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+        width: 100%;
+    }
+    
+    /* Ajusta o contador para não ter margem excessiva */
+    .contador-container {
+        margin-right: 0;
+    }
+
+    /* Permite que os botões (Comprar, Salvar, Excluir) quebrem a linha */
+    div[style*="display: flex; align-items: center; gap: 15px;"] {
+        flex-wrap: wrap;
+    }
+}

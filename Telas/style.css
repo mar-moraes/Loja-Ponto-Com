@@ -43,9 +43,8 @@
   }
 
   /* Container específico do logo (opcional, mas bom para consistência) */
-  .topbar .logo-container {
-    /* Estilos específicos se precisar */
-  }
+  /* .topbar .logo-container {
+  } */
 
   /* Espaçamento APENAS para os itens da direita */
   .topbar .actions > form { /* Adiciona espaçamento antes do form se ele não for o primeiro item (caso logo exista)*/
@@ -245,7 +244,7 @@ a.card-link:hover .thumb {
 a.card-link .card {
   /* transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; */ /* <-- REMOVA OU COMENTE ESTA LINHA */
   flex-grow: 1; 
-}
+} 
 
 a.card-link:hover .card {
   transform: translateY(-4px);
@@ -283,4 +282,45 @@ a.card-link {
 /* Cor da estrela preenchida (mesma de estilo_produto.css) */
 .card-avaliacao .star.filled {
   color: #FFC107; 
+}
+
+/* ===========================
+   REGRAS DE RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+    /* Ajusta o cabeçalho */
+    .topbar .actions {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 15px; /* Menos padding lateral */
+    }
+    
+    /* Faz a barra de pesquisa ocupar 100% e ir para baixo */
+    .topbar .actions form {
+        width: 100%;
+        order: 3; /* Coloca o form por último */
+        margin-left: 0;
+    }
+    
+    /* Alinha o logo e os links de conta/carrinho */
+    .topbar .actions .logo-container {
+        flex-grow: 1; /* Ocupa espaço à esquerda */
+    }
+    .topbar .actions > div:last-child {
+        width: auto; /* Links de "Entre", "Carrinho" */
+        gap: 15px; /* Menos espaço entre os links */
+    }
+    
+    /* Reduz o padding do container principal */
+    .container {
+        width: calc(100% - 20px);
+        margin: 15px auto;
+    }
+
+    /* Ajusta a grade para uma coluna em telas muito pequenas */
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+    }
 }
