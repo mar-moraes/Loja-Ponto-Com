@@ -1,0 +1,117 @@
+erDiagram
+    USERS {
+        int id PK
+        string nome
+        string email
+        string cpf
+        string senha
+        string telefone
+        datetime data_cadastro
+        string tipo
+    }
+
+    ADDRESSES {
+        int id PK
+        int usuario_id FK
+        string cep
+        string rua
+        string numero
+        string bairro
+        string cidade
+        string estado
+        string pais
+    }
+
+    CART {
+        int id PK
+        int usuario_id FK
+        datetime data_atualizacao
+    }
+
+    CART_ITEMS {
+        int id PK
+        int carrinho_id FK
+        int produto_id FK
+        int quantidade
+    }
+
+    CATEGORIES {
+        int id PK
+        string nome
+        string descricao
+    }
+
+    PRODUCTS {
+        int id PK
+        string nome
+        string descricao
+        float preco
+        int categoria_id FK
+        int estoque
+        string imagem_url
+        string status
+    }
+
+    ORDERS {
+        int id PK
+        int usuario_id FK
+        int endereco_id FK
+        datetime data_pedido
+        string status
+        float valor_total
+    }
+
+    ORDER_ITEMS {
+        int id PK
+        int pedido_id FK
+        int produto_id FK
+        int quantidade
+        float preco_unitario
+    }
+
+    PAYMENTS {
+        int id PK
+        int pedido_id FK
+        string metodo
+        string status
+        datetime data_pagamento
+        float valor_pago
+    }
+
+    SHIPMENTS {
+        int id PK
+        int pedido_id FK
+        string codigo_rastreio
+        string transportadora
+        datetime data_envio
+        string status_entrega
+    }
+
+    REVIEWS {
+        int id PK
+        int usuario_id FK
+        int produto_id FK
+        int nota
+        string comentario
+        datetime data_avaliacao
+    }
+
+    %% Definição das Relações
+    USERS ||--o{ ADDRESSES : "possui"
+    USERS ||--|| CART : "tem_um"
+    USERS ||--o{ ORDERS : "faz"
+    USERS ||--o{ REVIEWS : "escreve"
+
+    ADDRESSES ||--o{ ORDERS : "envia_para"
+
+    CATEGORIES ||--o{ PRODUCTS : "contém"
+
+    PRODUCTS ||--o{ REVIEWS : "recebe"
+    PRODUCTS }o--o{ CART_ITEMS : "contido_em"
+    PRODUCTS }o--o{ ORDER_ITEMS : "contido_em"
+
+    CART ||--o{ CART_ITEMS : "contém_itens"
+
+    ORDERS ||--o{ ORDER_ITEMS : "contém_itens"
+    ORDERS ||--|| PAYMENTS : "gera"
+    ORDERS ||--|| SHIPMENTS : "gera"

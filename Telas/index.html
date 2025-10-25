@@ -4,10 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Loja Ponto Com</title>
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="estilos/style.css">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
@@ -80,96 +78,55 @@
     <!-- Grade de produtos -->
     <section class="grid">
 
-      <!-- Exemplo do layout Produto -->
-      <article class="card" data-price="6"> <!-- "data-price" é necessário para se ordensr os itens, ssendo ele o valor atual-->
-        <div class="thumb" style="background-image:url('adicionar imagem')"></div>
-        <div class="title">Nome do produto</div>
-        <div>
-          <span class="old">preço antigo</span>
-          <span class="price">preço</span>
-          <span class="badge">porcentagem de desconto</span>
-          <span class="parcel"> parcelas </span>
-        </div>
-      </article>
-
-      <!-- Produto de Exemplo --> 
-      <a href="tela_produto.html" class="card-link">
-        <article class="card" data-price="159.79">
-          <div class="thumb" style="background-image:url('imagens/Zane lego.jpg')"></div>
-          <div class="title">LEGO NINJAGO!!</div>
-          <div class="card-avaliacao"></div>
-          <div>
-            <span class="old">R$ 199,99</span>
-            <span class="price">R$ 159,79</span>
-            <span class="badge">21% OFF</span> 
-            <span class="parcel">12x sem juros no CARTÃO</span>
-          </div>
-        </article>
-      </a>
-
-      <!-- Modelo para edição -->
-      <article class="card" data-price="">
-        <div class="thumb" style="background-image:url('')"></div>
-        <div class="title"></div>
-        <div class="card-avaliacao"></div>
-        <div>
-          <span class="old"></span>
-          <span class="price"></span>
-          <span class="badge"></span>
-          <span class="parcel"></span>
-          <div><di/v>
-        </div>
-      </article>
-
-      <!-- Card Vazio Cópia --> 
-      <article class="card" data-price="">
-        <div class="thumb" style="background-image:url('')"></div>
-        <div class="title"></div>
-        <div class="card-avaliacao"></div>
-        <div>
-          <span class="old"></span>
-          <span class="price"></span>
-          <span class="badge"></span>
-          <span class="parcel"></span>
-          <div><di/v>
-        </div>
-      </article>
-
-      <!-- Card Vazio Cópia -->
-      <article class="card" data-price="">
-        <div class="thumb" style="background-image:url('')"></div>
-        <div class="title"></div>
-        <div class="card-avaliacao"></div>
-        <div>
-          <span class="old"></span>
-          <span class="price"></span>
-          <span class="badge"></span>
-          <span class="parcel"></span>
-          <div><di/v>
-        </div>
-      </article>
-
-      <!-- Card Vazio Cópia -->
-      <article class="card" data-price="">
-        <div class="thumb" style="background-image:url('')"></div>
-        <div class="title"></div>
-        <div class="card-avaliacao"></div>
-        <div>
-          <span class="old"></span>
-          <span class="price"></span>
-          <span class="badge"></span>
-          <span class="parcel"></span>
-          <div><di/v>
-
-        </div>
-      </article>
-    </section>
-  </main>
-
-  <footer></footer>
+</section>
+</main>
 
   <!-- Importa o JavaScript -->
 <script src="script.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const grid = document.querySelector(".grid");
+
+  // Lê os produtos do localStorage
+  const produtos = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
+
+  // Para cada produto, cria um card na tela
+  produtos.forEach(p => {
+    const card = document.createElement("article");
+    card.classList.add("card");
+    card.dataset.price = p.precoFinal;
+
+    card.innerHTML = `
+      <div class="thumb" style="background-image:url('${p.img}')"></div>
+      <div class="title">${p.titulo}</div>
+      <div class="card-avaliacao"></div>
+      <div>
+        <span class="old">R$ ${p.preco}</span>
+        <span class="price">R$ ${p.precoFinal}</span>
+        <span class="badge">${p.desconto > 0 ? p.desconto + "% OFF" : ""}</span>
+        <span class="parcel">12x sem juros no cartão</span>
+      </div>
+    `;
+
+    // Opcional: redirecionar para tela_produto ao clicar
+    card.addEventListener("click", () => {
+      localStorage.setItem("produtoSelecionado", JSON.stringify({
+        title: p.titulo,
+        price: "R$ " + p.precoFinal,
+        oldPrice: "R$ " + p.preco,
+        badge: p.desconto > 0 ? p.desconto + "% OFF" : "",
+        priceValue: p.precoFinal,
+        img: p.img
+      }));
+      window.location.href = "tela_produto.html";
+    });
+
+    grid.appendChild(card);
+  });
+});
+</script>
+
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
@@ -197,5 +154,52 @@
       });
     });
   </script>
+
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const grid = document.querySelector(".grid");
+
+  if (!grid) return; // segurança: caso o layout seja diferente
+
+  // Lê os produtos salvos pelo fornecedor
+  const produtos = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
+
+  // Cria cards automaticamente
+  produtos.forEach(p => {
+    const card = document.createElement("article");
+    card.classList.add("card");
+    card.dataset.price = p.precoFinal;
+
+    card.innerHTML = `
+      <div class="thumb" style="background-image:url('${p.img}')"></div>
+      <div class="title">${p.titulo}</div>
+      <div class="card-avaliacao"></div>
+      <div>
+        <span class="old">R$ ${p.preco}</span>
+        <span class="price">R$ ${p.precoFinal}</span>
+        <span class="badge">${p.desconto > 0 ? p.desconto + "% OFF" : ""}</span>
+        <span class="parcel">12x sem juros no cartão</span>
+      </div>
+    `;
+
+    // Ao clicar, vai para tela_produto.html com os dados do produto
+    card.addEventListener("click", () => {
+      localStorage.setItem("produtoSelecionado", JSON.stringify({
+        title: p.titulo,
+        price: "R$ " + p.precoFinal,
+        oldPrice: "R$ " + p.preco,
+        badge: p.desconto > 0 ? p.desconto + "% OFF" : "",
+        priceValue: p.precoFinal,
+        img: p.img
+      }));
+      window.location.href = "tela_produto.html";
+    });
+
+    grid.appendChild(card);
+  });
+});
+</script>
+
+
   </body>
 </html>
