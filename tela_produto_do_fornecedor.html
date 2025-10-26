@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Novo Produto</title>
+
+  <link rel="stylesheet" href="estilos/style.css"/>
+  <link rel="stylesheet" href="estilos/estilo_carrinho.css">
+  <link rel="stylesheet" href="estilos/estilo_produto.css">
+
+</head>
+
+<body>
+    <header class="topbar">
+      <nav class="actions"> 
+        <div class="logo-container"> 
+            <a href="index.php" style="display: flex; align-items: center;">
+              <img src="imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px;">
+            </a>
+          </div> 
+        
+        <form action="buscar.php" method="GET" style="position: relative; width: 600px; max-width: 100%;">
+          
+          <input type="search" id="pesquisa" name="q" placeholder="Digite sua pesquisa..." style="font-size: 16px; width: 100%; height: 40px; padding-left: 15px; padding-right: 45px; border-radius: 6px; border: none; box-sizing: border-box;">
+          
+          <button type="submit" style="position: absolute; right: 0; top: 0; height: 40px; width: 45px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <img src="imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px; opacity: 0.6;">
+          </button>
+        </form>
+        
+        <div style="display: flex; gap: 30px; align-items: center;">
+          <a href="#">Crie a sua conta</a>
+          <a href="#">Entre</a>
+          <a href="tela_carrinho.html" style="display: flex; align-items: center; gap: 5px;">
+            Carrinho
+            <img src="imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
+          </a>
+        </div>
+      </nav>
+    </header>
+
+      <main class="produto-container" 
+          data-title="" 
+          data-price="" 
+          data-img="">
+      
+      <div class="imagens-container">
+  <div class="imagem-principal">
+    <img id="imagem-principal" src="imagens/produto-padrao.png" alt="Imagem principal do produto">
+    <label for="upload-principal" class="botao-upload">Alterar imagem principal</label>
+    <input type="file" id="upload-principal" accept="image/*" hidden>
+  </div>
+
+  <div class="thumbnails">
+    <div class="thumb-box">
+      <img id="thumb1" src="imagens/produto-padrao.png" alt="Thumbnail 1">
+      <input type="file" id="upload1" accept="image/*" hidden>
+    </div>
+    <div class="thumb-box">
+      <img id="thumb2" src="imagens/produto-padrao.png" alt="Thumbnail 2">
+      <input type="file" id="upload2" accept="image/*" hidden>
+    </div>
+    <div class="thumb-box">
+      <img id="thumb3" src="imagens/produto-padrao.png" alt="Thumbnail 3">
+      <input type="file" id="upload3" accept="image/*" hidden>
+    </div>
+  </div>
+</div>
+
+      <div class="coluna-info">
+
+        <h1 class="produto-titulo"></h1>
+        <input type="text" id="produto-titulo" required>
+
+                <div class="produto-preco">
+            <label>Preço:</label>
+            <input type="number" class="price" id="produto-preco" step="0.01" min="0" required placeholder="Ex: 199.90">
+
+            <label>Desconto (%):</label>
+            <input type="number" class="badge" id="produto-badge" min="0" max="100" placeholder="Opcional"><br>
+
+            <span class="old" id="produto-preco-antigo"></span><br>
+            <span class="new" id="produto-preco-novo"></span>
+
+            <br><br>
+            <button onclick="calcular()">Calcular desconto</button>
+            </div>
+
+            <script>
+            function calcular() {
+            let preco = parseFloat(document.getElementById("produto-preco").value);
+            let desconto = parseFloat(document.getElementById("produto-badge").value);
+
+            //Validações
+            if (isNaN(preco) || preco <= 0) {
+                alert("Digite um preço válido (entre 0 e 100).");
+                return;
+            }
+
+            if (isNaN(desconto)) desconto = 0;
+            if (desconto < 0) desconto = 0; // evita negativos
+            if (desconto > 100) desconto = 100; // evita valores acima de 100%
+
+            // Cálculo do preço final
+            let precoFinal = preco * (1 - desconto / 100);
+
+            // Formata os valores em real
+            const formatar = (valor) =>
+                valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+            const precoAntigoEl = document.getElementById("produto-preco-antigo");
+            const precoNovoEl = document.getElementById("produto-preco-novo");
+
+            if (desconto > 0) {
+                precoAntigoEl.textContent = `De: ${formatar(preco)}`;
+                precoAntigoEl.style.textDecoration = "line-through";
+                precoAntigoEl.style.color = "gray";
+
+                precoNovoEl.textContent = `Por: ${formatar(precoFinal)} (${desconto}% OFF)`;
+                precoNovoEl.style.color = "green";
+                precoNovoEl.style.fontWeight = "bold";
+            } else {
+                precoAntigoEl.textContent = "";
+                precoNovoEl.textContent = `Preço: ${formatar(preco)}`;
+                precoNovoEl.style.color = "black";
+            }
+
+            // para salvar localmente
+            localStorage.setItem("precoComDesconto", precoFinal.toFixed(2));
+            }
+
+            </script>
+
+            <script>
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Painel do fornecedor pronto.");
+});
+
+// Atualiza prévia da imagem
+function atualizarImagem(event) {
+    const arquivo = event.target.files[0];
+    if (arquivo) {
+        const leitor = new FileReader();
+        leitor.onload = e => {
+            document.getElementById("imagem-principal").src = e.target.result;
+        };
+        leitor.readAsDataURL(arquivo);
+    }
+}
+
+// Função para criar o objeto produto
+function obterProdutoFormulario() {
+    const titulo = document.getElementById("produto-titulo")?.value || "Produto sem nome";
+    const preco = parseFloat(document.getElementById("produto-preco").value);
+    const desconto = parseFloat(document.getElementById("produto-badge").value) || 0;
+    const quantidade = parseInt(document.getElementById("produto-quantidade").value) || 0;
+    const imagem = document.getElementById("imagem-principal").src || "imagens/produto-padrao.png";
+
+    if (isNaN(preco) || preco <= 0) {
+        alert("Digite um preço válido.");
+        return null;
+    }
+
+    if (quantidade < 0) {
+        alert("Quantidade inválida.");
+        return null;
+    }
+
+    const precoFinal = preco * (1 - desconto / 100);
+
+    return {
+        id: Date.now(),
+        titulo,
+        preco: preco.toFixed(2),
+        desconto: desconto.toFixed(0),
+        precoFinal: precoFinal.toFixed(2),
+        img: imagem,
+        quantidade
+    };
+}
+
+// Envia o produto para o index (publica)
+function enviarProduto() {
+  let produtos = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
+
+  const novoProduto = obterProdutoFormulario(); // coleta dados do formulário
+
+  produtos.push(novoProduto); // adiciona uma única vez
+  localStorage.setItem("produtosCadastrados", JSON.stringify(produtos));
+
+  alert("✅ Produto salvo com sucesso!");
+  // Se quiser redirecionar:
+  window.location.href = "tela_gerenciar_produtos.html";
+}
+
+// Salva como rascunho (não aparece no site)
+function salvarRascunho() {
+    const produto = obterProdutoFormulario();
+    if (!produto) return;
+
+    const lista = JSON.parse(localStorage.getItem("produtosRascunho")) || [];
+    lista.push(produto);
+    localStorage.setItem("produtosRascunho", JSON.stringify(lista));
+
+    alert("💾 Produto salvo como rascunho. Você poderá editá-lo futuramente.");
+}
+</script>
+
+
+</script>
+
+        <label class="label-quantidade">Quantidade disponível:</label>
+  <input type="number" id="produto-quantidade" min="0" placeholder="Ex: 50"><br>
+
+        <div style="margin-top:15px;">
+<div style="margin-top:15px;">
+  <button onclick="enviarProduto()" style="background:#00b347;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">
+    📤 Enviar Produto
+  </button>
+
+  <button onclick="salvarRascunho()" style="background:#f1c40f;color:black;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">
+    💾 Salvar como Rascunho
+  </button>
+</div>
+
+</main>
+    <div class="detalhes-produto-container">
+
+      <section id="caracteristicas" class="detalhe-bloco">
+        <h2>Características principais</h2>
+        
+        <div class="caracteristicas-tabela">
+          <div class="caracteristica-item">
+            <span>Marca</span>
+            <input type="text" name="marca" required>
+          </div>
+          <div class="caracteristica-item">
+            <span>Linha</span>
+            <input type="text" name="linha" required>
+          </div>
+          <div class="caracteristica-item">
+            <span>Modelo</span>
+            <input type="text" name="modelo" required>
+          </div>
+          <div class="caracteristica-item">
+            <span>Tipo de alimentação</span>
+            <input type="text" name="tipo_alimentacao" required>
+          </div>
+          <div class="caracteristica-item">
+            <span>Cor</span>
+            <input type="text" name="cor" required>
+          </div>
+        </div>
+      </section>
+
+      <section id="descricao" class="detalhe-bloco">
+        <h2>Descrição do produto</h2>
+        <textarea name="descricao" required></textarea>
+
+    </div>
+  <script>
+  // --- 0. PREENCHIMENTO DA PÁGINA (NOVO BLOCO) ---
+  // ... (o restante do seu script javascript) ...
+
+  // --- 0. PREENCHIMENTO DA PÁGINA (NOVO BLOCO) ---
+  // Este script roda assim que a página termina de carregar
+  
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1. Tenta ler o produto do localStorage
+    const produto = JSON.parse(localStorage.getItem("produtoSelecionado"));
+
+    // 2. Verifica se o produto existe
+    if (produto) {
+      // 3. Seleciona os elementos da página que vamos preencher
+      const container = document.querySelector(".produto-container");
+      const imagemPrincipal = document.getElementById("imagem-principal");
+      const thumbImg = document.querySelector(".thumb-img"); // Pega a primeira
+      const titulo = document.getElementById("produto-titulo");
+      const preco = document.getElementById("produto-preco");
+      const precoAntigo = document.getElementById("produto-preco-antigo");
+      const badge = document.getElementById("produto-badge");
+
+      // 4. Preenche os data-attributes do container
+      // (Isso é crucial para os botões 'Comprar' e 'Favoritar' funcionarem)
+      container.dataset.title = produto.title;
+      container.dataset.price = produto.priceValue;
+      container.dataset.img = produto.img;
+      
+      // 5. Preenche os elementos visuais na página
+      titulo.innerText = produto.title;
+      preco.innerText = produto.price;
+      precoAntigo.innerText = produto.oldPrice;
+      badge.innerText = produto.badge;
+      
+      // 6. Preenche as imagens
+      imagemPrincipal.src = produto.img;
+      thumbImg.src = produto.img;
+
+      // 7. Verifica se o item já está favoritado (nos 'salvos')
+      const btnFavoritar = document.getElementById("btn-favoritar");
+      const salvos = JSON.parse(localStorage.getItem("salvos")) || []; // Pega a lista de salvos
+      
+      // Compara pelo título (que é o identificador único até agora)
+      const existenteEmSalvos = salvos.find(p => p.title === produto.title); 
+
+      if (existenteEmSalvos) {
+        // Se estiver, já marca o botão como ativo
+        btnFavoritar.classList.add("active");
+      }
+      
+      // =======================================================
+      // --- INÍCIO DA CORREÇÃO (BLOCO MOVIDO E CORRIGIDO) ---
+      // 8. Carrega a avaliação (estrelas) salva
+      // As vars 'currentRating' e 'drawStars' são definidas mais abaixo,
+      // mas são acessíveis globalmente no script.
+      // =======================================================
+      const savedRating = localStorage.getItem("rating_" + container.dataset.title);
+      if (savedRating) {
+        currentRating = parseInt(savedRating); // Atualiza a variável global
+        drawStars(currentRating); // Desenha as estrelas salvas
+      }
+      // --- FIM DA CORREÇÃO ---
+
+
+      // 9. Opcional: Limpar o item do localStorage...
+      // localStorage.removeItem("produtoSelecionado");
+
+    } else {
+      // 10. Se, por algum motivo, o usuário chegar aqui sem um produto,
+      // podemos redirecioná-lo de volta para a home.
+      alert("Nenhum produto foi selecionado. Voltando para a loja.");
+      window.location.href = "index.php";
+    }
+  });
+
+
+  // --- 1. SELETORES DOS ELEMENTOS (Resto do script) ---
+  const container = document.querySelector(".produto-container");
+  const imagemPrincipal = document.getElementById("imagem-principal");
+  const thumbnails = document.querySelectorAll(".thumb-img");
+  
+  const contadorNumero = document.getElementById("contador-numero");
+  
+
+  let quantidade = 1;
+
+  const btnComprar = document.getElementById("btn-comprar");
+  const btnAdicionar = document.getElementById("btn-adicionar-carrinho");
+  const btnFavoritar = document.getElementById("btn-favoritar");
+
+  // --- 2. LÓGICA DA GALERIA ---
+  function mudarImagem(thumbElement) {
+    // Define a imagem principal
+    imagemPrincipal.src = thumbElement.src;
+    
+    // Remove a classe 'active' de todas as thumbnails
+    thumbnails.forEach(thumb => thumb.classList.remove("active"));
+    
+    // Adiciona a classe 'active' apenas na clicada
+    thumbElement.classList.add("active");
+  }
+
+  // --- 3. LÓGICA DO CONTADOR DE QUANTIDADE ---
+  function alterarContador(valor) {
+    quantidade += valor;
+    if (quantidade < 1) {
+      quantidade = 1; // Não permite quantidade menor que 1
+    }
+    // (Opcional) Adicionar verificação de estoque máximo (ex: 2)
+    // if (quantidade > 2) quantidade = 2;
+    
+    contadorNumero.innerText = quantidade;
+  }
+
+  // --- 4. FUNÇÃO AUXILIAR PARA PEGAR DADOS DO PRODUTO ---
+  // Esta função agora lê os dados que o script (item 0) preencheu
+  function getDadosProduto() {
+    return {
+      title: container.dataset.title,
+      price: parseFloat(container.dataset.price),
+      img: container.dataset.img,
+      quantidade: quantidade // Pega a quantidade do contador
+    };
+  }
+
+  // --- 5. LÓGICA DAS AÇÕES (CARRINHO E FAVORITOS) ---
+  // (Esta parte permanece a mesma da resposta anterior)
+
+  // Botão "Adicionar ao carrinho"
+  btnAdicionar.addEventListener("click", () => {
+    const produto = getDadosProduto();
+    let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+
+    // Verifica se o produto já existe
+    const existente = carrinho.find(p => p.title === produto.title);
+
+    if (existente) {
+      existente.quantidade += produto.quantidade;
+    } else {
+      carrinho.push(produto);
+    }
+
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+
+    // Redireciona imediatamente para o carrinho
+    window.location.href = "tela_carrinho.html"; // <-- Linha alterada
+  });
+
+  // Botão "Comprar agora" (Verifica login, Adiciona e Redireciona)
+  btnComprar.addEventListener("click", () => {
+    
+    // 1. Pega os dados do produto atual (incluindo a quantidade)
+    const produto = getDadosProduto();
+    
+    // 2. Calcula o total APENAS para este item
+    const totalDaCompra = produto.price * produto.quantidade;
+
+    // 3. Salva esse total no localStorage para a tela_entrega ler
+    // (usa a mesma chave que o 'tela_carrinho.html' usa)
+    localStorage.setItem("totalCompra", totalDaCompra.toFixed(2));
+    
+    // 4. Redireciona para a tela de entrega
+      window.location.href = "tela_entrega.html";
+
+    // Lógica de verificação de login (DESATIVADA) - Ainda é necessário a criação de tela_login
+    // if (!usuarioLogado) {
+    //   // 2. Se NÃO estiver logado, redireciona para login
+    //   alert("Você precisa estar logado para continuar. Redirecionando...");
+    //   window.location.href = "tela_login.html";
+    
+    // } else {
+    //   // 3. Se ESTIVER logado, executa a ação original
+    //   const produto = getDadosProduto();
+    //   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+      
+    //   const existente = carrinho.find(p => p.title === produto.title);
+
+    //   if (existente) {
+    //     existente.quantidade += produto.quantidade;
+    //   } else {
+    //     carrinho.push(produto);
+    //   }
+
+    //   localStorage.setItem("carrinho", JSON.stringify(carrinho));
+      
+    //   // Redireciona imediatamente para o carrinho
+    //   window.location.href = "tela_carrinho.html";
+    // }
+  });
+
+  // Botão "Favoritar" (Alterna Salvar/Remover)
+  btnFavoritar.addEventListener("click", (e) => {
+    const produto = getDadosProduto();
+    // Define a quantidade padrão para favoritos
+    produto.quantidade = 1; 
+    
+    let salvos = JSON.parse(localStorage.getItem("salvos")) || [];
+
+    // Procura o ÍNDICE do produto na lista de salvos
+    const indexExistente = salvos.findIndex(p => p.title === produto.title);
+
+    if (indexExistente === -1) {
+      // --- SE NÃO EXISTE: ADICIONA (FAVORITA) ---
+      salvos.push(produto);
+      
+      // Altera o visual do botão
+      btnFavoritar.classList.add("active");
+      
+    } else {
+      // --- SE JÁ EXISTE: REMOVE (DESFAVORITA) ---
+      salvos.splice(indexExistente, 1); // Remove o item pelo índice
+      
+      // Altera o visual do botão
+      btnFavoritar.classList.remove("active");
+    }
+    
+    // Salva o array atualizado (adicionado ou removido) no localStorage
+    localStorage.setItem("salvos", JSON.stringify(salvos));
+  });
+
+  // --- 6. LÓGICA DE AVALIAÇÃO (ESTRELAS) ---
+  const stars = document.querySelectorAll(".produto-avaliacao .star");
+  const starContainer = document.querySelector(".produto-avaliacao");
+  
+  // Variável para guardar a nota que foi clicada
+  let currentRating = 0; 
+
+  // =======================================================
+  // --- CORREÇÃO: O Bloco que estava aqui foi REMOVIDO ---
+  // (O 'if (savedRating) ...' estava quebrado e no
+  // lugar errado. Ele foi movido para a Seção 0)
+  // =======================================================
+
+  /**
+   * Função para desenhar as estrelas
+   * @param {number} rating - A nota (1 a 5) a ser exibida
+   */
+  function drawStars(rating) {
+    stars.forEach(star => {
+      const starValue = parseInt(star.dataset.value);
+      
+      if (starValue <= rating) {
+        star.classList.add("filled");
+        star.innerHTML = "&#9733;"; // Ícone de estrela cheia
+      } else {
+        star.classList.remove("filled");
+        star.innerHTML = "&#9734;"; // Ícone de estrela vazia
+      }
+    });
+  }
+
+  // Adiciona eventos de HOVER (mouse enter) para cada estrela
+  stars.forEach(star => {
+    star.addEventListener("mouseover", () => {
+      const rating = parseInt(star.dataset.value);
+      drawStars(rating); // Preenche as estrelas até a que está em hover
+    });
+
+    // Adiciona evento de CLIQUE para cada estrela
+    star.addEventListener("click", () => {
+      currentRating = parseInt(star.dataset.value); // Salva a nota
+      
+      // Salva a nota no localStorage
+      localStorage.setItem("rating_" + container.dataset.title, currentRating);
+      
+      drawStars(currentRating); // Trava a nota clicada
+    });
+  });
+
+  // Adiciona evento de MOUSE LEAVE (mouse out) no CONTAINER
+  starContainer.addEventListener("mouseleave", () => {
+    // Quando o mouse sai, volta para a nota que foi CLICADA (currentRating)
+    drawStars(currentRating);
+  });
+
+</script>
+</body>
+<script>
+function salvarProduto() {
+  const titulo = document.getElementById("produto-titulo")?.value || "Produto sem nome";
+  const preco = parseFloat(document.getElementById("produto-preco").value);
+  const desconto = parseFloat(document.getElementById("produto-badge").value) || 0;
+  const quantidade = parseInt(document.getElementById("produto-quantidade").value) || 0;
+
+  if (isNaN(preco) || preco <= 0) {
+    alert("Digite um preço válido para salvar.");
+    return;
+  }
+
+  if (quantidade < 0) {
+    alert("A quantidade não pode ser negativa.");
+    return;
+  }
+
+  const precoFinal = preco * (1 - desconto / 100);
+
+  const produto = {
+    titulo,
+    preco: preco.toFixed(2),
+    desconto: desconto.toFixed(0),
+    precoFinal: precoFinal.toFixed(2),
+    img: document.getElementById("imagem-principal").src || "imagens/produto-padrao.png",
+    quantidade
+  };
+
+  const lista = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
+  lista.push(produto);
+  localStorage.setItem("produtosCadastrados", JSON.stringify(lista));
+
+  alert("✅ Produto salvo com sucesso! Ele aparecerá automaticamente na página inicial.");
+}
+
+// Upload das imagens
+document.getElementById('upload-principal').addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      document.getElementById('imagem-principal').src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+['1', '2', '3'].forEach(num => {
+  const img = document.getElementById('thumb' + num);
+  const input = document.getElementById('upload' + num);
+
+  img.addEventListener('click', () => input.click());
+  input.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => img.src = ev.target.result;
+      reader.readAsDataURL(file);
+    }
+  });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const editarInfo = JSON.parse(localStorage.getItem("editarProduto"));
+
+  if (editarInfo) {
+    const p = editarInfo.dados;
+    document.getElementById("produto-titulo").value = p.titulo;
+    document.getElementById("produto-preco").value = p.preco;
+    document.getElementById("produto-badge").value = p.desconto;
+    document.getElementById("imagem-principal").src = p.img;
+
+ 
+  }
+});
+
+function salvarAlteracoes() {
+  const editarInfo = JSON.parse(localStorage.getItem("editarProduto"));
+  if (!editarInfo) return;
+
+  const lista = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
+  const novo = obterProdutoFormulario();
+  
+  lista[editarInfo.index] = novo; // Atualiza
+  localStorage.setItem("produtosCadastrados", JSON.stringify(lista));
+  localStorage.removeItem("editarProduto");
+  alert("✅ Produto atualizado com sucesso!");
+  window.location.href = "tela_gerenciar_produtos.html";
+}
+</script>
+
+
+</html>
