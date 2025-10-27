@@ -1,15 +1,81 @@
+<?php
+session_start();
+require 'Banco de dados/conexao.php'; // Inclui a conexão
+
+$usuario_logado = isset($_SESSION['usuario_nome']);
+$nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '';
+$carrinho_bd = []; // Array que guardará o carrinho vindo do BD
+$endereco_padrao = null; // Garante que a variável exista para o HTML
+
+// (O bloco 'try/catch' que estava aqui foi MOVIDO)
+
+if ($usuario_logado) {
+    // 1. DEFINA O ID DO USUÁRIO PRIMEIRO
+    $usuario_id = $_SESSION['usuario_id'];
+    
+    // 2. AGORA BUSQUE O ENDEREÇO (BLOCO MOVIDO PARA CÁ)
+    try {
+        // Busca o último endereço cadastrado pelo usuário
+        $stmt_addr = $pdo->prepare("SELECT * FROM ENDERECOS WHERE usuario_id = ? ORDER BY id DESC LIMIT 1");
+        $stmt_addr->execute([$usuario_id]); // <-- Agora $usuario_id existe
+        $endereco_padrao = $stmt_addr->fetch(PDO::FETCH_ASSOC);
+
+        // Se um endereço foi encontrado, usa o nome do destinatário dele
+        if ($endereco_padrao && !empty($endereco_padrao['destinatario_nome'])) {
+            $nome_usuario = $endereco_padrao['destinatario_nome'];
+        }
+
+    } catch (PDOException $e) {
+        error_log("Erro ao buscar endereço: " . $e->getMessage());
+    }
+    
+    // 3. A BUSCA DE CARRINHO (QUE JÁ ESTAVA AQUI) CONTINUA ABAIXO
+    try {
+        // 1. Busca o ID do carrinho principal do usuário
+        $stmt_cart = $pdo->prepare("SELECT id FROM CARRINHO WHERE usuario_id = ?");
+        $stmt_cart->execute([$usuario_id]);
+        $carrinho = $stmt_cart->fetch();
+
+        if ($carrinho) {
+            $carrinho_id = $carrinho['id'];
+            
+            // 2. Busca os itens desse carrinho E os dados dos produtos
+            $sql_itens = "SELECT p.id, p.nome as title, p.preco as price, p.imagem_url as img, ci.quantidade
+                          FROM CARRINHO_ITENS ci
+                          JOIN PRODUTOS p ON ci.produto_id = p.id
+                          WHERE ci.carrinho_id = ?";
+            $stmt_itens = $pdo->prepare($sql_itens);
+            $stmt_itens->execute([$carrinho_id]);
+            $itens = $stmt_itens->fetchAll(PDO::FETCH_ASSOC);
+            
+            // 3. Formata o array para o JavaScript entender (igual ao formato do localStorage)
+            foreach ($itens as $item) {
+                $carrinho_bd[] = [
+                    'id' => (int) $item['id'], // ID DO PRODUTO (Necessário para sincronizar_carrinho.php)
+                    'title' => $item['title'],
+                    'price' => (float) $item['price'],
+                    'img' => $item['img'] ?? 'imagens/placeholder.png',
+                    'quantidade' => (int) $item['quantidade']
+                ];
+            }
+        }
+    } catch (PDOException $e) {
+        error_log("Erro ao buscar carrinho do BD: " . $e->getMessage());
+    }
+}
+// Se não está logado, $carrinho_bd continuará sendo um array vazio.
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <title>Tela de Compras</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css"/>
-  <link rel="stylesheet" href="estilo_carrinho.css">
+  <link rel="stylesheet" href="estilos/style.css"/>
+  <link rel="stylesheet" href="estilos/estilo_carrinho.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
   <style>
-    /* ... (seu style inline permanece o mesmo) ... */
     .carrinho-tabs {
       display: flex;
       gap: 10px;
@@ -31,35 +97,37 @@
     }
   </style>
 
-</head>
-
+  </head>
 <body>
     <header class="topbar">
       <nav class="actions"> 
         <div class="logo-container"> 
-            <a href="index.html" style="display: flex; align-items: center;">
+            <a href="index.php" style="display: flex; align-items: center;">
               <img src="imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px;">
             </a>
           </div> 
         
         <form action="buscar.php" method="GET" style="position: relative; width: 600px; max-width: 100%;">
-          
           <input type="search" id="pesquisa" name="q" placeholder="Digite sua pesquisa..." style="font-size: 16px; width: 100%; height: 40px; padding-left: 15px; padding-right: 45px; border-radius: 6px; border: none; box-sizing: border-box;">
-          
           <button type="submit" style="position: absolute; right: 0; top: 0; height: 40px; width: 45px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;">
             <img src="imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px; opacity: 0.6;">
           </button>
         </form>
         
         <div style="display: flex; gap: 30px; align-items: center;">
-          <a href="#">Crie a sua conta</a>
-          <a href="#">Entre</a>
-          <a href="tela_carrinho.html" style="display: flex; align-items: center; gap: 5px;">
+          <?php if ($usuario_logado): ?>
+            <a href="tela_minha_conta.php">Olá, <?php echo htmlspecialchars($nome_usuario); ?></a>
+            <a href="Banco de dados/logout.php">Sair</a>
+          <?php else: ?>
+            <a href="tela_cadastro.html">Crie a sua conta</a>
+            <a href="tela_login.html">Entre</a>
+          <?php endif; ?>
+          <a href="tela_carrinho.php" style="display: flex; align-items: center; gap: 5px;">
             Carrinho
             <img src="imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
           </a>
         </div>
-      </nav>
+        </nav>
     </header>
 
     <div class="carrinho-layout-container">
@@ -81,113 +149,80 @@
       
       <div class="resumo-container">
         <h3>Resumo da compra</h3>
-        <div id="resumo-separador"></div>
-        <div id="total-container">
-            <span>Total:</span>
+        <div id="resumo-separador" class="resumo-divisor" style="display: none;"></div>
+        <div id="total-container" class="resumo-linha total" style="display: none;">
+            <span>Total</span>
             <span id="valor-total">R$ 0,00</span>
         </div>
-        <button type="button" class="btn-continuar">Continuar a compra</button>
+        <button class="btn-continuar" style="display: none;">Continuar</button>
       </div>
     
     </div>
 
-    <div class="carrinho-layout-container">
-    </div>
-  <div class="recomendacoes-container">
-    <h2>Produtos que podem interessar</h2>
-    
-<div class="swiper recomendacoes-swiper">
-      <div class="swiper-wrapper">
-        
-        <div class="swiper-slide">
-          <a href="tela_produto.html" class="card-link">
-            <article class="card" data-price="159.79">
-              <div class="thumb" style="background-image:url('imagens/Zane lego.jpg')"></div>
-              <div class="title">LEGO NINJAGO!!</div>
-              <div class="card-avaliacao"></div> <div>
-                <span class="old">R$ 199,99</span>
-                <span class="price">R$ 159,79</span>
-                <span class="badge">21% OFF</span>
-              </div>
-            </article>
-          </a>
+    <section class="recomendacoes-container">
+        <h2>Produtos que podem interessar</h2>
+        <div class="swiper recomendacoes-swiper">
+            <div class="swiper-wrapper">
+                </div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
         </div>
+    </section>
 
-        <div class="swiper-slide">
-          <article class="card" data-price="">
-            <div class="thumb" style="background-image:url('')"></div>
-            <div class="title"></div>
-            <div class="card-avaliacao"></div>
-            <div>
-              <span class="old"></span>
-              <span class="price"></span>
-              <span class="badge"></span>
-              <span class="parcel"></span>
-              <div><di/v>
-            </div>
-          </article>
-        </div>
-        
-        <div class="swiper-slide">
-          <article class="card" data-price="">
-            <div class="thumb" style="background-image:url('')"></div>
-            <div class="title"></div>
-            <div class="card-avaliacao"></div>
-            <div>
-              <span class="old"></span>
-              <span class="price"></span>
-              <span class="badge"></span>
-              <span class="parcel"></span>
-              <div><di/v>
-            </div>
-          </article>
-        </div>
-
-        <div class="swiper-slide">
-          <article class="card" data-price="">
-            <div class="thumb" style="background-image:url('')"></div>
-            <div class="title"></div>
-            <div class="card-avaliacao"></div>
-            <div>
-              <span class="old"></span>
-              <span class="price"></span>
-              <span class="badge"></span>
-              <span class="parcel"></span>
-              <div><di/v>
-            </div>
-          </article>
-        </div>
-
-        <div class="swiper-slide">
-          <article class="card" data-price="">
-            <div class="thumb" style="background-image:url('')"></div>
-            <div class="title"></div>
-            <div class="card-avaliacao"></div>
-            <div>
-              <span class="old"></span>
-              <span class="price"></span>
-              <span class="badge"></span>
-              <span class="parcel"></span>
-              <div><di/v>
-            </div>
-          </article>
-        </div>
-
-      </div> <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div>
-
-<script>
+  
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
   // --- 1. RECUPERAÇÃO DE DADOS E SELETORES ---
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-  let salvos = JSON.parse(localStorage.getItem("salvos")) || []; 
+  
+  // === INÍCIO DA NOVA LÓGICA DE MERGE ===
 
+  // 1. Carrega ambos os carrinhos
+  let carrinho_bd = <?php echo json_encode($carrinho_bd); ?>;
+  let carrinho_ls = JSON.parse(localStorage.getItem("carrinho")) || [];
+
+  // 2. O 'carrinho' final começa sendo o do banco de dados (nossa base)
+  let carrinho = carrinho_bd;
+
+  // 3. Se o localStorage TEM itens, precisamos mesclá-los
+  if (carrinho_ls.length > 0) {
+      
+      // Criamos um mapa do carrinho do BD para facilitar a busca (usando 'id')
+      // [tela_produto.php] e [tela_carrinho.php] garantem que 'id' existe.
+      const mapaCarrinhoBD = new Map();
+      carrinho.forEach(item => mapaCarrinhoBD.set(item.id, item));
+
+      // 4. Itera sobre o carrinho do localStorage
+      carrinho_ls.forEach(item_ls => {
+          
+          if (mapaCarrinhoBD.has(item_ls.id)) {
+              // Item JÁ EXISTE no carrinho do BD.
+              // Atualiza a quantidade (o localStorage é mais recente)
+              mapaCarrinhoBD.get(item_ls.id).quantidade = item_ls.quantidade;
+          } else {
+              // Item NÃO EXISTE no carrinho do BD.
+              // Adiciona o item do localStorage ao 'carrinho' final.
+              carrinho.push(item_ls);
+          }
+      });
+  }
+  
+  // 5. Neste ponto, 'carrinho' contém a lista mesclada (BD + LS).
+  // Salva a lista mesclada de volta no localStorage para manter a consistência.
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  
+  // ===== CORREÇÃO =====
+  // A variável 'salvos' deve ser declarada aqui, no escopo principal,
+  // para que 'salvarDepois' e 'removerDosSalvos' possam usá-la.
+  let salvos = JSON.parse(localStorage.getItem("salvos")) || [];
+  // ===== FIM DA CORREÇÃO =====
+
+  // === FIM DA NOVA LÓGICA DE MERGE ===
+
+  // (Seletores ... painelCarrinho, tabCarrinho, etc. ... permanecem os mesmos)
   const painelCarrinho = document.getElementById("painel-carrinho");
   const painelSalvos = document.getElementById("painel-salvos"); 
-
   const tabCarrinho = document.getElementById("tab-carrinho"); 
   const tabSalvos = document.getElementById("tab-salvos"); 
-  
   const resumoContainer = document.querySelector(".resumo-container"); 
   const totalSpan = document.getElementById("valor-total");
   const separador = document.getElementById("resumo-separador");
@@ -195,7 +230,10 @@
   const btnContinuar = document.querySelector(".btn-continuar");
 
   // --- 2. FUNÇÕES DE RENDERIZAÇÃO ---
-  // ... (funções renderCarrinho() e renderSalvos() permanecem as mesmas) ...
+  
+  // ===== CORREÇÃO: Função 'renderCarrinho' duplicada removida =====
+  // A versão incompleta foi apagada. Esta é a versão correta.
+
   // Renderiza os itens do CARRINHO (CORRIGIDA)
   function renderCarrinho() {
     if (carrinho.length === 0) {
@@ -240,6 +278,9 @@
       }).join("");
     }
   }
+
+  // ===== CORREÇÃO: Função 'renderSalvos' duplicada removida =====
+  // A versão incompleta foi apagada. Esta é a versão correta.
 
   // Renderiza os itens SALVOS (CORRIGIDA)
   function renderSalvos() {
@@ -302,8 +343,10 @@
   }
 
   // --- 4. FUNÇÕES DE AÇÃO DOS PRODUTOS ---
-  // ... (funções alterarContador(), removerProduto(), removerDosSalvos(), comprarAgora(), salvarDepois(), moverParaCarrinho() permanecem as mesmas) ...
-  function alterarContador(index, valor) {
+  
+  // ===== CORREÇÃO: Funções movidas para o escopo global (window) =====
+  
+  window.alterarContador = function(index, valor) {
     const item = carrinho[index];
     item.quantidade += valor;
     if (item.quantidade < 1) item.quantidade = 1;
@@ -317,7 +360,7 @@
   }
 
   // Remove do Carrinho (ATUALIZADA)
-  function removerProduto(index) {
+  window.removerProduto = function(index) {
     carrinho.splice(index, 1);
     localStorage.setItem("carrinho", JSON.stringify(carrinho));
     
@@ -327,7 +370,7 @@
   }
 
   // Remove dos Salvos (ATUALIZADA)
-  function removerDosSalvos(index) {
+  window.removerDosSalvos = function(index) {
     salvos.splice(index, 1);
     localStorage.setItem("salvos", JSON.stringify(salvos));
     
@@ -336,7 +379,7 @@
     mostrarSalvos(); // Garante que a visão (painel) está correta
   }
 
-  function comprarAgora(index) {
+  window.comprarAgora = function(index) {
     // 1. Pega o produto específico do carrinho
     const produto = carrinho[index];
     
@@ -347,27 +390,20 @@
     localStorage.setItem("totalCompra", totalDoProduto.toFixed(2));
     
     // 4. Redireciona para a tela de entrega
-    window.location.href = "tela_entrega.html";
+    // MODIFICADO: Apontando para o .php correto
+    window.location.href = "tela_entrega.php"; 
   }
 
   // "Salvar para depois" (CORRIGIDA)
-  function salvarDepois(index) {
+  window.salvarDepois = function(index) {
     const item = carrinho[index];
     
-    // --- INÍCIO DA CORREÇÃO ---
-    // A linha "let salvos = ..." FOI REMOVIDA.
-    // Agora, o código abaixo usa a variável 'salvos' GLOBAL,
-    // que foi declarada no topo do seu script.
-    
-    // Verifica se o item já existe na lista de salvos (pelo título)
+    // Agora usa a variável 'salvos' GLOBAL
     const existenteEmSalvos = salvos.find(p => p.title === item.title);
 
     if (!existenteEmSalvos) {
-      // Adiciona ao array GLOBAL 'salvos'
       salvos.push(item);
     }
-    // Se JÁ existe, não fazemos nada, o item só será removido do carrinho
-    // --- FIM DA CORREÇÃO ---
 
     carrinho.splice(index, 1); // Remove do carrinho (array global 'carrinho')
     
@@ -375,13 +411,13 @@
     localStorage.setItem("salvos", JSON.stringify(salvos)); // Salva o array GLOBAL 'salvos'
     
     renderCarrinho(); // Renderiza o 'carrinho' global (correto)
-    renderSalvos();   // AGORA renderiza o 'salvos' global (que acabamos de atualizar)
+    renderSalvos();   // Renderiza o 'salvos' global (que acabamos de atualizar)
     atualizarContadoresTabs();
     mostrarCarrinho(); 
   }
   
   // Mover dos Salvos para o Carrinho (ATUALIZADA)
-  function moverParaCarrinho(index) {
+  window.moverParaCarrinho = function(index) {
     const item = salvos[index];
     
     salvos.splice(index, 1);
@@ -401,6 +437,8 @@
     atualizarContadoresTabs();
     mostrarSalvos(); // Garante que a visão (painel) é atualizada
   }
+  
+  // ===== FIM DAS CORREÇÕES 'window.' =====
 
   // --- 5. LÓGICA DAS ABAS (Funções principais de visão) ---
   // ... (funções mostrarCarrinho() e mostrarSalvos() permanecem as mesmas) ...
@@ -430,44 +468,49 @@
 
 
   // --- 6. AÇÃO DO BOTÃO "CONTINUAR" ---
+  // O seu código para o btnContinuar já está 100% CORRETO.
+  // Ele já usa o 'fetch' para 'sincronizar_carrinho.php'
+  // e já redireciona para tela_login.html se não estiver logado.
+  // A única diferença é que agora o array 'carrinho' (se logado)
+  // contém o 'produto.id' vindo do PHP, o que faz o 'sincronizar_carrinho.php' funcionar.
   btnContinuar.addEventListener("click", function() {
-      const usuarioLogado = localStorage.getItem("usuarioLogado");
-
-      // 1. Calcula o total final com base no array 'carrinho'
-      const totalCompra = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
+      if (carrinho.length === 0) {
+          alert("Seu carrinho está vazio.");
+          return;
+      }
       
-      // 2. Salva o valor no localStorage para a próxima página ler
-      localStorage.setItem("totalCompra", totalCompra.toFixed(2));
-      
-      // 3. Redireciona o usuário para a tela de entrega
-      window.location.href = "tela_entrega.html";
-
-      // Lógica de verificação de login (DESATIVADA) - Ainda é necessário a criação de tela_login
-      // if (!usuarioLogado) {
-      //   alert("Você precisa estar logado para continuar. Redirecionando...");
-      //   window.location.href = "tela_login.html";
-      
-      // } else {
-      //   // 1. Calcula o total final com base no array 'carrinho'
-      //   const totalCompra = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
-        
-      //   // 2. Salva o valor no localStorage para a próxima página ler
-      //   localStorage.setItem("totalCompra", totalCompra.toFixed(2));
-        
-      //   // 3. Redireciona o usuário para a tela de entrega
-      //   window.location.href = "tela_entrega.html";
-      // }
+      fetch('Banco de dados/sincronizar_carrinho.php', { //
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ carrinho: carrinho }) 
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.sucesso) {
+              window.location.href = "tela_entrega.php"; //
+          } else {
+              if (data.erro === 'nao_logado') { //
+                   alert("Você precisa estar logado para continuar.");
+                   sessionStorage.setItem('redirecionarPara', 'tela_carrinho.php');
+                   window.location.href = "tela_login.html"; //
+              } else {
+                   alert("Erro ao salvar seu carrinho: " + data.mensagem);
+              }
+          }
+      })
+      .catch(error => {
+          console.error("Erro no fetch:", error);
+          alert("Erro de conexão. Tente novamente.");
+      });
   });
-
 
   // --- 7. INICIALIZAÇÃO DA PÁGINA ---
   renderCarrinho();
   renderSalvos();
   atualizarContadoresTabs();
-  
-  // Define o estado inicial (mostra o carrinho e seu resumo)
   mostrarCarrinho();
-</script>
+}); // Fim do DOMContentLoaded // <-- LINHA ADICIONADA
+
 </script> 
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -552,5 +595,8 @@
 
     });
   </script>
-  </body>
+
+
+
+</body>
 </html>

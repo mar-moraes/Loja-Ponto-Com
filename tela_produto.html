@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <title>Página do Produto</title>
 
-  <link rel="stylesheet" href="style.css"/>
-  <link rel="stylesheet" href="estilo_carrinho.css">
-  <link rel="stylesheet" href="estilo_produto.css">
+  <link rel="stylesheet" href="estilos/style.css"/>
+  <link rel="stylesheet" href="estilos/estilo_carrinho.css">
+  <link rel="stylesheet" href="estilos/estilo_produto.css">
 
 </head>
 
@@ -14,7 +14,7 @@
     <header class="topbar">
       <nav class="actions"> 
         <div class="logo-container"> 
-            <a href="index.html" style="display: flex; align-items: center;">
+            <a href="index.php" style="display: flex; align-items: center;">
               <img src="imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px;">
             </a>
           </div> 
@@ -232,7 +232,7 @@
       // 10. Se, por algum motivo, o usuário chegar aqui sem um produto,
       // podemos redirecioná-lo de volta para a home.
       alert("Nenhum produto foi selecionado. Voltando para a loja.");
-      window.location.href = "index.html";
+      window.location.href = "index.php";
     }
   });
 

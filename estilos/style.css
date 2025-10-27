@@ -324,3 +324,90 @@ a.card-link {
         gap: 10px;
     }
 }
+/* =================================== */
+/* ESTILOS DE AUTENTICAÇÃO (Login/Cadastro) */
+/* =================================== */
+
+/* Centraliza o container do formulário na página */
+.auth-container {
+    width: 100%;
+    max-width: 450px; /* Define uma largura máxima para o formulário */
+    margin: 28px auto; /* Centraliza (mesma margem do .container) */
+    padding: 24px;
+    background: var(--card-bg); /* Reutiliza a variável de fundo do card */
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+.auth-container h1 {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+/* O formulário em si */
+.auth-container form {
+    display: flex;
+    flex-direction: column; /* <-- CORREÇÃO PRINCIPAL: Força o empilhamento vertical */
+    gap: 18px; /* Espaço entre os campos (labels) */
+}
+
+/* O <label> que contém (Texto + Input) */
+.auth-container form label {
+    display: block; /* Garante que o label se comporte como um bloco */
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* O <input> dentro do <label> */
+.auth-container form input[type="text"],
+.auth-container form input[type="email"],
+.auth-container form input[type="tel"],
+.auth-container form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-top: 6px; /* Espaço entre o texto do label e o input */
+    box-sizing: border-box; /* Garante que o padding não estoure a largura */
+}
+
+/* O botão de submit */
+.auth-container form button {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #2968C8; /* Padrão azul dos outros botões */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 10px; /* Espaço extra antes do botão */
+}
+
+.auth-container form button:hover {
+    opacity: 0.9;
+}
+
+/* O link "Já possui conta?" */
+.auth-container p {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 20px;
+    color: #555;
+}
+
+.auth-container p a {
+    color: #2968C8; /* Azul padrão */
+    text-decoration: none;
+    font-weight: 500;
+}
+.auth-container p a:hover {
+    text-decoration: underline;
+}
