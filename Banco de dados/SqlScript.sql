@@ -1,3 +1,13 @@
+/* 
+========================================================
+ Este arquivo SQL deve ser utilizado no XAMPP (MySQL/MariaDB).
+ Certifique-se de importar o arquivo utilizando o phpMyAdmin 
+ou outro gerenciador de banco de dados do XAMPP.
+========================================================
+*/
+
+
+
 -- -----------------------------------------------------
 -- Tabela `USUARIOS`
 -- -----------------------------------------------------

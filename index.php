@@ -2,7 +2,7 @@
 session_start();
 require 'Banco de dados/conexao.php'; // Inclui a conexão
 
-// Busca produtos do banco de dados
+// Busca produtos do banco de dados (Grid Principal)
 try {
     $stmt = $pdo->prepare("SELECT * FROM PRODUTOS WHERE status = 'ativo' LIMIT 20");
     $stmt->execute();
@@ -11,6 +11,20 @@ try {
     $produtos = []; // Array vazio em caso de erro
     error_log("Erro ao buscar produtos: " . $e->getMessage());
 }
+
+// === NOVO BLOCO: Busca 3 produtos aleatórios para o carrossel ===
+try {
+    // ORDER BY RAND() pega produtos aleatórios. 
+    // Garante que tenham imagem e estejam ativos.
+    $stmt_carousel = $pdo->prepare("SELECT id, nome, imagem_url FROM PRODUTOS WHERE status = 'ativo' AND imagem_url IS NOT NULL ORDER BY RAND() LIMIT 3");
+    $stmt_carousel->execute();
+    $produtos_carousel = $stmt_carousel->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $produtos_carousel = []; // Array vazio em caso de erro
+    error_log("Erro ao buscar produtos do carrossel: " . $e->getMessage());
+}
+// === FIM DO NOVO BLOCO ===
+
 
 // Verifica se o usuário está logado
 $usuario_logado = isset($_SESSION['usuario_nome']);
@@ -24,6 +38,28 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
   <title>Loja Ponto Com</title>
   <link rel="stylesheet" href="estilos/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    /* Ajuste para o slide do carrossel cobrir a área */
+    .hero-swiper .swiper-slide {
+        background-size: cover;
+        background-position: center;
+    }
+    /* Estilo para o título no slide (opcional) */
+    .hero-swiper .swiper-slide a {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: flex-end; /* Coloca o texto no fim */
+        justify-content: center;
+        padding: 20px;
+        text-decoration: none;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        box-sizing: border-box; /* Garante que o padding não quebre o layout */
+    }
+  </style>
 </head>
 <body>
     <header class="topbar">
@@ -60,27 +96,37 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
   <section class="hero">
     <div class="swiper hero-swiper">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" style="background-image:url('imagens/Zane lego.jpg')"></div>
-        <div class="swiper-slide" style="background-image:url('imagens/SEU_OUTRO_BANNER.jpg')"></div>
-        <div class="swiper-slide" style="background-image:url('')"></div>
-      </div>
+        
+        <?php foreach ($produtos_carousel as $produto_slide): ?>
+            <div class="swiper-slide" style="background-image:url('<?php echo htmlspecialchars($produto_slide['imagem_url']); ?>')">
+                <a href="tela_produto.php?id=<?php echo $produto_slide['id']; ?>">
+                    <?php // echo htmlspecialchars($produto_slide['nome']); /* Descomente se quiser o nome no slide */ ?>
+                </a>
+            </div>
+        <?php endforeach; ?>
+
+        <?php if (empty($produtos_carousel)): /* Caso não ache produtos */ ?>
+            <div class="swiper-slide" style="background-image:url('imagens/exemplo-logo.png')"></div>
+        <?php endif; ?>
+        </div>
       <div class="swiper-button-prev"></div>
       <div class="swiper-button-next"></div>
       <div class="swiper-pagination"></div>
     </div>
   </section>
+  
   <main class="container">
 
     <div class="controls">
       <label for="sort">Ordenar por</label>
       <select id="sort" aria-label="Ordenar por">
-        <option>Mais relevantes</option>
-        <option>Menor preço</option>
-        <option>Maior preço</option>
+        <option value="relevantes">Mais relevantes</option>
+        <option value="menor-preco">Menor preço</option>
+        <option value="maior-preco">Maior preço</option>
       </select>
     </div>
 
-    <section class="grid">
+    <section class="grid" id="product-grid">
         <?php foreach ($produtos as $produto): ?>
             <a href="tela_produto.php?id=<?php echo $produto['id']; ?>" class="card-link">
                 <article class="card" data-price="<?php echo htmlspecialchars($produto['preco']); ?>">
@@ -98,18 +144,59 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
             <p>Nenhum produto encontrado no momento.</p>
         <?php endif; ?>
     </section>
-    </main>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
-    // Script do Carrossel (Swiper)
     document.addEventListener('DOMContentLoaded', function () {
+      
+      // Script do Carrossel (Swiper)
       const swiper = new Swiper('.hero-swiper', {
         loop: true,
         autoplay: { delay: 3000, disableOnInteraction: false },
         pagination: { el: '.swiper-pagination', clickable: true },
         navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
       });
+
+      // === NOVO SCRIPT PARA ORDENAÇÃO ===
+      const sortSelect = document.getElementById('sort');
+      const productGrid = document.getElementById('product-grid');
+      // Pega todos os 'a.card-link' que estão dentro do grid
+      const products = Array.from(productGrid.querySelectorAll('.card-link')); 
+      // Salva a ordem original (para o "Mais Relevantes")
+      const originalProducts = [...products]; 
+
+      sortSelect.addEventListener('change', function() {
+          const sortBy = this.value; // Pega o valor (ex: 'menor-preco')
+
+          let sortedProducts = [];
+
+          if (sortBy === 'menor-preco') {
+              sortedProducts = products.sort((a, b) => {
+                  // Pega o 'data-price' de dentro do 'article' de cada 'a'
+                  const priceA = parseFloat(a.querySelector('.card').dataset.price);
+                  const priceB = parseFloat(b.querySelector('.card').dataset.price);
+                  return priceA - priceB; // Ordena do menor para o maior
+              });
+          } else if (sortBy === 'maior-preco') {
+              sortedProducts = products.sort((a, b) => {
+                  const priceA = parseFloat(a.querySelector('.card').dataset.price);
+                  const priceB = parseFloat(b.querySelector('.card').dataset.price);
+                  return priceB - priceA; // Ordena do maior para o menor
+              });
+          } else {
+              // 'relevantes' (volta à ordem original)
+              sortedProducts = originalProducts;
+          }
+
+          // Limpa o grid e re-adiciona os produtos na ordem correta
+          productGrid.innerHTML = ''; // Limpa o grid
+          sortedProducts.forEach(product => {
+              productGrid.appendChild(product); // Adiciona o produto (o <a>) de volta
+          });
+      });
+      // === FIM DO NOVO SCRIPT ===
+
     });
   </script>
 </body>
