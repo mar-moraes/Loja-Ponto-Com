@@ -12,15 +12,29 @@ if (!isset($_SESSION['usuario_id'])) {
 require 'Banco de dados/conexao.php';
 
 $usuario_id = $_SESSION['usuario_id'];
-$endereco_padrao = null;
-$nome_usuario = $_SESSION['usuario_nome']; // Pego da sessão de login
+$usuario_logado = true; // Necessário para o template do header
+$nome_usuario_completo = $_SESSION['usuario_nome']; // Pego da sessão de login
+$nome_usuario = explode(' ', $nome_usuario_completo)[0]; // Primeiro nome para o header
 
-// Busca o primeiro endereço cadastrado para este usuário
-// $total_carrinho = 0.00;
+$endereco_padrao = null;
+$total_carrinho = 0.00; // Valor padrão
 $frete = 0.00; // Frete padrão grátis
 $total_final = 0.00;
-$total_carrinho = 0.00; // Valor padrão
 
+// === BUSCAR ENDEREÇO ===
+try {
+    // Busca o último endereço cadastrado pelo usuário
+    $stmt_addr = $pdo->prepare("SELECT * FROM ENDERECOS WHERE usuario_id = ? ORDER BY id DESC LIMIT 1");
+    $stmt_addr->execute([$usuario_id]);
+    $endereco_padrao = $stmt_addr->fetch(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    error_log("Erro ao buscar endereço: " . $e->getMessage());
+    // $endereco_padrao continua null
+}
+
+
+// Busca o total do carrinho (código original)
 try {
     // SQL para buscar o carrinho, itens e produtos, e calcular o total
     $sql_cart = "SELECT SUM(p.preco * ci.quantidade) as subtotal
@@ -53,7 +67,7 @@ try {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Forma de Entrega</title>
 
-  <link rel="stylesheet" href="estilos/style.css"> <link rel="stylesheet" href="estilo_entrega.css">
+  <link rel="stylesheet" href="estilos/style.css">
   <link rel="stylesheet" href="estilos/estilo_entrega.css">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -63,23 +77,32 @@ try {
 </head>
 <body>
 
-     <header class="topbar-entrega">
-      <nav class="actions-entrega">
-        <div class="logo-container">
-          <a href="index.php">
-            <img src="imagens/exemplo-logo.png" alt="Logo" class="logo">
+    <header class="topbar">
+      <nav class="actions"> 
+        <div class="logo-container"> 
+            <a href="index.php" style="display: flex; align-items: center;">
+              <img src="imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px;">
+            </a>
+          </div> 
+        
+        <form action="buscar.php" method="GET" style="position: relative; width: 600px; max-width: 100%;">
+          <input type="search" id="pesquisa" name="q" placeholder="Digite sua pesquisa..." style="font-size: 16px; width: 100%; height: 40px; padding-left: 15px; padding-right: 45px; border-radius: 6px; border: none; box-sizing: border-box;">
+          <button type="submit" style="position: absolute; right: 0; top: 0; height: 40px; width: 45px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <img src="imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px; opacity: 0.6;">
+          </button>
+        </form>
+        
+        <div style="display: flex; gap: 30px; align-items: center;">
+          <a href="tela_minha_conta.php">Olá, <?php echo htmlspecialchars($nome_usuario); ?></a>
+          <a href="Banco de dados/logout.php">Sair</a>
+          <a href="tela_carrinho.php" style="display: flex; align-items: center; gap: 5px;">
+            Carrinho
+            <img src="imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
           </a>
         </div>
-        <div class="user-menu">
-          <a href="#">
-            <i class="fa-regular fa-user"></i>
-            Usuarío
-            <i class="fa-solid fa-chevron-down"></i>
-          </a>
-          <a href="#">Contato</a>
-        </div>
-      </nav>
+        </nav>
     </header>
+
 
     <main class="entrega-layout-container">
         
@@ -103,7 +126,7 @@ try {
                                 <p style="margin: 5px 0;">
                                     <?php echo htmlspecialchars($endereco_padrao['cep']); ?> - <?php echo htmlspecialchars($endereco_padrao['cidade']); ?> - <?php echo htmlspecialchars($endereco_padrao['estado']); ?>
                                 </p>
-                                <p class="tipo-endereco">Recebe: <?php echo htmlspecialchars($nome_usuario); ?></p>
+                                <p class="tipo-endereco">Recebe: <?php echo htmlspecialchars($nome_usuario_completo); ?></p>
                             <?php else: ?>
                                 <p style="font-weight: 600; font-size: 15px;">Nenhum endereço cadastrado.</p>
                                 <p style="margin: 5px 0;">Por favor, adicione um endereço.</p>
@@ -162,7 +185,6 @@ try {
                 <div class="form-grupo">
                     <label for="cep">CEP</label>
                     <input type="text" id="cep" placeholder="Ex.: 13184-000">
-                    <!-- <a href="#" class="link-form">Não sei meu CEP</a> -->
                 </div>
                 
                 <div class="form-linha">
@@ -270,12 +292,14 @@ try {
         </div>
     </div>
 
-
     <script>
         // --- Variáveis globais ---
         let subtotalCompra= <?php echo $total_carrinho; ?>;
         let map = null; // Referência global para o mapa Leaflet
-
+        
+        // (O JavaScript das funções mostrarModal, fecharModal, atualizarResumoEntrega, 
+        // geolocalização, etc., permanece o mesmo)
+        // ...
         // --- Funções para Modais ---
         function mostrarModal(modalId) {
             document.getElementById(modalId).style.display = 'flex';
@@ -427,10 +451,6 @@ try {
                 'cep': addressData.postcode,
                 'rua': addressData.road,
                 'numero': addressData.house_number, // Tenta pegar o número, se disponível
-                // Adicione outros campos se necessário, mapeando do addressData
-                // 'bairro': addressData.suburb || addressData.neighbourhood || addressData.city_district,
-                // 'cidade': addressData.city || addressData.town || addressData.village,
-                // 'uf': addressData.state,
             };
 
             for (const id in campos) {
@@ -443,11 +463,9 @@ try {
                         input.value = valor;
                     }
                 } else if (input) {
-                    // Limpa o campo se não houver valor correspondente
                     // input.value = ''; // Descomente se quiser limpar campos não encontrados
                 }
             }
-             // Foca no campo número se a rua foi preenchida, ou no complemento se o número também foi
              if (campos['rua'] && campos['numero']) {
                  document.getElementById('complemento')?.focus();
              } else if (campos['rua']) {
@@ -462,12 +480,10 @@ try {
                 if (input) input.value = '';
             });
 
-            // Reseta também as mensagens de erro
              const erroRua = document.getElementById('erro-rua');
              const erroNome = document.getElementById('erro-nome');
              const inputRua = document.getElementById('rua');
              const inputNome = document.getElementById('nome');
-
              const inputTelefone = document.getElementById('telefone');
              const erroTelefone = document.getElementById('erro-telefone');
 
@@ -475,30 +491,25 @@ try {
              if(erroNome) erroNome.style.display = 'none';
              if(inputRua) inputRua.classList.remove('input-erro');
              if(inputNome) inputNome.classList.remove('input-erro');
-
              if(erroTelefone) erroTelefone.style.display = 'none';
              if(inputTelefone) inputTelefone.classList.remove('input-erro');             
         }
 
         // --- Roda quando a página carrega ---
         document.addEventListener("DOMContentLoaded", () => {
-
  
-            
             atualizarResumoEntrega(); // Atualiza o resumo inicial
 
             // --- Lógica para selecionar as opções de entrega (Radios) ---
             document.querySelectorAll('input[name="forma-entrega"]').forEach(radio => {
                 radio.addEventListener('change', function() {
-                    // Remove 'selecionado' de todos os blocos
                     document.querySelectorAll('.opcao-bloco').forEach(bloco => {
                         bloco.classList.remove('selecionado');
                     });
-                    // Adiciona 'selecionado' ao bloco pai do radio clicado
                     if (this.checked) {
                         this.closest('.opcao-bloco').classList.add('selecionado');
                     }
-                    atualizarResumoEntrega(); // Atualiza o resumo sempre que a opção muda
+                    atualizarResumoEntrega(); 
                 });
             });
 
@@ -512,10 +523,9 @@ try {
                     const horarioAgenciaElement = itemAgencia.querySelector('p > i.fa-regular.fa-clock');
                     const horarioAgencia = horarioAgenciaElement ? horarioAgenciaElement.parentElement.innerText : 'Horário indisponível';
 
-                    // Captura e Análise de Endereço da Agência
                     const pEnderecoElement = itemAgencia.querySelector('p > i.fa-solid.fa-location-dot');
                     const pEndereco = pEnderecoElement ? pEnderecoElement.parentElement.innerText : '';
-                    const regex = /^(.*?), (.*?), (.*?), (.*?) \((.*?)\)/; // Ajuste regex se necessário
+                    const regex = /^(.*?), (.*?), (.*?), (.*?) \((.*?)\)/; 
                     const match = pEndereco.match(regex);
 
                     let dadosAgencia = { tipo: 'agencia', nome: nomeAgencia, endereco: pEndereco }; // Fallback
@@ -523,22 +533,20 @@ try {
                         dadosAgencia = {
                             tipo: 'agencia',
                             nome: nomeAgencia,
-                            documento: 'ISENTO', // Ou CNPJ se disponível
-                            endereco: `${match[1].trim()}, ${match[2].trim()}`, // Rua, Número
+                            documento: 'ISENTO', 
+                            endereco: `${match[1].trim()}, ${match[2].trim()}`, 
                             bairro: match[3].trim(),
                             municipio: match[4].trim(),
                             cep: match[5].trim(),
-                            uf: 'SP', // Assumindo SP, idealmente viria da API/dados
+                            uf: 'SP', 
                             fone: '(19) 3888-8888' // Fictício
                         };
                     } else {
                         console.warn("Regex não capturou os dados do endereço da agência:", pEndereco);
                     }
 
-                    // Salva os dados da agência escolhida no localStorage
                     localStorage.setItem('dadosEntrega', JSON.stringify(dadosAgencia));
 
-                    // Atualiza a UI da tela de entrega (fora do modal)
                     const targetDetalhes = document.getElementById('detalhes-agencia-selecionada');
                     if (targetDetalhes) {
                         targetDetalhes.innerHTML = `
@@ -548,14 +556,11 @@ try {
                         `;
                     }
 
-                    // Seleciona o rádio 'retirar-agencia', atualiza a classe e dispara o evento 'change'
                     const radioAgencia = document.getElementById('retirar-agencia');
                     if (radioAgencia) {
                         radioAgencia.checked = true;
-                         // Garante que o bloco correto fique selecionado visualmente
                         document.querySelectorAll('.opcao-bloco').forEach(b => b.classList.remove('selecionado'));
                         radioAgencia.closest('.opcao-bloco').classList.add('selecionado');
-                        // Dispara o evento para atualizar o resumo
                         radioAgencia.dispatchEvent(new Event('change', { bubbles: true }));
                     }
 
@@ -565,21 +570,35 @@ try {
 
 
             // --- Lógica de Validação do Modal de Endereço ---
+            // =================================================================
+            // INÍCIO DAS VARIÁVEIS DECLARADAS (UMA SÓ VEZ)
+            // =================================================================
             const btnSalvarEndereco = document.getElementById('btn-salvar-endereco');
             const inputRua = document.getElementById('rua');
             const erroRua = document.getElementById('erro-rua');
             const inputNome = document.getElementById('nome');
             const erroNome = document.getElementById('erro-nome');
-
-            // ADICIONE ESTAS DUAS LINHAS
-            const inputTelefone = document.getElementById('telefone');
+            
+            // Variáveis que estavam sendo redeclaradas
+            const inputTelefone = document.getElementById('telefone'); 
             const erroTelefone = document.getElementById('erro-telefone');
+            const inputCep = document.getElementById('cep');
+            const inputNumero = document.getElementById('numero');
+            const checkboxSemNumero = document.getElementById('sem-numero');
+            
+            // Outras referências
+            const inputComplemento = document.getElementById('complemento');
+            const inputInfoAdicional = document.getElementById('info-adicional');
+            // =================================================================
+            // FIM DAS VARIÁVEIS DECLARADAS
+            // =================================================================
+
 
             if (btnSalvarEndereco) {
                 btnSalvarEndereco.addEventListener('click', () => {
                     let isValid = true;
                     
-                    // Reset erros (seu código original)
+                    // Reset erros
                     if(erroRua) erroRua.style.display = 'none';
                     if(inputRua) inputRua.classList.remove('input-erro');
                     if(erroNome) erroNome.style.display = 'none';
@@ -587,7 +606,7 @@ try {
                     if(erroTelefone) erroTelefone.style.display = 'none';
                     if(inputTelefone) inputTelefone.classList.remove('input-erro');
 
-                    // Validações (seu código original)
+                    // Validações
                     if (inputRua && inputRua.value.trim() === '') {
                         if(erroRua) erroRua.style.display = 'block';
                         inputRua.classList.add('input-erro');
@@ -605,9 +624,9 @@ try {
                     }
 
                     if (isValid) {
-                        // ---- INÍCIO DA MODIFICAÇÃO ----
                         // 1. Coletar dados do formulário
                         const dadosEndereco = {
+                            tipo: 'endereco', 
                             cep: inputCep ? inputCep.value : '',
                             rua: inputRua ? inputRua.value : '',
                             numero: checkboxSemNumero.checked ? 'S/N' : (inputNumero ? inputNumero.value : ''),
@@ -616,6 +635,8 @@ try {
                             nome: inputNome ? inputNome.value : '',
                             telefone: inputTelefone ? inputTelefone.value : ''
                         };
+                        
+                        localStorage.setItem('dadosEntrega', JSON.stringify(dadosEndereco));
 
                         // 2. Enviar dados para o PHP via fetch
                         fetch('Banco de dados/salvar_endereco.php', {
@@ -631,7 +652,7 @@ try {
                             if (data.sucesso) {
                                 // 3. Atualizar a tela principal com o novo endereço
                                 const detalhesEnderecoDiv = document.querySelector('#enviar-endereco').closest('.opcao-bloco').querySelector('.opcao-detalhes');
-                                const novoEndereco = data.endereco;
+                                const novoEndereco = data.endereco; // Pega os dados retornados pelo PHP
                                 
                                 if (detalhesEnderecoDiv) {
                                     detalhesEnderecoDiv.innerHTML = `
@@ -657,7 +678,6 @@ try {
                                 }
 
                             } else {
-                                // 4. Se falhar, mostrar erro (pode ser num local específico do modal)
                                 alert('Erro ao salvar endereço: ' + data.mensagem);
                             }
                         })
@@ -666,25 +686,30 @@ try {
                             alert('Erro de comunicação. Tente novamente.');
                         });
                         
-                        // ---- FIM DA MODIFICAÇÃO ----
                     }
                 });
             } else {
                 console.error("Botão 'btn-salvar-endereco' não encontrado.");
             }
-            })
-
+            
             // --- Lógica do ViaCEP ---
-            const inputCep = document.getElementById('cep');
-            function buscarCep() {
-                if (!inputCep) return; // Verifica se o input existe
+            // =================================================================
+            // INÍCIO DA CORREÇÃO 1: REMOVIDA A REDECLARAÇÃO
+            // A variável 'inputCep' já foi declarada acima (linha 608)
+            // =================================================================
+            // const inputCep = document.getElementById('cep'); // <-- LINHA REMOVIDA
+            
+            function buscarCepLocal() {
+                // (O resto da função permanece o mesmo, 
+                // ela usará o 'inputCep' e 'inputRua' do escopo superior)
+                if (!inputCep) return; 
 
-                const cep = inputCep.value.replace(/\D/g, ''); // Remove não dígitos
-                if(erroRua) erroRua.style.display = 'none'; // Esconde erro anterior
+                const cep = inputCep.value.replace(/\D/g, ''); 
+                if(erroRua) erroRua.style.display = 'none'; 
                 if(inputRua) inputRua.classList.remove('input-erro');
 
                 if (cep.length === 8) {
-                    if(inputRua) inputRua.value = "Buscando..."; // Feedback visual
+                    if(inputRua) inputRua.value = "Buscando..."; 
                     fetch(`https://viacep.com.br/ws/${cep}/json/`)
                         .then(response => {
                              if (!response.ok) { throw new Error('Erro na resposta da API ViaCEP'); }
@@ -694,54 +719,53 @@ try {
                             if (data.erro) {
                                 console.warn("CEP não encontrado na base do ViaCEP.");
                                 if(inputRua) inputRua.value = "";
-                                inputRua?.focus(); // Foca na rua para preenchimento manual
+                                inputRua?.focus(); 
                             } else {
-                                if(inputRua) inputRua.value = data.logradouro || ""; // Preenche rua (ou vazio se não tiver)
-                                // Poderia preencher bairro, cidade, UF aqui também
-                                // document.getElementById('bairro').value = data.bairro || "";
-                                // document.getElementById('cidade').value = data.localidade || "";
-                                // document.getElementById('uf').value = data.uf || "";
-                                document.getElementById('numero')?.focus(); // Foca no número
+                                if(inputRua) inputRua.value = data.logradouro || ""; 
+                                document.getElementById('numero')?.focus(); 
                             }
                         })
                         .catch(error => {
                             console.error('Erro ao consultar a API ViaCEP:', error);
-                            if(inputRua) inputRua.value = ""; // Limpa em caso de erro
+                            if(inputRua) inputRua.value = ""; 
                         });
                 } else if (cep.length > 0 && cep.length < 8) {
-                     // CEP incompleto, limpa a rua se estava "Buscando..."
                      if(inputRua && inputRua.value === "Buscando...") inputRua.value = "";
                 } else if (cep.length === 0) {
-                     // Campo CEP vazio, limpa a rua
                      if(inputRua) inputRua.value = "";
                 }
             }
+            
             if (inputCep) {
-                inputCep.addEventListener('blur', buscarCep); // Busca quando perde o foco
-                inputCep.addEventListener('input', () => { // Limpa "Buscando..." se o usuário digitar mais
+                inputCep.addEventListener('blur', buscarCepLocal); 
+                inputCep.addEventListener('input', () => { 
                      if(inputRua && inputRua.value === "Buscando...") inputRua.value = "";
                 });
                 inputCep.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
-                        event.preventDefault(); // Evita submit do formulário (se houver)
-                        buscarCep(); // Busca ao pressionar Enter
+                        event.preventDefault(); 
+                        buscarCepLocal(); 
                     }
                 });
             } else {
                  console.error("Input 'cep' não encontrado.");
             }
+            // =================================================================
+            // FIM DA CORREÇÃO 1
+            // =================================================================
+
 
              // --- Lógica da Busca de Localização (Mapa/Nominatim) ---
             const inputBuscaLocal = document.getElementById('busca-local');
             const btnBuscaLocal = document.getElementById('btn-busca-local');
 
             function buscarLocalizacaoMapa() {
-                if (!inputBuscaLocal || !map) return; // Verifica se input e mapa existem
+                // (Função permanece a mesma)
+                if (!inputBuscaLocal || !map) return; 
 
                 const query = inputBuscaLocal.value;
                 if (query.trim() === '') return;
 
-                // Adiciona ", Brasil" para melhorar a busca no Nominatim
                 const queryComPais = query.includes('Brasil') ? query : `${query}, Brasil`;
                 const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryComPais)}&format=json&limit=1&countrycodes=br&addressdetails=1`;
 
@@ -762,8 +786,7 @@ try {
                             const lat = parseFloat(result.lat);
                             const lon = parseFloat(result.lon);
                             if (!isNaN(lat) && !isNaN(lon)) {
-                                map.setView([lat, lon], 16); // Move o mapa para o resultado com zoom 16
-                                // Poderia adicionar um marcador temporário aqui se quisesse
+                                map.setView([lat, lon], 16); 
                             } else {
                                  console.warn("Coordenadas inválidas recebidas do Nominatim:", result);
                                  alert("Localização encontrada, mas com coordenadas inválidas.");
@@ -796,6 +819,7 @@ try {
             const btnContinuar = document.querySelector('.btn-continuar-entrega');
             if (btnContinuar) {
                 btnContinuar.addEventListener('click', () => {
+                    // (Função permanece a mesma)
                     const freteSelecionadoRadio = document.querySelector('input[name="forma-entrega"]:checked');
                     if (!freteSelecionadoRadio) {
                         alert("Por favor, selecione uma forma de entrega.");
@@ -803,46 +827,42 @@ try {
                     }
                     const freteSelecionado = freteSelecionadoRadio.value;
 
-                    // Garante que 'dadosEntrega' está atualizado no localStorage
-                    // Se 'endereco' estiver selecionado, usa os dados padrão (ou os editados se implementado)
                     if (freteSelecionado === 'endereco') {
-                        // Tenta pegar dados editados, se não, usa o padrão
+                        
                         const dadosEditadosJSON = localStorage.getItem('dadosEntrega');
                         let dadosEditados = null;
                         try { dadosEditados = dadosEditadosJSON ? JSON.parse(dadosEditadosJSON) : null; } catch(e){}
 
-                        // Usa dados editados APENAS se o tipo for 'endereco', senão usa o default
                         if(dadosEditados && dadosEditados.tipo === 'endereco') {
-                             // Já está salvo, não precisa fazer nada
-                        } else {
-                            // Salva os dados padrão de endereço se não houver edição ou se era agência antes
-                             const dadosHomeDefault = {
+                             // Já está salvo
+                        } else if (<?php echo json_encode($endereco_padrao); ?>) {
+                            const phpEndereco = <?php echo json_encode($endereco_padrao); ?>;
+                            const dadosHomeDefault = {
                                 tipo: 'endereco',
-                                nome: 'Fulano Silva', // Idealmente viria de um cadastro
-                                documento: '123.456.789-00', // Idealmente viria de um cadastro
-                                endereco: 'Exemplo Fictício, 123', // Padrão
-                                bairro: 'Centro',
-                                cep: '13180-000',
-                                municipio: 'Hortolândia',
-                                uf: 'SP',
-                                fone: '(19) 99999-9999' // Idealmente viria de um cadastro
+                                nome: '<?php echo htmlspecialchars($nome_usuario_completo); ?>', 
+                                documento: 'N/A', 
+                                endereco: `${phpEndereco.rua}, ${phpEndereco.numero}`,
+                                bairro: phpEndereco.bairro,
+                                cep: phpEndereco.cep,
+                                municipio: phpEndereco.cidade,
+                                uf: phpEndereco.estado,
+                                fone: 'N/A' 
                             };
                             localStorage.setItem('dadosEntrega', JSON.stringify(dadosHomeDefault));
+                        } else {
+                            alert("Por favor, adicione um endereço de entrega clicando em 'Alterar ou escolher outro endereço'.");
+                            return; 
                         }
 
-                    } else { // freteSelecionado === 'agencia'
-                        // Verifica se uma agência foi realmente selecionada e salva no localStorage
-                        // A lógica no '.btn-escolher' já deve ter salvo os dados corretos.
+                    } else { 
                         const dadosAgenciaJSON = localStorage.getItem('dadosEntrega');
                         let dadosAgencia = null;
                          try { dadosAgencia = dadosAgenciaJSON ? JSON.parse(dadosAgenciaJSON) : null; } catch(e){}
 
-                        // Se ainda não salvou (ex: carregou a página e clicou direto em continuar com agência selecionada por padrão)
-                        // salva a agência padrão
                         if (!dadosAgencia || dadosAgencia.tipo !== 'agencia') {
                              const dadosDefaultAgencia = {
                                 tipo: 'agencia',
-                                nome: 'Agência - LOJA 1', // Agência padrão
+                                nome: 'Agência - LOJA 1', 
                                 documento: 'ISENTO',
                                 endereco: 'RUA LUIZ CAMILO DE CAMARGO, 581',
                                 bairro: 'Centro',
@@ -855,7 +875,6 @@ try {
                         }
                     }
 
-                    // Navega para a próxima página
                     window.location.href = 'tela_pagamento.html';
                 });
             } else {
@@ -863,16 +882,25 @@ try {
             }
 
              // --- Ajuste para checkbox "Sem número" ---
-             const checkboxSemNumero = document.getElementById('sem-numero');
-             const inputNumero = document.getElementById('numero');
+            // =================================================================
+            // INÍCIO DA CORREÇÃO 2: REMOVIDAS AS REDECLARAÇÕES
+            // As variáveis 'checkboxSemNumero' e 'inputNumero' já foram
+            // declaradas acima (linhas 609 e 610)
+            // =================================================================
+             // const checkboxSemNumero = document.getElementById('sem-numero'); // <-- LINHA REMOVIDA
+             // const inputNumero = document.getElementById('numero'); // <-- LINHA REMOVIDA
              if (checkboxSemNumero && inputNumero) {
                  checkboxSemNumero.addEventListener('change', function() {
                      inputNumero.disabled = this.checked;
                      if (this.checked) {
-                         inputNumero.value = ''; // Limpa o número se marcar "sem número"
+                         inputNumero.value = ''; 
                      }
                  });
              }
+            // =================================================================
+            // FIM DA CORREÇÃO 2
+            // =================================================================
+
 
              // --- Lógica contador de caracteres ---
              const textareaInfo = document.getElementById('info-adicional');
@@ -882,34 +910,37 @@ try {
                      const currentLength = textareaInfo.value.length;
                      contadorSpan.textContent = `${currentLength} / 128`;
                  });
-                 // Inicializa contador
                  contadorSpan.textContent = `${textareaInfo.value.length} / 128`;
              }
 
-        // --- Lógica da Máscara de Telefone ---
-         const inputTelefone = document.getElementById('telefone');
-         if (inputTelefone) {
-             inputTelefone.addEventListener('input', (e) => {
-                 let valor = e.target.value.replace(/\D/g, ''); // Permite apenas números
+            // --- Lógica da Máscara de Telefone ---
+            // =================================================================
+            // INÍCIO DA CORREÇÃO 3: REMOVIDA A REDECLARAÇÃO
+            // A variável 'inputTelefone' já foi declarada acima (linha 604)
+            // =================================================================
+            // const inputTelefone = document.getElementById('telefone'); // <-- LINHA REMOVIDA
+             if (inputTelefone) {
+                 inputTelefone.addEventListener('input', (e) => {
+                     let valor = e.target.value.replace(/\D/g, ''); 
 
-                 if (valor.length > 10) { 
-                     // Celular (11 dígitos): (99) 99999-9999
-                     valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
-                 } else if (valor.length > 6) {
-                     // Fixo (10 dígitos) ou Celular incompleto: (99) 9999-9999
-                     valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
-                 } else if (valor.length > 2) {
-                     // (99) 9999
-                     valor = valor.replace(/^(\d{2})(\d{0,4}).*/, '($1) $2');
-                 } else if (valor.length > 0) {
-                     // (99
-                     valor = valor.replace(/^(\d{0,2}).*/, '($1');
-                 }
-                 e.target.value = valor;
-                 
-             }); // <-- FIM do DOMContentLoaded
-         } 
-
+                     if (valor.length > 10) { 
+                         valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+                     } else if (valor.length > 6) {
+                         valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+                     } else if (valor.length > 2) {
+                         valor = valor.replace(/^(\d{2})(\d{0,4}).*/, '($1) $2');
+                     } else if (valor.length > 0) {
+                         valor = valor.replace(/^(\d{0,2}).*/, '($1');
+                     }
+                     e.target.value = valor;
+                     
+                 }); 
+             } 
+            // =================================================================
+            // FIM DA CORREÇÃO 3
+            // =================================================================
+         
+        }); // <-- FIM do DOMContentLoaded
     </script>
 </body>
 </html>

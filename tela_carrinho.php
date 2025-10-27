@@ -116,7 +116,7 @@ if ($usuario_logado) {
         
         <div style="display: flex; gap: 30px; align-items: center;">
           <?php if ($usuario_logado): ?>
-            <a href="minha_conta.php">Olá, <?php echo htmlspecialchars($nome_usuario); ?></a>
+            <a href="tela_minha_conta.php">Olá, <?php echo htmlspecialchars($nome_usuario); ?></a>
             <a href="Banco de dados/logout.php">Sair</a>
           <?php else: ?>
             <a href="tela_cadastro.html">Crie a sua conta</a>
