@@ -9,7 +9,26 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-</head>
+  <style>
+    #lista-produtos {
+      display: flex;          /* Usa Flexbox em vez de Grid */
+      flex-wrap: wrap;        /* Permite que os cards quebrem a linha */
+      justify-content: flex-start; /* Alinha os cards à esquerda */
+      
+      /* O 'gap' (espaçamento) provavelmente já vem da classe .grid, 
+         mas se o espaçamento sumir, descomente a linha abaixo: */
+      /* gap: 20px; */ 
+    }
+
+    /* Esta regra garante que o card não tente crescer */
+    #lista-produtos .card {
+      flex-grow: 0;
+      flex-shrink: 0;
+      /* O card já deve ter uma largura definida em 'style.css' 
+         (ex: width: 250px), o que é ideal. */
+    }
+  </style>
+  </head>
 
 <body>
     <header class="topbar">
@@ -41,7 +60,6 @@
     </header>
 
 
-    <!-- Controle de "ordenação" -->
     <div class="controls">
       <label for="sort">Ordenar por</label>
       <select id="sort" aria-label="Ordenar por">
@@ -51,8 +69,7 @@
       </select>
     </div>
 
-    <!-- Grade de produtos -->
- <section class="grid" id="lista-produtos"></section>
+    <section class="grid" id="lista-produtos"></section>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -109,8 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   <footer></footer>
 
-  <!-- Importa o JavaScript -->
-<script src="script.js"></script>
+  <script src="script.js"></script>
   </script>
   </body>
 </html>

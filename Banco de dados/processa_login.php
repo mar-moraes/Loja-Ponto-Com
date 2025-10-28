@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // 4. Busca o usuário pelo email
-        $stmt = $pdo->prepare("SELECT id, nome, senha FROM USUARIOS WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT id, nome, senha FROM usuarios WHERE email = ?");
         $stmt->execute([$email]);
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -28,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // 7. Redireciona para a página principal (ou index.html)
             header("Location: ../index.php");
             exit();
+            
             
         } else {
             // 8. Usuário ou senha incorretos

@@ -12,7 +12,7 @@ $usuario_id = $_SESSION['usuario_id'];
 
 // 2. Busca os dados pessoais do usuário
 try {
-    $stmt_user = $pdo->prepare("SELECT nome, email, cpf, telefone FROM USUARIOS WHERE id = ?");
+    $stmt_user = $pdo->prepare("SELECT nome, email, cpf, telefone FROM usuarios WHERE id = ?");
     $stmt_user->execute([$usuario_id]);
     $usuario = $stmt_user->fetch(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -21,7 +21,7 @@ try {
 
 // 3. Busca os endereços do usuário
 try {
-    $stmt_enderecos = $pdo->prepare("SELECT * FROM ENDERECOS WHERE usuario_id = ? ORDER BY id DESC");
+    $stmt_enderecos = $pdo->prepare("SELECT * FROM enderecos WHERE usuario_id = ? ORDER BY id DESC");
     $stmt_enderecos->execute([$usuario_id]);
     $enderecos = $stmt_enderecos->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {

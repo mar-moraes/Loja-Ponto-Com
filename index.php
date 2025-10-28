@@ -4,7 +4,7 @@ require 'Banco de dados/conexao.php'; // Inclui a conexão
 
 // Busca produtos do banco de dados (Grid Principal)
 try {
-    $stmt = $pdo->prepare("SELECT * FROM PRODUTOS WHERE status = 'ativo' LIMIT 20");
+    $stmt = $pdo->prepare("SELECT * FROM produtos WHERE status = 'ativo' LIMIT 20");
     $stmt->execute();
     $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -16,7 +16,7 @@ try {
 try {
     // ORDER BY RAND() pega produtos aleatórios. 
     // Garante que tenham imagem e estejam ativos.
-    $stmt_carousel = $pdo->prepare("SELECT id, nome, imagem_url FROM PRODUTOS WHERE status = 'ativo' AND imagem_url IS NOT NULL ORDER BY RAND() LIMIT 3");
+    $stmt_carousel = $pdo->prepare("SELECT id, nome, imagem_url FROM produtos WHERE status = 'ativo' AND imagem_url IS NOT NULL ORDER BY RAND() LIMIT 3");
     $stmt_carousel->execute();
     $produtos_carousel = $stmt_carousel->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -59,6 +59,24 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
         text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
         box-sizing: border-box; /* Garante que o padding não quebre o layout */
     }
+
+    /* ============ INÍCIO DA CORREÇÃO ============ */
+    /* Corrige o estouro do card quando há apenas 1 produto */
+    #product-grid {
+      display: flex;          /* Usa Flexbox em vez de Grid */
+      flex-wrap: wrap;        /* Permite que os cards quebrem a linha */
+      justify-content: flex-start; /* Alinha os cards à esquerda */
+      
+      /* O 'gap: 18px' será herdado da classe .grid */
+    }
+
+    /* Garante que o link (que envolve o card) não tente crescer */
+    #product-grid .card-link {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+    /* ============= FIM DA CORREÇÃO ============= */
+
   </style>
 </head>
 <body>
@@ -128,12 +146,51 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
 
     <section class="grid" id="product-grid">
         <?php foreach ($produtos as $produto): ?>
+            <?php
+            // --- (INÍCIO - LÓGICA DE DESCONTO PARA O CARD) ---
+            // Copiada de tela_produto.php
+            $preco_original = (float)$produto['preco'];
+            // Usamos ?? 0 para garantir que funcione se a coluna 'desconto' for nula
+            $desconto_percent = (int)($produto['desconto'] ?? 0); 
+            $tem_desconto = $desconto_percent > 0;
+
+            $preco_final = $preco_original; // Preço para o data-price
+            $preco_antigo_formatado = '';
+            $preco_final_formatado = '';
+            $badge_texto = '';
+
+            if ($tem_desconto) {
+                // Calcula o preço final com desconto
+                $preco_final = $preco_original * (1 - ($desconto_percent / 100));
+                
+                // Formata os textos para exibição
+                $preco_antigo_formatado = 'R$ ' . number_format($preco_original, 2, ',', '.');
+                $preco_final_formatado = 'R$ ' . number_format($preco_final, 2, ',', '.');
+                $badge_texto = $desconto_percent . '% OFF';
+            } else {
+                // Se não tem desconto, o preço final é o original
+                $preco_final_formatado = 'R$ ' . number_format($preco_original, 2, ',', '.');
+            }
+            // --- (FIM - LÓGICA DE DESCONTO PARA O CARD) ---
+            ?>
+            
             <a href="tela_produto.php?id=<?php echo $produto['id']; ?>" class="card-link">
-                <article class="card" data-price="<?php echo htmlspecialchars($produto['preco']); ?>">
+                <article class="card" data-price="<?php echo htmlspecialchars($preco_final); ?>">
                     <div class="thumb" style="background-image:url('<?php echo htmlspecialchars($produto['imagem_url'] ?? 'imagens/placeholder.png'); ?>')"></div>
                     <div class="title"><?php echo htmlspecialchars($produto['nome']); ?></div>
-                    <div class="card-avaliacao"></div> <div>
-                        <span class="price">R$ <?php echo number_format($produto['preco'], 2, ',', '.'); ?></span>
+                    <div class="card-avaliacao"></div> 
+                    
+                    <div>
+                        <?php if ($tem_desconto): ?>
+                            <span class="old"><?php echo $preco_antigo_formatado; ?></span>
+                        <?php endif; ?>
+                        
+                        <span class="price"><?php echo $preco_final_formatado; ?></span>
+                        
+                        <?php if ($tem_desconto): ?>
+                            <span class="badge"><?php echo $badge_texto; ?></span>
+                        <?php endif; ?>
+                        
                         <span class="parcel">em 12x sem juros</span>
                     </div>
                 </article>

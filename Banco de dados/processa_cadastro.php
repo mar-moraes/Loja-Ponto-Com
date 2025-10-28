@@ -31,13 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // 4. Inserir no banco de dados
-        $stmt = $pdo->prepare("INSERT INTO USUARIOS (nome, email, cpf, telefone, senha) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO usuarios (nome, email, cpf, telefone, senha) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$nome, $email, $cpf, $telefone, $senha_hash]);
 
         // 5. Sucesso: Loga o usuário e redireciona para a index
         $_SESSION['usuario_id'] = $pdo->lastInsertId();
         $_SESSION['usuario_nome'] = $nome;
-        header("Location: .../index.php"); // Redireciona para a nova index.php
+        header("Location: ../index.php"); // Redireciona para a nova index.php
         exit();
 
     } catch (PDOException $e) {

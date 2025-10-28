@@ -1,10 +1,9 @@
 <?php
 session_start();
-require 'Banco de dados/conexao.php'; // Inclui a conexão
+require 'Banco de dados/conexao.php'; 
 
 // 1. Validar e pegar o ID da URL
 if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-    // Se o ID não for válido, volta para a index
     header('Location: index.php');
     exit();
 }
@@ -12,24 +11,23 @@ $produto_id = $_GET['id'];
 
 // 2. Buscar o produto principal
 try {
+    // O SELECT * já vai pegar a nova coluna 'desconto'
     $stmt = $pdo->prepare("SELECT * FROM PRODUTOS WHERE id = ? AND status = 'ativo'");
     $stmt->execute([$produto_id]);
     $produto = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Se o produto não for encontrado, volta para a index
     if (!$produto) {
         header('Location: index.php');
         exit();
     }
     
-    // 3. Buscar as imagens secundárias (da tabela produto_imagens)
+    // 3. Buscar as imagens secundárias
     $stmt_imgs = $pdo->prepare("SELECT url_imagem FROM PRODUTO_IMAGENS WHERE produto_id = ?");
     $stmt_imgs->execute([$produto_id]);
     $imagens_secundarias = $stmt_imgs->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
     error_log("Erro ao buscar produto: " . $e->getMessage());
-    // Em caso de erro de banco, volta para a index
     header('Location: index.php');
     exit();
 }
@@ -37,6 +35,101 @@ try {
 // 4. Lógica de usuário logado (para o header)
 $usuario_logado = isset($_SESSION['usuario_nome']);
 $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '';
+
+
+// 5. Parsear a descrição (lógica anterior)
+// 5. Parsear a descrição (NOVA LÓGICA)
+$descricao_completa = $produto['descricao'] ?? '';
+$caracteristicas_array = [];
+$especificacoes_array = []; // <-- NOVO ARRAY
+$descricao_texto = '';
+
+// Encontra os marcadores
+$inicio_caract = strpos($descricao_completa, "--- CARACTERÍSTICAS ---");
+$inicio_espec = strpos($descricao_completa, "--- ESPECIFICAÇÕES ---"); // <-- NOVO
+$inicio_desc = strpos($descricao_completa, "--- DESCRIÇÃO ---");
+
+// --- Processa Bloco de Descrição (o último) ---
+if ($inicio_desc !== false) {
+    $descricao_texto = trim(substr($descricao_completa, $inicio_desc + strlen("--- DESCRIÇÃO ---")));
+} else {
+    // Fallback se não houver marcadores (ou se for só descrição antiga)
+    if ($inicio_caract === false && $inicio_espec === false) {
+         $descricao_texto = $descricao_completa;
+    }
+}
+
+// --- Processa Bloco de Características ---
+if ($inicio_caract !== false) {
+    // O bloco termina onde o próximo bloco (especificações ou descrição) começa
+    $fim_caract = $inicio_espec !== false ? $inicio_espec : $inicio_desc;
+    if ($fim_caract === false) $fim_caract = strlen($descricao_completa); // Se for o último
+
+    $bloco_caract = substr(
+        $descricao_completa, 
+        $inicio_caract + strlen("--- CARACTERÍSTICAS ---"),
+        $fim_caract - ($inicio_caract + strlen("--- CARACTERÍSTICAS ---"))
+    );
+    
+    $linhas = explode("\n", trim($bloco_caract));
+    foreach ($linhas as $linha) {
+        $partes = explode(":", $linha, 2); 
+        if (count($partes) == 2) {
+            $caracteristicas_array[] = [
+                'nome' => trim($partes[0]),
+                'valor' => trim($partes[1])
+            ];
+        }
+    }
+}
+
+// --- NOVO: Processa Bloco de Especificações ---
+if ($inicio_espec !== false) {
+    // O bloco termina onde a descrição começa
+    $fim_espec = $inicio_desc !== false ? $inicio_desc : strlen($descricao_completa);
+
+    $bloco_espec = substr(
+        $descricao_completa, 
+        $inicio_espec + strlen("--- ESPECIFICAÇÕES ---"),
+        $fim_espec - ($inicio_espec + strlen("--- ESPECIFICAÇÕES ---"))
+    );
+    
+    $linhas = explode("\n", trim($bloco_espec));
+    foreach ($linhas as $linha) {
+        if (!empty(trim($linha))) {
+            $especificacoes_array[] = trim($linha); // Adiciona ao novo array
+        }
+    }
+}
+
+// =======================================================
+// --- (NOVO BLOCO DE LÓGICA DE DESCONTO) ---
+// =======================================================
+$preco_original = (float)$produto['preco'];
+// Pegamos a coluna 'desconto' que veio do banco
+$desconto_percent = (int)$produto['desconto']; 
+$tem_desconto = $desconto_percent > 0;
+
+$preco_final = $preco_original; // Preço que vai para o data-price e JS
+$preco_antigo_formatado = '';  // Ex: R$ 100,00 (com risco)
+$preco_final_formatado = '';   // Ex: R$ 80,00 (preço principal)
+$badge_texto = '';             // Ex: 20% OFF
+
+if ($tem_desconto) {
+    // Calcula o preço final com desconto
+    $preco_final = $preco_original * (1 - ($desconto_percent / 100));
+    
+    // Formata os textos para exibição
+    $preco_antigo_formatado = 'R$ ' . number_format($preco_original, 2, ',', '.');
+    $preco_final_formatado = 'R$ ' . number_format($preco_final, 2, ',', '.');
+    $badge_texto = $desconto_percent . '% OFF';
+} else {
+    // Se não tem desconto, o preço final é o original
+    $preco_final_formatado = 'R$ ' . number_format($preco_original, 2, ',', '.');
+}
+// =======================================================
+// --- (FIM DO NOVO BLOCO) ---
+// =======================================================
 ?>
 
 <!DOCTYPE html>
@@ -44,13 +137,10 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
 <head>
   <meta charset="UTF-8">
   <title>Página do Produto</title>
-
   <link rel="stylesheet" href="estilos/style.css"/>
   <link rel="stylesheet" href="estilos/estilo_carrinho.css">
   <link rel="stylesheet" href="estilos/estilo_produto.css">
-
 </head>
-
 <body>
     <header class="topbar">
       <nav class="actions"> 
@@ -86,14 +176,14 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
     </header>
 
       <main class="produto-container" 
-            data-id="<?php echo $produto['id']; ?>" data-title="<?php echo htmlspecialchars($produto['nome']); ?>" 
-            data-price="<?php echo htmlspecialchars($produto['preco']); ?>" 
+            data-id="<?php echo $produto['id']; ?>" 
+            data-title="<?php echo htmlspecialchars($produto['nome']); ?>" 
+            data-price="<?php echo htmlspecialchars($preco_final); ?>" 
             data-img="<?php echo htmlspecialchars($produto['imagem_url']); ?>">
       
       <div class="coluna-galeria">
         <div class="thumbnails">
           <img src="<?php echo htmlspecialchars($produto['imagem_url']); ?>" alt="Thumb 1" class="thumb-img active" onmouseover="mudarImagem(this)">
-
           <?php foreach ($imagens_secundarias as $img): ?>
             <img src="<?php echo htmlspecialchars($img['url_imagem']); ?>" alt="Thumb" class="thumb-img" onmouseover="mudarImagem(this)">
           <?php endforeach; ?>
@@ -114,9 +204,16 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
         <h1 class="produto-titulo" id="produto-titulo"><?php echo htmlspecialchars($produto['nome']); ?></h1>
         
         <div class="produto-preco">
-          <span class="old" id="produto-preco-antigo"></span> <span class="price" id="produto-preco">R$ <?php echo number_format($produto['preco'], 2, ',', '.'); ?></span>
-          <span class="badge" id="produto-badge"></span> </div>
-
+          <?php if ($tem_desconto): ?>
+            <span class="old" id="produto-preco-antigo"><?php echo $preco_antigo_formatado; ?></span>
+          <?php endif; ?>
+          
+          <span class="price" id="produto-preco"><?php echo $preco_final_formatado; ?></span>
+          
+          <?php if ($tem_desconto): ?>
+            <span class="badge" id="produto-badge"><?php echo $badge_texto; ?></span>
+          <?php endif; ?>
+        </div>
         <div class="especificacoes-rapidas">
           <div class="produto-avaliacao">
             <span class="star" data-value="1">&#9734;</span>
@@ -127,11 +224,21 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
           </div>          
           <h3>O que você precisa saber sobre este produto:</h3>
           <ul>
-            <li>Compatível com outros conjuntos LEGO.</li>
-            <li>Inclui 3 minifiguras.</li>
-            <li>Recomendado para maiores de 8 anos.</li>
-            <li>Material: Plástico ABS.</li>
+            <?php if (!empty($especificacoes_array)): ?>
+                <?php foreach ($especificacoes_array as $espec): ?>
+                    <li><?php echo htmlspecialchars($espec); ?></li>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <?php
+                  // Exibe os itens antigos apenas se a lista estiver vazia (para produtos não atualizados)
+                  if(empty($caracteristicas_array) && empty($especificacoes_array)) {
+                      echo '<li>Compatível com outros conjuntos LEGO.</li>';
+                      echo '<li>Inclui 3 minifiguras.</li>';
+                  }
+                ?>
+            <?php endif; ?>
           </ul>
+          
         </div>
 
         <label class="label-quantidade">Quantidade:</label>
@@ -156,33 +263,23 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
         <h2>Características principais</h2>
         
         <div class="caracteristicas-tabela">
-          <div class="caracteristica-item">
-            <span>Marca</span>
-            <span>LEGO</span>
-          </div>
-          <div class="caracteristica-item">
-            <span>Linha</span>
-            <span>NINJAGO</span>
-          </div>
-          <div class="caracteristica-item">
-            <span>Modelo</span>
-            <span>71741</span>
-          </div>
-          <div class="caracteristica-item">
-            <span>Tipo de alimentação</span>
-            <span>N/A</span>
-          </div>
-          <div class="caracteristica-item">
-            <span>Cor</span>
-            <span>Colorido</span>
-          </div>
+          <?php if (!empty($caracteristicas_array)): ?>
+            <?php foreach ($caracteristicas_array as $caract): ?>
+              <div class="caracteristica-item">
+                <span><?php echo htmlspecialchars($caract['nome']); ?></span>
+                <span><?php echo htmlspecialchars($caract['valor']); ?></span>
+              </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <p>Este produto não possui características principais detalhadas.</p>
+          <?php endif; ?>
         </div>
       </section>
 
       <section id="descricao" class="detalhe-bloco">
         <h2>Descrição do produto</h2>
         <p>
-          <?php echo nl2br(htmlspecialchars($produto['descricao'])); // nl2br preserva quebras de linha ?>
+          <?php echo nl2br(htmlspecialchars($descricao_texto)); // nl2br preserva quebras de linha ?>
         </p>
       </section>
 
@@ -196,6 +293,7 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
       </section>
 
     </div>
+
 <script>
   // --- 1. SELETORES DOS ELEMENTOS ---
   const container = document.querySelector(".produto-container");
@@ -204,11 +302,9 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
   
   const contadorNumero = document.getElementById("contador-numero");
   
-  // ***** SUA CORREÇÃO ESTÁ AQUI (PASSO 1) *****
-  // Buscamos o estoque máximo que o PHP já imprimiu na página.
   const estoqueMaximo = <?php echo $produto['estoque']; ?>;
   
-  let quantidade = 1; // Variável global da quantidade
+  let quantidade = 1; 
 
   const btnComprar = document.getElementById("btn-comprar");
   const btnAdicionar = document.getElementById("btn-adicionar-carrinho");
@@ -216,60 +312,42 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
 
   // --- 2. LÓGICA DA GALERIA ---
   function mudarImagem(thumbElement) {
-    // Define a imagem principal
     imagemPrincipal.src = thumbElement.src;
-    
-    // Remove a classe 'active' de todas as thumbnails
     thumbnails.forEach(thumb => thumb.classList.remove("active"));
-    
-    // Adiciona a classe 'active' apenas na clicada
     thumbElement.classList.add("active");
   }
 
-  // ***** SUA CORREÇÃO ESTÁ AQUI (PASSO 2) *****
   // --- 3. LÓGICA DO CONTADOR DE QUANTIDADE (CORRIGIDA) ---
-  // Esta função é a que o seu HTML chama no 'onclick'
   function alterarContador(valor) {
-    // Calcula a nova quantidade ANTES de aplicar
     let novaQuantidade = quantidade + valor;
 
-    // 1. Verifica o limite mínimo
     if (novaQuantidade < 1) {
       novaQuantidade = 1;
-      
-    // 2. Verifica o limite máximo (o estoque)
     } else if (novaQuantidade > estoqueMaximo) {
-      novaQuantidade = estoqueMaximo; // Trava no máximo
-      // alert("Quantidade máxima em estoque atingida."); // Avisa o usuário
-    
+      novaQuantidade = estoqueMaximo; 
     }
     
-    // 3. Atualiza a variável global e o texto na tela
     quantidade = novaQuantidade;
     contadorNumero.innerText = quantidade;
   }
 
   // --- 4. FUNÇÃO AUXILIAR PARA PEGAR DADOS DO PRODUTO ---
-  // Esta função agora lê os dados que o script (item 0) preencheu
   function getDadosProduto() {
     return {
-      id: container.dataset.id, // <-- ADICIONE ESTA LINHA
+      id: container.dataset.id, 
       title: container.dataset.title,
+      // O 'data-price' agora já vem com o desconto calculado pelo PHP
       price: parseFloat(container.dataset.price),
       img: container.dataset.img,
-      quantidade: quantidade // Pega a quantidade do contador
+      quantidade: quantidade 
     };
   }
 
   // --- 5. LÓGICA DAS AÇÕES (CARRINHO E FAVORITOS) ---
-  // (Esta parte permanece a mesma da resposta anterior)
-
-  // Botão "Adicionar ao carrinho"
   btnAdicionar.addEventListener("click", () => {
     const produto = getDadosProduto();
     let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
-    // Verifica se o produto já existe
     const existente = carrinho.find(p => p.title === produto.title);
 
     if (existente) {
@@ -279,55 +357,30 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
     }
 
     localStorage.setItem("carrinho", JSON.stringify(carrinho));
-
-    // Redireciona imediatamente para o carrinho
-    window.location.href = "tela_carrinho.php"; // <-- Linha alterada
+    window.location.href = "tela_carrinho.php"; 
   });
 
-  // Botão "Comprar agora" (Verifica login, Adiciona e Redireciona)
   btnComprar.addEventListener("click", () => {
-    
-    // 1. Pega os dados do produto atual (incluindo a quantidade)
     const produto = getDadosProduto();
-    
-    // 2. Calcula o total APENAS para este item
     const totalDaCompra = produto.price * produto.quantidade;
-
-    // 3. Salva esse total no localStorage para a tela_entrega ler
-    // (usa a mesma chave que o 'tela_carrinho.html' usa)
     localStorage.setItem("totalCompra", totalDaCompra.toFixed(2));
-    
-    // 4. Redireciona para a tela de entrega
-      window.location.href = "tela_entrega.php";
+    window.location.href = "tela_entrega.php";
   });
 
-  // Botão "Favoritar" (Alterna Salvar/Remover)
   btnFavoritar.addEventListener("click", (e) => {
     const produto = getDadosProduto();
-    // Define a quantidade padrão para favoritos
     produto.quantidade = 1; 
     
     let salvos = JSON.parse(localStorage.getItem("salvos")) || [];
-
-    // Procura o ÍNDICE do produto na lista de salvos
     const indexExistente = salvos.findIndex(p => p.title === produto.title);
 
     if (indexExistente === -1) {
-      // --- SE NÃO EXISTE: ADICIONA (FAVORITA) ---
       salvos.push(produto);
-      
-      // Altera o visual do botão
       btnFavoritar.classList.add("active");
-      
     } else {
-      // --- SE JÁ EXISTE: REMOVE (DESFAVORITA) ---
-      salvos.splice(indexExistente, 1); // Remove o item pelo índice
-      
-      // Altera o visual do botão
+      salvos.splice(indexExistente, 1); 
       btnFavoritar.classList.remove("active");
     }
-    
-    // Salva o array atualizado (adicionado ou removido) no localStorage
     localStorage.setItem("salvos", JSON.stringify(salvos));
   });
 
@@ -335,54 +388,38 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
   const stars = document.querySelectorAll(".produto-avaliacao .star");
   const starContainer = document.querySelector(".produto-avaliacao");
   
-  // Variável para guardar a nota que foi clicada
   let currentRating = 0; 
 
-  /**
-   * Função para desenhar as estrelas
-   * @param {number} rating - A nota (1 a 5) a ser exibida
-   */
   function drawStars(rating) {
     stars.forEach(star => {
       const starValue = parseInt(star.dataset.value);
       
       if (starValue <= rating) {
         star.classList.add("filled");
-        star.innerHTML = "&#9733;"; // Ícone de estrela cheia
+        star.innerHTML = "&#9733;"; 
       } else {
         star.classList.remove("filled");
-        star.innerHTML = "&#9734;"; // Ícone de estrela vazia
+        star.innerHTML = "&#9734;"; 
       }
     });
   }
 
-  // Adiciona eventos de HOVER (mouse enter) para cada estrela
   stars.forEach(star => {
     star.addEventListener("mouseover", () => {
       const rating = parseInt(star.dataset.value);
-      drawStars(rating); // Preenche as estrelas até a que está em hover
+      drawStars(rating); 
     });
 
-    // Adiciona evento de CLIQUE para cada estrela
     star.addEventListener("click", () => {
-      currentRating = parseInt(star.dataset.value); // Salva a nota
-      
-      // Salva a nota no localStorage
+      currentRating = parseInt(star.dataset.value); 
       localStorage.setItem("rating_" + container.dataset.title, currentRating);
-      
-      drawStars(currentRating); // Trava a nota clicada
+      drawStars(currentRating); 
     });
   });
 
-  // Adiciona evento de MOUSE LEAVE (mouse out) no CONTAINER
   starContainer.addEventListener("mouseleave", () => {
-    // Quando o mouse sai, volta para a nota que foi CLICADA (currentRating)
     drawStars(currentRating);
   });
-
-  // O script "DOMContentLoaded" que eu te passei antes foi REMOVIDO
-  // pois ele não era compatível com seu HTML. Esta versão está correta.
-
 </script>
 </body>
 </html>

@@ -8,8 +8,115 @@
   <link rel="stylesheet" href="estilos/estilo_carrinho.css">
   <link rel="stylesheet" href="estilos/estilo_produto.css">
 
-</head>
+  <style>
+    /* Estiliza os inputs de NOME da característica */
+    .caracteristica-item input[name="caracteristica_nome[]"] {
+      font-weight: 500;
+      color: #333;
+      background-color: transparent; /* Tira o fundo do input */
+      border: none; /* Tira a borda */
+      padding: 12px 16px; /* Mantém o padding original */
+      font-size: 1em; /* Mantém o tamanho da fonte */
+      font-family: inherit; /* Mantém a fonte */
+      width: 100%; /* Ocupa o espaço */
+      box-sizing: border-box;
+    }
+    
+    /* --- INÍCIO DA MODIFICAÇÃO CSS --- */
 
+    /* Estiliza os inputs de VALOR da característica */
+    .caracteristica-item input[name="caracteristica_valor[]"] {
+      border: none;
+      background-color: transparent;
+      padding: 12px 16px;
+      font-size: 1em;
+      font-family: inherit;
+      width: 100%;
+      box-sizing: border-box;
+      /* Adiciona espaço à direita para o ícone não sobrepor o texto */
+      padding-right: 40px; 
+    }
+    
+    /* Adiciona foco para saber onde está digitando */
+    .caracteristica-item input:focus {
+      outline: 1px solid #2968C8; /* Borda azul ao focar */
+      background-color: #fff;
+    }
+
+    /* Define o item como 'relative' para posicionar o ícone dentro dele */
+    .caracteristica-item {
+      position: relative;
+    }
+
+    /* Estilo do ícone de lixeira */
+    .btn-delete-caracteristica {
+      position: absolute;
+      right: 12px; /* Alinha com o padding do input */
+      top: 50%;
+      transform: translateY(-50%);
+      display: none; /* Escondido por padrão */
+      cursor: pointer;
+      font-size: 1.2em;
+      opacity: 0.6;
+      user-select: none; /* Impede de selecionar o emoji */
+    }
+
+    /* Mostra o ícone quando o mouse passa sobre o item */
+    .caracteristica-item:hover .btn-delete-caracteristica {
+      display: block;
+    }
+
+    .btn-delete-caracteristica:hover {
+      opacity: 1;
+    }
+    /* --- FIM DA MODIFICAÇÃO CSS --- */
+
+
+    /* --- INÍCIO CSS ESPECIFICAÇÕES RÁPIDAS (NOVO) --- */
+    #especificacoes-rapidas-lista .espec-item {
+      position: relative;
+      border-bottom: 1px solid #eee;
+    }
+
+    #especificacoes-rapidas-lista input[name="especificacao_rapida[]"] {
+      border: none;
+      background-color: transparent;
+      padding: 12px 16px;
+      font-size: 1em;
+      font-family: inherit;
+      width: 100%;
+      box-sizing: border-box;
+      padding-right: 40px; /* Espaço para lixeira */
+    }
+    
+    #especificacoes-rapidas-lista input:focus {
+      outline: 1px solid #2968C8; 
+      background-color: #fff;
+    }
+
+    #especificacoes-rapidas-lista .btn-delete-espec {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: none; 
+      cursor: pointer;
+      font-size: 1.2em;
+      opacity: 0.6;
+      user-select: none;
+    }
+
+    #especificacoes-rapidas-lista .espec-item:hover .btn-delete-espec {
+      display: block;
+    }
+
+    #especificacoes-rapidas-lista .btn-delete-espec:hover {
+      opacity: 1;
+    }
+    /* --- FIM CSS ESPECIFICAÇÕES RÁPIDAS (NOVO) --- */
+
+  </style>
+</head>
 <body>
     <header class="topbar">
       <nav class="actions"> 
@@ -39,191 +146,178 @@
       </nav>
     </header>
 
+    <form id="form-produto">
+
       <main class="produto-container" 
-          data-title="" 
-          data-price="" 
-          data-img="">
-      
-      <div class="imagens-container">
-  <div class="imagem-principal">
-    <img id="imagem-principal" src="imagens/produto-padrao.png" alt="Imagem principal do produto">
-    <label for="upload-principal" class="botao-upload">Alterar imagem principal</label>
-    <input type="file" id="upload-principal" accept="image/*" hidden>
-  </div>
+      data-title="" 
+      data-price="" 
+      data-img="">
+  
+      <div class="coluna-galeria" style="flex: 1.2;">
+        
+        <input type="file" id="produto-imagens" multiple accept="image/*" style="display: none;">
 
-  <div class="thumbnails">
-    <div class="thumb-box">
-      <img id="thumb1" src="imagens/produto-padrao.png" alt="Thumbnail 1">
-      <input type="file" id="upload1" accept="image/*" hidden>
-    </div>
-    <div class="thumb-box">
-      <img id="thumb2" src="imagens/produto-padrao.png" alt="Thumbnail 2">
-      <input type="file" id="upload2" accept="image/*" hidden>
-    </div>
-    <div class="thumb-box">
-      <img id="thumb3" src="imagens/produto-padrao.png" alt="Thumbnail 3">
-      <input type="file" id="upload3" accept="image/*" hidden>
-    </div>
-  </div>
-</div>
+        <div style="display: flex; gap: 15px; width: 100%; height: 100%;">
+            
+            <div class="thumbnails" id="thumbnails-container">
+              </div>
+            
+            <div class="imagem-principal-container" style="display: flex; flex-direction: column; flex: 1;">
+              
+              <img alt="Clique aqui para selecionar as imagens" 
+                   id="imagem-principal" 
+                   style="background-color: #f0f0f0; border: 1px dashed #ccc; height: 100%; display: block; width: 100%; cursor: pointer; object-fit: contain; color: #555; text-align: center; padding-top: 180px; box-sizing: border-box;"
+                   onclick="document.getElementById('produto-imagens').click();">
+              
+              </div>
+        </div>
+        
+      </div>
 
-      <div class="coluna-info">
+      <div class="coluna-info" style="flex: 1;">
 
-        <h1 class="produto-titulo"></h1>
-        <input type="text" id="produto-titulo" required>
+        <label for="produto-titulo" style="font-size: 14px; font-weight: 600; color: #333;">Título do Produto:</label>
+        <input type="text" id="produto-titulo" name="titulo" required style="width: 100%; font-size: 22px; font-weight: 600; padding: 5px; margin-bottom: 20px; box-sizing: border-box;">
 
-                <div class="produto-preco">
-            <label>Preço:</label>
-            <input type="number" class="price" id="produto-preco" step="0.01" min="0" required placeholder="Ex: 199.90">
+        <div style="margin-bottom: 20px;">
+          <label for="produto-categoria" style="display: block; margin-bottom: 5px;">Categoria:</label>
+          <select id="produto-categoria" name="categoria" required style="width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 6px; background: #fff;">
+            <option value="">Carregando categorias...</option>
+          </select>
+        </div>
+        <div class="produto-preco" style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px;">
+          
+          <div style="flex: 1; min-width: 150px;">
+            <label for="produto-preco" style="display: block; margin-bottom: 5px;">Preço:</label>
+            <input type="number" class="price" id="produto-preco" name="preco" step="0.01" min="0" required placeholder="Ex: 199.90" style="width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 6px;">
+          </div>
 
-            <label>Desconto (%):</label>
-            <input type="number" class="badge" id="produto-badge" min="0" max="100" placeholder="Opcional"><br>
+          <div style="flex: 1; min-width: 150px;">
+            <label for="produto-badge" style="display: block; margin-bottom: 5px;">Desconto (%):</label>
+            <input type="number" class="badge" id="produto-badge" name="desconto" min="0" max="100" placeholder="Opcional" style="width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 6px;">
+          </div>
+          
+          <div style="width: 100%; margin-top: 10px;">
+            <button type="button" onclick="calcular()" style="padding: 10px 15px; cursor: pointer; border-radius: 6px; border: 1px solid #ddd; background: #f0f0f0;">
+              Calcular desconto
+            </button>
+          </div>
 
-            <span class="old" id="produto-preco-antigo"></span><br>
-            <span class="new" id="produto-preco-novo"></span>
+          <div style="width: 100%; margin-top: 10px; min-height: 40px;">
+            <span class="old" id="produto-preco-antigo"></span>
+            <span class="price" id="produto-preco-novo"></span>
+            <span class="badge" id="produto-badge-display"></span>
+          </div>
 
-            <br><br>
-            <button onclick="calcular()">Calcular desconto</button>
-            </div>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label class="label-quantidade" for="produto-quantidade" style="display: block; margin-bottom: 5px;">Quantidade disponível:</label>
+          <input type="number" id="produto-quantidade" name="quantidade" min="0" placeholder="Ex: 50" required style="width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 6px;">
+        </div>
 
-            <script>
-            function calcular() {
+        
+        <script>
+          // Script de calcular o desconto (MODIFICADO)
+          function calcular() {
             let preco = parseFloat(document.getElementById("produto-preco").value);
             let desconto = parseFloat(document.getElementById("produto-badge").value);
-
-            //Validações
-            if (isNaN(preco) || preco <= 0) {
-                alert("Digite um preço válido (entre 0 e 100).");
+            
+            if (isNaN(preco) || preco < 0) {
+                alert("Digite um preço válido.");
                 return;
             }
-
+            
             if (isNaN(desconto)) desconto = 0;
-            if (desconto < 0) desconto = 0; // evita negativos
-            if (desconto > 100) desconto = 100; // evita valores acima de 100%
+            if (desconto < 0) desconto = 0;
+            if (desconto > 100) desconto = 100;
 
-            // Cálculo do preço final
             let precoFinal = preco * (1 - desconto / 100);
-
-            // Formata os valores em real
+            
             const formatar = (valor) =>
                 valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
+            // Selecionar os 3 elementos
             const precoAntigoEl = document.getElementById("produto-preco-antigo");
             const precoNovoEl = document.getElementById("produto-preco-novo");
+            const badgeEl = document.getElementById("produto-badge-display"); // O novo span
 
             if (desconto > 0) {
-                precoAntigoEl.textContent = `De: ${formatar(preco)}`;
-                precoAntigoEl.style.textDecoration = "line-through";
-                precoAntigoEl.style.color = "gray";
+                // 1. Preço antigo (sem "De:")
+                precoAntigoEl.textContent = formatar(preco);
+                precoAntigoEl.style.display = "inline"; // Garante que apareça
 
-                precoNovoEl.textContent = `Por: ${formatar(precoFinal)} (${desconto}% OFF)`;
-                precoNovoEl.style.color = "green";
-                precoNovoEl.style.fontWeight = "bold";
+                // 2. Preço novo (sem "Por:")
+                precoNovoEl.textContent = formatar(precoFinal);
+                
+                // 3. Badge (Ex: 20% OFF)
+                badgeEl.textContent = `${desconto}% OFF`;
+                badgeEl.style.display = "inline"; // Garante que apareça
+
             } else {
+                // Se não tem desconto, limpa o antigo e o badge
                 precoAntigoEl.textContent = "";
-                precoNovoEl.textContent = `Preço: ${formatar(preco)}`;
-                precoNovoEl.style.color = "black";
-            }
+                precoAntigoEl.style.display = "none";
+                badgeEl.textContent = "";
+                badgeEl.style.display = "none";
 
-            // para salvar localmente
+                // Mostra apenas o preço normal
+                precoNovoEl.textContent = formatar(preco);
+            }
+            
             localStorage.setItem("precoComDesconto", precoFinal.toFixed(2));
+          }
+
+          // Script de salvar rascunho (sem alterações, continua no localStorage)
+          function salvarRascunho() {
+            const produto = obterProdutoFormulario(); // Esta função ainda é útil
+            if (!produto) return;
+            const lista = JSON.parse(localStorage.getItem("produtosRascunho")) || [];
+            lista.push(produto);
+            localStorage.setItem("produtosRascunho", JSON.stringify(lista));
+            alert("💾 Produto salvo como rascunho. Você poderá editá-lo futuramente.");
+          }
+
+          // Função auxiliar (usada pelo salvarRascunho)
+          function obterProdutoFormulario() {
+            const titulo = document.getElementById("produto-titulo")?.value || "Produto sem nome";
+            const preco = parseFloat(document.getElementById("produto-preco").value);
+            const desconto = parseFloat(document.getElementById("produto-badge").value) || 0;
+            const quantidade = parseInt(document.getElementById("produto-quantidade").value) || 0;
+            const imagem = document.getElementById("imagem-principal").src || "imagens/produto-padrao.png";
+
+            if (isNaN(preco) || preco <= 0) {
+                alert("Digite um preço válido.");
+                return null;
             }
+            if (quantidade < 0) {
+                alert("Quantidade inválida.");
+                return null;
+            }
+            const precoFinal = preco * (1 - desconto / 100);
+            return {
+                id: Date.now(),
+                titulo,
+                preco: preco.toFixed(2),
+                desconto: desconto.toFixed(0),
+                precoFinal: precoFinal.toFixed(2),
+                img: imagem,
+                quantidade
+            };
+          }
+        </script>
 
-            </script>
+        <div style="margin-top: auto; display: flex; gap: 10px; padding-top: 20px; border-top: 1px solid #eee;">
+          <button type="submit" style="flex: 1; background:#00b347;color:white;padding:12px 20px;border:none;border-radius:6px;cursor:pointer; font-size: 16px; font-weight: 600;">
+            📤 Enviar Produto
+          </button>
 
-            <script>
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("Painel do fornecedor pronto.");
-});
+          <button type="button" onclick="salvarRascunho()" style="flex: 1; background:#f1c40f;color:black;padding:12px 20px;border:none;border-radius:6px;cursor:pointer; font-size: 16px; font-weight: 600;">
+            💾 Salvar como Rascunho
+          </button>
+        </div>
+      </div> 
+    </main>
 
-// Atualiza prévia da imagem
-function atualizarImagem(event) {
-    const arquivo = event.target.files[0];
-    if (arquivo) {
-        const leitor = new FileReader();
-        leitor.onload = e => {
-            document.getElementById("imagem-principal").src = e.target.result;
-        };
-        leitor.readAsDataURL(arquivo);
-    }
-}
-
-// Função para criar o objeto produto
-function obterProdutoFormulario() {
-    const titulo = document.getElementById("produto-titulo")?.value || "Produto sem nome";
-    const preco = parseFloat(document.getElementById("produto-preco").value);
-    const desconto = parseFloat(document.getElementById("produto-badge").value) || 0;
-    const quantidade = parseInt(document.getElementById("produto-quantidade").value) || 0;
-    const imagem = document.getElementById("imagem-principal").src || "imagens/produto-padrao.png";
-
-    if (isNaN(preco) || preco <= 0) {
-        alert("Digite um preço válido.");
-        return null;
-    }
-
-    if (quantidade < 0) {
-        alert("Quantidade inválida.");
-        return null;
-    }
-
-    const precoFinal = preco * (1 - desconto / 100);
-
-    return {
-        id: Date.now(),
-        titulo,
-        preco: preco.toFixed(2),
-        desconto: desconto.toFixed(0),
-        precoFinal: precoFinal.toFixed(2),
-        img: imagem,
-        quantidade
-    };
-}
-
-// Envia o produto para o index (publica)
-function enviarProduto() {
-  let produtos = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
-
-  const novoProduto = obterProdutoFormulario(); // coleta dados do formulário
-
-  produtos.push(novoProduto); // adiciona uma única vez
-  localStorage.setItem("produtosCadastrados", JSON.stringify(produtos));
-
-  alert("✅ Produto salvo com sucesso!");
-  // Se quiser redirecionar:
-  window.location.href = "tela_gerenciar_produtos.html";
-}
-
-// Salva como rascunho (não aparece no site)
-function salvarRascunho() {
-    const produto = obterProdutoFormulario();
-    if (!produto) return;
-
-    const lista = JSON.parse(localStorage.getItem("produtosRascunho")) || [];
-    lista.push(produto);
-    localStorage.setItem("produtosRascunho", JSON.stringify(lista));
-
-    alert("💾 Produto salvo como rascunho. Você poderá editá-lo futuramente.");
-}
-</script>
-
-
-</script>
-
-        <label class="label-quantidade">Quantidade disponível:</label>
-  <input type="number" id="produto-quantidade" min="0" placeholder="Ex: 50"><br>
-
-        <div style="margin-top:15px;">
-<div style="margin-top:15px;">
-  <button onclick="enviarProduto()" style="background:#00b347;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">
-    📤 Enviar Produto
-  </button>
-
-  <button onclick="salvarRascunho()" style="background:#f1c40f;color:black;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">
-    💾 Salvar como Rascunho
-  </button>
-</div>
-
-</main>
     <div class="detalhes-produto-container">
 
       <section id="caracteristicas" class="detalhe-bloco">
@@ -231,374 +325,237 @@ function salvarRascunho() {
         
         <div class="caracteristicas-tabela">
           <div class="caracteristica-item">
-            <span>Marca</span>
-            <input type="text" name="marca" required>
+            <input type="text" name="caracteristica_nome[]" value="Marca" required>
+            <input type="text" name="caracteristica_valor[]" placeholder="Valor (Ex: Samsung)" required>
+            <span class="btn-delete-caracteristica">🗑️</span>
           </div>
           <div class="caracteristica-item">
-            <span>Linha</span>
-            <input type="text" name="linha" required>
+            <input type="text" name="caracteristica_nome[]" value="Linha" required>
+            <input type="text" name="caracteristica_valor[]" placeholder="Valor (Ex: Galaxy)" required>
+            <span class="btn-delete-caracteristica">🗑️</span>
           </div>
           <div class="caracteristica-item">
-            <span>Modelo</span>
-            <input type="text" name="modelo" required>
+            <input type="text" name="caracteristica_nome[]" value="Modelo" required>
+            <input type="text" name="caracteristica_valor[]" placeholder="Valor (Ex: S24 Ultra)" required>
+            <span class="btn-delete-caracteristica">🗑️</span>
           </div>
           <div class="caracteristica-item">
-            <span>Tipo de alimentação</span>
-            <input type="text" name="tipo_alimentacao" required>
+            <input type="text" name="caracteristica_nome[]" value="Tipo de alimentação" required>
+            <input type="text" name="caracteristica_valor[]" placeholder="Valor (Ex: Bateria)" required>
+            <span class="btn-delete-caracteristica">🗑️</span>
           </div>
           <div class="caracteristica-item">
-            <span>Cor</span>
-            <input type="text" name="cor" required>
+            <input type="text" name="caracteristica_nome[]" value="Cor" required>
+            <input type="text" name="caracteristica_valor[]" placeholder="Valor (Ex: Preto)" required>
+            <span class="btn-delete-caracteristica">🗑️</span>
           </div>
         </div>
+        <button type="button" id="btn-add-caracteristica" style="background-color: #2968C8; color: #FFFFFF; border: none; border-radius: 6px; padding: 10px 15px; font-weight: 600; cursor: pointer; margin-top: 15px;">
+          Adicionar Característica
+        </button>
+
       </section>
 
+      <section id="especificacoes-rapidas" class="detalhe-bloco">
+        <h2>O que você precisa saber sobre este produto</h2>
+        
+        <div id="especificacoes-rapidas-lista">
+          <div class="espec-item">
+            <input type="text" name="especificacao_rapida[]" placeholder="Ex: Compatível com outros conjuntos LEGO" required>
+            <span class="btn-delete-espec">🗑️</span>
+          </div>
+          <div class="espec-item">
+            <input type="text" name="especificacao_rapida[]" placeholder="Ex: Inclui 3 minifiguras" required>
+            <span class="btn-delete-espec">🗑️</span>
+          </div>
+          <div class="espec-item">
+            <input type="text" name="especificacao_rapida[]" placeholder="Ex: Recomendado para maiores de 8 anos" required>
+            <span class="btn-delete-espec">🗑️</span>
+          </div>
+        </div>
+        
+        <button type="button" id="btn-add-especificacao" style="background-color: #2968C8; color: #FFFFFF; border: none; border-radius: 6px; padding: 10px 15px; font-weight: 600; cursor: pointer; margin-top: 15px;">
+          Adicionar Item
+        </button>
+      </section>
       <section id="descricao" class="detalhe-bloco">
         <h2>Descrição do produto</h2>
-        <textarea name="descricao" required></textarea>
+        <textarea name="descricao" required style="min-height: 150px; width: 100%;"></textarea>
+      </section>
 
     </div>
-  <script>
-  // --- 0. PREENCHIMENTO DA PÁGINA (NOVO BLOCO) ---
-  // ... (o restante do seu script javascript) ...
-
-  // --- 0. PREENCHIMENTO DA PÁGINA (NOVO BLOCO) ---
-  // Este script roda assim que a página termina de carregar
   
-  document.addEventListener("DOMContentLoaded", () => {
-    // 1. Tenta ler o produto do localStorage
-    const produto = JSON.parse(localStorage.getItem("produtoSelecionado"));
-
-    // 2. Verifica se o produto existe
-    if (produto) {
-      // 3. Seleciona os elementos da página que vamos preencher
-      const container = document.querySelector(".produto-container");
-      const imagemPrincipal = document.getElementById("imagem-principal");
-      const thumbImg = document.querySelector(".thumb-img"); // Pega a primeira
-      const titulo = document.getElementById("produto-titulo");
-      const preco = document.getElementById("produto-preco");
-      const precoAntigo = document.getElementById("produto-preco-antigo");
-      const badge = document.getElementById("produto-badge");
-
-      // 4. Preenche os data-attributes do container
-      // (Isso é crucial para os botões 'Comprar' e 'Favoritar' funcionarem)
-      container.dataset.title = produto.title;
-      container.dataset.price = produto.priceValue;
-      container.dataset.img = produto.img;
-      
-      // 5. Preenche os elementos visuais na página
-      titulo.innerText = produto.title;
-      preco.innerText = produto.price;
-      precoAntigo.innerText = produto.oldPrice;
-      badge.innerText = produto.badge;
-      
-      // 6. Preenche as imagens
-      imagemPrincipal.src = produto.img;
-      thumbImg.src = produto.img;
-
-      // 7. Verifica se o item já está favoritado (nos 'salvos')
-      const btnFavoritar = document.getElementById("btn-favoritar");
-      const salvos = JSON.parse(localStorage.getItem("salvos")) || []; // Pega a lista de salvos
-      
-      // Compara pelo título (que é o identificador único até agora)
-      const existenteEmSalvos = salvos.find(p => p.title === produto.title); 
-
-      if (existenteEmSalvos) {
-        // Se estiver, já marca o botão como ativo
-        btnFavoritar.classList.add("active");
-      }
-      
-      // =======================================================
-      // --- INÍCIO DA CORREÇÃO (BLOCO MOVIDO E CORRIGIDO) ---
-      // 8. Carrega a avaliação (estrelas) salva
-      // As vars 'currentRating' e 'drawStars' são definidas mais abaixo,
-      // mas são acessíveis globalmente no script.
-      // =======================================================
-      const savedRating = localStorage.getItem("rating_" + container.dataset.title);
-      if (savedRating) {
-        currentRating = parseInt(savedRating); // Atualiza a variável global
-        drawStars(currentRating); // Desenha as estrelas salvas
-      }
-      // --- FIM DA CORREÇÃO ---
-
-
-      // 9. Opcional: Limpar o item do localStorage...
-      // localStorage.removeItem("produtoSelecionado");
-
-    } else {
-      // 10. Se, por algum motivo, o usuário chegar aqui sem um produto,
-      // podemos redirecioná-lo de volta para a home.
-      alert("Nenhum produto foi selecionado. Voltando para a loja.");
-      window.location.href = "index.php";
-    }
-  });
-
-
-  // --- 1. SELETORES DOS ELEMENTOS (Resto do script) ---
-  const container = document.querySelector(".produto-container");
-  const imagemPrincipal = document.getElementById("imagem-principal");
-  const thumbnails = document.querySelectorAll(".thumb-img");
-  
-  const contadorNumero = document.getElementById("contador-numero");
-  
-
-  let quantidade = 1;
-
-  const btnComprar = document.getElementById("btn-comprar");
-  const btnAdicionar = document.getElementById("btn-adicionar-carrinho");
-  const btnFavoritar = document.getElementById("btn-favoritar");
-
-  // --- 2. LÓGICA DA GALERIA ---
-  function mudarImagem(thumbElement) {
-    // Define a imagem principal
-    imagemPrincipal.src = thumbElement.src;
-    
-    // Remove a classe 'active' de todas as thumbnails
-    thumbnails.forEach(thumb => thumb.classList.remove("active"));
-    
-    // Adiciona a classe 'active' apenas na clicada
-    thumbElement.classList.add("active");
-  }
-
-  // --- 3. LÓGICA DO CONTADOR DE QUANTIDADE ---
-  function alterarContador(valor) {
-    quantidade += valor;
-    if (quantidade < 1) {
-      quantidade = 1; // Não permite quantidade menor que 1
-    }
-    // (Opcional) Adicionar verificação de estoque máximo (ex: 2)
-    // if (quantidade > 2) quantidade = 2;
-    
-    contadorNumero.innerText = quantidade;
-  }
-
-  // --- 4. FUNÇÃO AUXILIAR PARA PEGAR DADOS DO PRODUTO ---
-  // Esta função agora lê os dados que o script (item 0) preencheu
-  function getDadosProduto() {
-    return {
-      title: container.dataset.title,
-      price: parseFloat(container.dataset.price),
-      img: container.dataset.img,
-      quantidade: quantidade // Pega a quantidade do contador
-    };
-  }
-
-  // --- 5. LÓGICA DAS AÇÕES (CARRINHO E FAVORITOS) ---
-  // (Esta parte permanece a mesma da resposta anterior)
-
-  // Botão "Adicionar ao carrinho"
-  btnAdicionar.addEventListener("click", () => {
-    const produto = getDadosProduto();
-    let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-
-    // Verifica se o produto já existe
-    const existente = carrinho.find(p => p.title === produto.title);
-
-    if (existente) {
-      existente.quantidade += produto.quantidade;
-    } else {
-      carrinho.push(produto);
-    }
-
-    localStorage.setItem("carrinho", JSON.stringify(carrinho));
-
-    // Redireciona imediatamente para o carrinho
-    window.location.href = "tela_carrinho.html"; // <-- Linha alterada
-  });
-
-  // Botão "Comprar agora" (Verifica login, Adiciona e Redireciona)
-  btnComprar.addEventListener("click", () => {
-    
-    // 1. Pega os dados do produto atual (incluindo a quantidade)
-    const produto = getDadosProduto();
-    
-    // 2. Calcula o total APENAS para este item
-    const totalDaCompra = produto.price * produto.quantidade;
-
-    // 3. Salva esse total no localStorage para a tela_entrega ler
-    // (usa a mesma chave que o 'tela_carrinho.html' usa)
-    localStorage.setItem("totalCompra", totalDaCompra.toFixed(2));
-    
-    // 4. Redireciona para a tela de entrega
-      window.location.href = "tela_entrega.html";
-
-    // Lógica de verificação de login (DESATIVADA) - Ainda é necessário a criação de tela_login
-    // if (!usuarioLogado) {
-    //   // 2. Se NÃO estiver logado, redireciona para login
-    //   alert("Você precisa estar logado para continuar. Redirecionando...");
-    //   window.location.href = "tela_login.html";
-    
-    // } else {
-    //   // 3. Se ESTIVER logado, executa a ação original
-    //   const produto = getDadosProduto();
-    //   let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-      
-    //   const existente = carrinho.find(p => p.title === produto.title);
-
-    //   if (existente) {
-    //     existente.quantidade += produto.quantidade;
-    //   } else {
-    //     carrinho.push(produto);
-    //   }
-
-    //   localStorage.setItem("carrinho", JSON.stringify(carrinho));
-      
-    //   // Redireciona imediatamente para o carrinho
-    //   window.location.href = "tela_carrinho.html";
-    // }
-  });
-
-  // Botão "Favoritar" (Alterna Salvar/Remover)
-  btnFavoritar.addEventListener("click", (e) => {
-    const produto = getDadosProduto();
-    // Define a quantidade padrão para favoritos
-    produto.quantidade = 1; 
-    
-    let salvos = JSON.parse(localStorage.getItem("salvos")) || [];
-
-    // Procura o ÍNDICE do produto na lista de salvos
-    const indexExistente = salvos.findIndex(p => p.title === produto.title);
-
-    if (indexExistente === -1) {
-      // --- SE NÃO EXISTE: ADICIONA (FAVORITA) ---
-      salvos.push(produto);
-      
-      // Altera o visual do botão
-      btnFavoritar.classList.add("active");
-      
-    } else {
-      // --- SE JÁ EXISTE: REMOVE (DESFAVORITA) ---
-      salvos.splice(indexExistente, 1); // Remove o item pelo índice
-      
-      // Altera o visual do botão
-      btnFavoritar.classList.remove("active");
-    }
-    
-    // Salva o array atualizado (adicionado ou removido) no localStorage
-    localStorage.setItem("salvos", JSON.stringify(salvos));
-  });
-
-  // --- 6. LÓGICA DE AVALIAÇÃO (ESTRELAS) ---
-  const stars = document.querySelectorAll(".produto-avaliacao .star");
-  const starContainer = document.querySelector(".produto-avaliacao");
-  
-  // Variável para guardar a nota que foi clicada
-  let currentRating = 0; 
-
-  // =======================================================
-  // --- CORREÇÃO: O Bloco que estava aqui foi REMOVIDO ---
-  // (O 'if (savedRating) ...' estava quebrado e no
-  // lugar errado. Ele foi movido para a Seção 0)
-  // =======================================================
-
-  /**
-   * Função para desenhar as estrelas
-   * @param {number} rating - A nota (1 a 5) a ser exibida
-   */
-  function drawStars(rating) {
-    stars.forEach(star => {
-      const starValue = parseInt(star.dataset.value);
-      
-      if (starValue <= rating) {
-        star.classList.add("filled");
-        star.innerHTML = "&#9733;"; // Ícone de estrela cheia
-      } else {
-        star.classList.remove("filled");
-        star.innerHTML = "&#9734;"; // Ícone de estrela vazia
-      }
-    });
-  }
-
-  // Adiciona eventos de HOVER (mouse enter) para cada estrela
-  stars.forEach(star => {
-    star.addEventListener("mouseover", () => {
-      const rating = parseInt(star.dataset.value);
-      drawStars(rating); // Preenche as estrelas até a que está em hover
-    });
-
-    // Adiciona evento de CLIQUE para cada estrela
-    star.addEventListener("click", () => {
-      currentRating = parseInt(star.dataset.value); // Salva a nota
-      
-      // Salva a nota no localStorage
-      localStorage.setItem("rating_" + container.dataset.title, currentRating);
-      
-      drawStars(currentRating); // Trava a nota clicada
-    });
-  });
-
-  // Adiciona evento de MOUSE LEAVE (mouse out) no CONTAINER
-  starContainer.addEventListener("mouseleave", () => {
-    // Quando o mouse sai, volta para a nota que foi CLICADA (currentRating)
-    drawStars(currentRating);
-  });
-
-</script>
-</body>
+  </form> 
 <script>
-function salvarProduto() {
-  const titulo = document.getElementById("produto-titulo")?.value || "Produto sem nome";
-  const preco = parseFloat(document.getElementById("produto-preco").value);
-  const desconto = parseFloat(document.getElementById("produto-badge").value) || 0;
-  const quantidade = parseInt(document.getElementById("produto-quantidade").value) || 0;
+// Variável global para armazenar os arquivos selecionados
+let selectedFiles = [];
 
-  if (isNaN(preco) || preco <= 0) {
-    alert("Digite um preço válido para salvar.");
-    return;
-  }
+document.addEventListener('DOMContentLoaded', () => {
 
-  if (quantidade < 0) {
-    alert("A quantidade não pode ser negativa.");
-    return;
-  }
-
-  const precoFinal = preco * (1 - desconto / 100);
-
-  const produto = {
-    titulo,
-    preco: preco.toFixed(2),
-    desconto: desconto.toFixed(0),
-    precoFinal: precoFinal.toFixed(2),
-    img: document.getElementById("imagem-principal").src || "imagens/produto-padrao.png",
-    quantidade
-  };
-
-  const lista = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
-  lista.push(produto);
-  localStorage.setItem("produtosCadastrados", JSON.stringify(lista));
-
-  alert("✅ Produto salvo com sucesso! Ele aparecerá automaticamente na página inicial.");
-}
-
-// Upload das imagens
-document.getElementById('upload-principal').addEventListener('change', function (e) {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (ev) {
-      document.getElementById('imagem-principal').src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-['1', '2', '3'].forEach(num => {
-  const img = document.getElementById('thumb' + num);
-  const input = document.getElementById('upload' + num);
-
-  img.addEventListener('click', () => input.click());
-  input.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => img.src = ev.target.result;
-      reader.readAsDataURL(file);
+    // --- Script para carregar categorias (sem alterações) ---
+    const selectCategoria = document.getElementById('produto-categoria');
+    
+    async function carregarCategorias() {
+        try {
+            const response = await fetch('Banco de dados/buscar_categorias.php');
+            if (!response.ok) {
+                throw new Error('Falha de rede ao buscar categorias.');
+            }
+            const data = await response.json();
+            if (data.sucesso && data.categorias.length > 0) {
+                selectCategoria.innerHTML = '<option value="">Selecione uma categoria</option>'; 
+                data.categorias.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria.id;
+                    option.textContent = categoria.nome;
+                    selectCategoria.appendChild(option);
+                });
+            } else {
+                selectCategoria.innerHTML = '<option value="">Nenhuma categoria encontrada</option>';
+                console.warn(data.mensagem || 'Nenhuma categoria retornada do BD.');
+            }
+        } catch (error) {
+            console.error('Erro ao buscar categorias:', error);
+            selectCategoria.innerHTML = '<option value="">Erro ao carregar categorias</option>';
+        }
     }
-  });
+    carregarCategorias();
+    // --- Fim do script de categorias ---
+
+
+    
+    // =======================================================
+    // --- INÍCIO DA REESCRITA (CORREÇÃO DO BUG) ---
+    // =======================================================
+    // --- Script de Upload de Imagem (CORRIGIDO) ---
+    const fileInput = document.getElementById('produto-imagens');
+    const mainImage = document.getElementById('imagem-principal');
+    const thumbnailsContainer = document.getElementById('thumbnails-container');
+    const formProduto = document.getElementById('form-produto');
+
+    fileInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        
+        if (files.length === 0) {
+            // Se o usuário cancelar a seleção, limpa tudo
+            selectedFiles = []; 
+            mainImage.src = ""; // Limpa a imagem principal
+            mainImage.alt = "Clique aqui para selecionar as imagens";
+            // Restaura o estilo do placeholder
+            mainImage.style.paddingTop = '180px'; 
+            mainImage.style.border = '1px dashed #ccc';
+            mainImage.style.backgroundColor = '#f0f0f0';
+            mainImage.style.color = '#555';
+            thumbnailsContainer.innerHTML = ''; // Limpa thumbnails
+            return;
+        }
+        
+        selectedFiles = Array.from(files); 
+
+        // 1. Carrega a IMAGEM PRINCIPAL (sempre o primeiro arquivo)
+        const firstFile = selectedFiles[0];
+        const readerMain = new FileReader();
+        readerMain.onload = (ev) => {
+            mainImage.src = ev.target.result;
+            mainImage.alt = "Imagem principal do produto";
+            mainImage.style.paddingTop = '0';
+            mainImage.style.border = '1px solid #eee';
+            mainImage.style.backgroundColor = '#fff';
+            mainImage.style.color = 'transparent'; // Esconde o texto alternativo
+        };
+        readerMain.readAsDataURL(firstFile);
+
+        // 2. Carrega TODAS as imagens como thumbnails
+        thumbnailsContainer.innerHTML = ''; 
+        
+        selectedFiles.forEach((file, index) => {
+            const readerThumb = new FileReader();
+            const thumbImg = document.createElement('img');
+            thumbImg.alt = `Thumbnail ${index + 1}`;
+            thumbImg.classList.add('thumb-img');
+
+            // Marca o primeiro como ativo por padrão
+            if (index === 0) {
+                thumbImg.classList.add('active');
+            }
+            
+            // Define o src da thumbnail SOMENTE quando o arquivo for lido
+            readerThumb.onload = (ev) => {
+                thumbImg.src = ev.target.result; 
+            };
+            
+            // Adiciona o listener para trocar a imagem principal
+            thumbImg.addEventListener('click', () => {
+                // Ao clicar, a imagem principal usa o src da thumbnail
+                mainImage.src = thumbImg.src; 
+                
+                // Atualiza o 'active' state
+                thumbnailsContainer.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+                thumbImg.classList.add('active');
+            });
+
+            thumbnailsContainer.appendChild(thumbImg);
+            readerThumb.readAsDataURL(file); // Inicia a leitura do arquivo para esta thumbnail
+        });
+        
+    });
+    // --- Fim do script de Upload de Imagem ---
+    // =======================================================
+    // --- FIM DA REESCRITA ---
+    // =======================================================
+
+
+    // --- Script de Envio do Formulário (sem alterações) ---
+    formProduto.addEventListener('submit', async (e) => {
+        e.preventDefault(); 
+        
+        if (selectedFiles.length === 0) {
+            alert("Por favor, selecione pelo menos uma imagem para o produto.");
+            return;
+        }
+
+        const submitButton = formProduto.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Enviando...';
+
+        const formData = new FormData(formProduto);
+
+        formData.append('imagem_principal', selectedFiles[0]);
+        
+        for (let i = 1; i < selectedFiles.length; i++) {
+            formData.append('thumbnails[]', selectedFiles[i]); 
+        }
+        
+        try {
+            const response = await fetch('Banco de dados/processa_novo_produto.php', {
+                method: 'POST',
+                body: formData 
+            });
+
+            const resultado = await response.json();
+
+            if (resultado.sucesso) {
+                alert('✅ ' + resultado.mensagem);
+                window.location.href = 'index.php'; 
+            } else {
+                alert('❌ Erro: ' + resultado.mensagem);
+            }
+
+        } catch (error) {
+            console.error('Erro ao enviar formulário:', error);
+            alert('❌ Erro de conexão. Verifique o console.');
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = '📤 Enviar Produto';
+        }
+    });
+    // --- Fim do script de Envio do Formulário ---
+
 });
 </script>
 
 <script>
+// Script de Rascunho/Edição (sem alterações)
 document.addEventListener("DOMContentLoaded", () => {
   const editarInfo = JSON.parse(localStorage.getItem("editarProduto"));
 
@@ -608,19 +565,22 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("produto-preco").value = p.preco;
     document.getElementById("produto-badge").value = p.desconto;
     document.getElementById("imagem-principal").src = p.img;
-
- 
+    
+    const mainImage = document.getElementById("imagem-principal");
+    mainImage.alt = "Imagem principal do produto";
+    mainImage.style.paddingTop = '0';
+    mainImage.style.border = '1px solid #eee';
+    mainImage.style.backgroundColor = '#fff';
   }
 });
 
 function salvarAlteracoes() {
   const editarInfo = JSON.parse(localStorage.getItem("editarProduto"));
   if (!editarInfo) return;
-
   const lista = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
   const novo = obterProdutoFormulario();
-  
-  lista[editarInfo.index] = novo; // Atualiza
+  if (!novo) return;
+  lista[editarInfo.index] = novo;
   localStorage.setItem("produtosCadastrados", JSON.stringify(lista));
   localStorage.removeItem("editarProduto");
   alert("✅ Produto atualizado com sucesso!");
@@ -629,4 +589,154 @@ function salvarAlteracoes() {
 </script>
 
 
+<script>
+// Script de Rascunho/Edição (MODIFICADO)
+document.addEventListener("DOMContentLoaded", () => {
+  const editarInfo = JSON.parse(localStorage.getItem("editarProduto"));
+
+  if (editarInfo) {
+    // --- ESTÁ EM MODO DE EDIÇÃO ---
+    const p = editarInfo.dados;
+    document.getElementById("produto-titulo").value = p.titulo;
+    document.getElementById("produto-preco").value = p.preco;
+    document.getElementById("produto-badge").value = p.desconto;
+    document.getElementById("imagem-principal").src = p.img;
+    
+    const mainImage = document.getElementById("imagem-principal");
+    mainImage.alt = "Imagem principal do produto";
+    mainImage.style.paddingTop = '0';
+    mainImage.style.border = '1px solid #eee';
+    mainImage.style.backgroundColor = '#fff';
+
+    // --- INÍCIO DA MODIFICAÇÃO ---
+    // Encontra o botão "Salvar como Rascunho"
+    const btnRascunho = document.querySelector('button[onclick="salvarRascunho()"]');
+    if (btnRascunho) {
+        // Muda o texto do botão
+        btnRascunho.textContent = "💾 Salvar Alterações no Rascunho";
+        // MUDA A FUNÇÃO que o botão chama
+        btnRascunho.setAttribute("onclick", "salvarAlteracoes()");
+    }
+    // --- FIM DA MODIFICAÇÃO ---
+  }
+});
+
+// Esta função é chamada para SALVAR UM RASCUNHO NOVO
+function salvarRascunho() {
+  const produto = obterProdutoFormulario(); // obterProdutoFormulario() já existe no seu código
+  if (!produto) return;
+  
+  // Carrega da lista correta ('produtosCadastrados')
+  const lista = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
+  
+  lista.push(produto); // Adiciona o novo produto
+  
+  // Salva na lista correta ('produtosCadastrados')
+  localStorage.setItem("produtosCadastrados", JSON.stringify(lista));
+  
+  alert("💾 Produto salvo como rascunho. Redirecionando...");
+  
+  // Redireciona o usuário para a tela de gerenciamento
+  window.location.href = "tela_gerenciar_produtos.html";
+}
+
+
+// Esta função é chamada para ATUALIZAR UM RASCUNHO existente
+function salvarAlteracoes() {
+  const editarInfo = JSON.parse(localStorage.getItem("editarProduto"));
+  if (!editarInfo) return;
+  
+  const lista = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
+  const novo = obterProdutoFormulario(); // obterProdutoFormulario() já existe
+  if (!novo) return;
+  
+  lista[editarInfo.index] = novo; // Atualiza o item no índice correto
+  
+  localStorage.setItem("produtosCadastrados", JSON.stringify(lista));
+  localStorage.removeItem("editarProduto"); // Limpa o modo de edição
+  
+  alert("✅ Rascunho atualizado com sucesso!");
+  
+  // Redireciona para a tela de gerenciamento
+  window.location.href = "tela_gerenciar_produtos.html";
+}
+</script>
+
+
+<script>
+// --- SCRIPT PARA ADICIONAR/REMOVER CARACTERÍSTICAS ---
+// (Este script permanece exatamente o mesmo de antes)
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Seleciona o botão de adicionar e o container das características
+    const btnAdd = document.getElementById('btn-add-caracteristica');
+    const container = document.querySelector('.caracteristicas-tabela');
+
+    // 1. Lógica para ADICIONAR
+    btnAdd.addEventListener('click', function() {
+        const novoItem = document.createElement('div');
+        novoItem.className = 'caracteristica-item';
+        
+        novoItem.innerHTML = `
+            <input type="text" name="caracteristica_nome[]" placeholder="Nome (Ex: Material)" required>
+            <input type="text" name="caracteristica_valor[]" placeholder="Valor (Ex: Titânio)" required>
+            <span class="btn-delete-caracteristica">🗑️</span>
+        `;
+        
+        container.appendChild(novoItem);
+    });
+
+    // 2. Lógica para REMOVER (Usando Delegação de Evento)
+    container.addEventListener('click', function(e) {
+        
+        if (e.target.classList.contains('btn-delete-caracteristica')) {
+            
+            const itemParaRemover = e.target.closest('.caracteristica-item');
+            if (itemParaRemover) {
+                itemParaRemover.remove();
+            }
+        }
+    });
+
+});
+</script>
+
+<script>
+// --- SCRIPT PARA ESPECIFICAÇÕES RÁPIDAS ---
+// (Este script permanece exatamente o mesmo de antes)
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 1. Seleciona os novos elementos
+    const btnAddEspec = document.getElementById('btn-add-especificacao');
+    const containerEspec = document.getElementById('especificacoes-rapidas-lista');
+
+    // 2. Lógica para ADICIONAR
+    btnAddEspec.addEventListener('click', function() {
+        const novoItem = document.createElement('div');
+        novoItem.className = 'espec-item';
+        
+        novoItem.innerHTML = `
+            <input type="text" name="especificacao_rapida[]" placeholder="Novo item" required>
+            <span class="btn-delete-espec">🗑️</span>
+        `;
+        
+        containerEspec.appendChild(novoItem);
+        novoItem.querySelector('input').focus(); 
+    });
+
+    // 3. Lógica para REMOVER (Usando Delegação de Evento)
+    containerEspec.addEventListener('click', function(e) {
+        
+        if (e.target.classList.contains('btn-delete-espec')) {
+            
+            const itemParaRemover = e.target.closest('.espec-item');
+            if (itemParaRemover) {
+                itemParaRemover.remove();
+            }
+        }
+    });
+
+});
+</script>
+</body>
 </html>

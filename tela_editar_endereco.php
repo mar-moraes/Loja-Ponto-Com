@@ -18,7 +18,7 @@ if (!$endereco_id) {
 
 // Busca o endereço específico PARA ESTE USUÁRIO (Segurança)
 try {
-    $stmt = $pdo->prepare("SELECT * FROM ENDERECOS WHERE id = ? AND usuario_id = ?");
+    $stmt = $pdo->prepare("SELECT * FROM enderecos WHERE id = ? AND usuario_id = ?");
     $stmt->execute([$endereco_id, $usuario_id]);
     $endereco = $stmt->fetch(PDO::FETCH_ASSOC);
 

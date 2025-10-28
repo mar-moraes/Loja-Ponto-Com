@@ -299,9 +299,23 @@
 }
 
 /* Coluna 1 (Nome da característica) */
-.caracteristica-item span:first-child {
-  font-weight: 500;
-  color: #333;
+/* Substitua o .caracteristica-item span:first-child por isto */
+.caracteristica-item input {
+    border: none;
+    background-color: transparent;
+    padding: 12px 16px;
+    font-size: 1em;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+}
+.caracteristica-item input:focus {
+    outline: 1px solid #2968C8; 
+    background-color: #fff;
+}
+.caracteristica-item input[name="caracteristica_nome[]"] {
+    font-weight: 500;
+    color: #333;
 }
 
 /* Efeito de fundo alternado (zebra) */

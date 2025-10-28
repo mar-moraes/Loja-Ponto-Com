@@ -8,21 +8,7 @@ $nome_cliente = $_SESSION['usuario_nome'] ?? 'Cliente não identificado';
 $cpf_cliente = $_SESSION['usuario_cpf'] ?? 'N/A';
 $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
 
-// 
-// Lógica de geração de PDF (ex: com FPDF ou Dompdf)
-//
-// Exemplo com FPDF:
-// require('fpdf.php');
-// $pdf = new FPDF();
-// $pdf->AddPage();
-// $pdf->SetFont('Arial', 'B', 12);
-// $pdf->Cell(0, 10, 'Dados do Cliente', 0, 1);
-// $pdf->SetFont('Arial', '', 10);
-// $pdf->Cell(0, 7, 'Nome: ' . utf8_decode($nome_cliente), 0, 1);
-// $pdf->Cell(0, 7, 'CPF/CNPJ: ' . $cpf_cliente, 0, 1);
-// $pdf->Cell(0, 7, 'Telefone: ' . $telefone_cliente, 0, 1);
-// ...
-// $pdf->Output();
+
 
 ?>
 <!DOCTYPE html>
