@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 28, 2025 at 01:53 AM
+-- Generation Time: Oct 28, 2025 at 02:14 AM
 -- Server version: 8.0.34
 -- PHP Version: 8.2.12
 
@@ -347,7 +347,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT for table `avaliacoes`
 --
 ALTER TABLE `avaliacoes`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `carrinho`
