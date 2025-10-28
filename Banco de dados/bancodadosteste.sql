@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 27, 2025 at 02:34 AM
+-- Generation Time: Oct 28, 2025 at 01:53 AM
 -- Server version: 8.0.34
 -- PHP Version: 8.2.12
 
@@ -53,7 +53,7 @@ CREATE TABLE `carrinho` (
 --
 
 INSERT INTO `carrinho` (`id`, `usuario_id`, `data_atualizacao`) VALUES
-(3, 1, '2025-10-26 22:31:08');
+(4, 3, '2025-10-27 20:48:01');
 
 -- --------------------------------------------------------
 
@@ -67,14 +67,6 @@ CREATE TABLE `carrinho_itens` (
   `produto_id` int NOT NULL,
   `quantidade` int NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `carrinho_itens`
---
-
-INSERT INTO `carrinho_itens` (`id`, `carrinho_id`, `produto_id`, `quantidade`) VALUES
-(1, 3, 1, 1),
-(2, 3, 5, 7);
 
 -- --------------------------------------------------------
 
@@ -97,7 +89,11 @@ INSERT INTO `categorias` (`id`, `nome`, `descricao`) VALUES
 (2, 'TVs', 'Televisores, Smart TVs e acessórios de vídeo.'),
 (3, 'Ferramentas', 'Ferramentas manuais, elétricas e equipamentos.'),
 (4, 'Eletrônicos', 'Celulares, notebooks, computadores, áudio e acessórios.'),
-(5, 'Robótica', 'Drones, Robôs quadrúpedes, Assistentes inteligentes, Entretenimento high-tech, Robôs inteligentes e Robôs autônomos.');
+(5, 'Robótica', 'Drones, Robôs quadrúpedes, Assistentes inteligentes, Entretenimento high-tech, Robôs inteligentes e Robôs autônomos.'),
+(6, 'Esporte e Fitness', 'Equipamentos de ginástica, bicicletas ergométricas, acessórios esportivos e de fitness.'),
+(7, 'Eletrodomésticos', 'Aparelhos elétricos para uso doméstico, como cafeteiras, liquidificadores, batedeiras e outros.'),
+(8, 'Energia Solar', 'Painéis solares, inversores, baterias e equipamentos para geração de energia solar.'),
+(9, 'Motores e Equipamentos Agrícolas', 'Motores estacionários, geradores, motobombas e equipamentos para uso agrícola e industrial.');
 
 -- --------------------------------------------------------
 
@@ -188,6 +184,7 @@ CREATE TABLE `produtos` (
   `nome` varchar(255) NOT NULL,
   `descricao` text,
   `preco` decimal(10,2) NOT NULL,
+  `desconto` int DEFAULT '0',
   `categoria_id` int NOT NULL,
   `estoque` int NOT NULL DEFAULT '0',
   `imagem_url` varchar(1024) DEFAULT NULL,
@@ -198,13 +195,8 @@ CREATE TABLE `produtos` (
 -- Dumping data for table `produtos`
 --
 
-INSERT INTO `produtos` (`id`, `nome`, `descricao`, `preco`, `categoria_id`, `estoque`, `imagem_url`, `status`) VALUES
-(1, 'Minifigura LEGO Ninjago - Zane', 'Minifigura original LEGO do personagem Zane...', 149.90, 1, 50, 'imagens/Produtos/Lego/Zane lego - 1.jpg', 'ativo'),
-(4, 'Samsung Vision Ai Tv 65 Oled 4k S85f 2025', 'Processador Com Ai, Controle Por Gestos, Modo Ai, Painel 120hz, 7 Anos De Atualização', 7999.90, 2, 15, 'imagens/Produtos/Televisão/principal.webp', 'ativo'),
-(5, 'Parafusadeira E Furadeira Impacto', 'Parafusadeira E Furadeira Impacto The Black Tools Tb-21pw 3/8 Cor Amarelo Frequência 50/60 Hz', 189.90, 3, 50, 'imagens/Produtos/Furadeira/principal.webp', 'ativo'),
-(6, 'Notebook Gamer Msi Katana ', 'Notebook GAMER TOP MSI KATANA 15HX - Intel Core i7 14° Geração 14650HX 5.2Ghz - RTX 5070 8Gb DDR7 ( FULL POWER GPU ) - 64GB de memória DDR5 - 1 Tera NVME - Tela 15\" 165Hz - QHD+ - DCIP3 100%', 15900.00, 4, 50, 'imagens/Produtos/Notebook/principal.jpg', 'ativo'),
-(7, 'Kit Mini Antena Starlink Internet via Satélite', 'O Kit Mini Antena Starlink oferece internet via satélite com velocidade de até 100 Mbps, ideal para uso em locais remotos. Compacto e leve (3,05 kg), funciona com alimentação 12V e é compatível com computadores, notebooks, smartphones e tablets. Conta com modo Access Point e conexão Wi-Fi no padrão 802.11ac. Inclui peças completas para montagem e garante conexão estável com tecnologia avançada da Starlink.', 799.00, 4, 15, 'imagens/Produtos/Antena/principal.jpg', 'ativo'),
-(8, 'Unitree Go2 Robot Dog ', 'O Unitree Go2 Robot Dog é um robô quadrúpede inteligente projetado para mobilidade avançada, exploração e interação autônoma. Equipado com inteligência artificial, sensores de alta precisão e capacidade de navegação em diversos terrenos, ele oferece desempenho ágil e estável. Ideal para pesquisa, entretenimento, uso educacional e demonstrações tecnológicas. Representa uma das soluções mais modernas em robótica móvel.', 2518.52, 5, 200, 'imagens/Produtos/Robô/principal.webp', 'ativo');
+INSERT INTO `produtos` (`id`, `nome`, `descricao`, `preco`, `desconto`, `categoria_id`, `estoque`, `imagem_url`, `status`) VALUES
+(21, 'Parafusadeira E Furadeira Impacto', '--- CARACTERÍSTICAS ---\nÉ sem fio: Sim\nCom função percutor: Sim\nTamanho do mandril: 10 mm\n\n--- ESPECIFICAÇÕES ---\nCom função reversa.\nVem com maleta de transporte.\nSua frequência é de 60Hz.\nInclui função martelete.\n\n--- DESCRIÇÃO ---\nA Parafusadeira/Furadeira de Impacto Profissional The Black Tools TB-21PW 21V é ideal para uso profissional e doméstico, oferecendo potência, durabilidade e praticidade. Com velocidade variável, função reversível e impacto, garante excelente desempenho em metal, madeira e plástico. Possui empunhadura Soft Grip e indicador de carga da bateria para maior conforto e controle. Acompanha maleta completa com brocas, soquetes, adaptadores e bits. Compacta e leve, é a escolha certa para quem busca eficiência e qualidade nas tarefas do dia a dia.\r\n', 211.00, 6, 4, 25, 'imagens/Produtos/69001220f237f-1.webp', 'ativo');
 
 -- --------------------------------------------------------
 
@@ -223,27 +215,10 @@ CREATE TABLE `produto_imagens` (
 --
 
 INSERT INTO `produto_imagens` (`id`, `produto_id`, `url_imagem`) VALUES
-(3, 4, 'imagens/Produtos/Televisão/1.webp'),
-(4, 4, 'imagens/Produtos/Televisão/2.webp'),
-(5, 4, 'imagens/Produtos/Televisão/3.webp'),
-(6, 4, 'imagens/Produtos/Televisão/4.webp'),
-(7, 5, 'imagens/Produtos/Furadeira/1.webp'),
-(8, 5, 'imagens/Produtos/Furadeira/2.webp'),
-(9, 5, 'imagens/Produtos/Furadeira/3.webp'),
-(10, 5, 'imagens/Produtos/Furadeira/4.webp'),
-(11, 6, 'imagens/Produtos/Notebook/1.jpg'),
-(12, 6, 'imagens/Produtos/Notebook/2.jpg'),
-(13, 6, 'imagens/Produtos/Notebook/3.jpg'),
-(14, 6, 'imagens/Produtos/Notebook/4.jpg'),
-(19, 8, 'imagens/Produtos/Robô/1.webp'),
-(20, 8, 'imagens/Produtos/Robô/2.webp'),
-(21, 8, 'imagens/Produtos/Robô/3.webp'),
-(23, 1, 'imagens/Produtos/Lego/Zane lego - 2.jpg'),
-(24, 1, 'imagens/Produtos/Lego/Zane lego.jpg'),
-(25, 7, 'imagens/Produtos/Antena/1.jpg'),
-(26, 7, 'imagens/Produtos/Antena/2.jpg'),
-(27, 7, 'imagens/Produtos/Antena/3.jpg'),
-(28, 7, 'imagens/Produtos/Antena/4.jpg');
+(84, 21, 'imagens/Produtos/69001220f282c-2.webp'),
+(85, 21, 'imagens/Produtos/69001220f2b7f-3.webp'),
+(86, 21, 'imagens/Produtos/69001220f2dfc-4.webp'),
+(87, 21, 'imagens/Produtos/69001220f3102-principal.webp');
 
 -- --------------------------------------------------------
 
@@ -267,7 +242,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `cpf`, `senha`, `telefone`, `data_cadastro`, `tipo`) VALUES
-(1, 'Chris Brown', 'chrisbrown@gmail.com', '123456478910', '$2y$10$a54PQT1ifql6Im7K1O1KnuyWZ9nMUhZjbP4.AH3H9m6Se8Ql9MThC', '9912345678', '2025-10-25 21:14:47', 'cliente');
+(3, 'João Silva Teste', 'joao.teste+qa@example.com', '123.456.789-00', '$2y$10$BzliJoZptHJnsCFGKk4ADO8MOXxT89I3LfYgG/QSqC7CXCjLgEfzO', '11 91234-5678', '2025-10-27 19:17:53', 'cliente');
 
 --
 -- Indexes for dumped tables
@@ -378,25 +353,25 @@ ALTER TABLE `avaliacoes`
 -- AUTO_INCREMENT for table `carrinho`
 --
 ALTER TABLE `carrinho`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `carrinho_itens`
 --
 ALTER TABLE `carrinho_itens`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `enderecos`
 --
 ALTER TABLE `enderecos`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `entregas`
@@ -426,19 +401,19 @@ ALTER TABLE `pedido_itens`
 -- AUTO_INCREMENT for table `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `produto_imagens`
 --
 ALTER TABLE `produto_imagens`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
