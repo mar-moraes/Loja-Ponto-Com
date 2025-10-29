@@ -145,31 +145,61 @@
   }
   
   /* lista de produtos */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 18px; /* largura do container*/
-  }
+.grid {
+  display: grid;
   
-  .card {
-    background: var(--card-bg);
-    border-radius: 8px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* <-- ADICIONE ESTA LINHA */
-  }
+  /* DE: grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    PARA: Forçar 4 colunas
+  */
+  grid-template-columns: repeat(4, 1fr);
   
-  .thumb {
-    height: 170px; /* altura do container */
-    border-radius: 6px;
-    background-size: cover;
-    background-position: center;
-    margin-bottom: 12px;
-    overflow: hidden; /* <-- ADICIONE ESTA LINHA */
-    /* transition: transform 0.2s ease-out; <-- ADICIONE ESTA LINHA */
-  }
+  gap: 18px; /* largura do container*/
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  
+  /* --- ADIÇÃO (Req. 2 - Altura igual) --- */
+  /* Faz o card ocupar 100% da altura da célula do grid */
+  height: 100%;
+}
+
+/* --- ADIÇÃO (Req. 2 - Altura igual) --- */
+/* Seleciona o último <div> dentro do .card (que contém o preço)
+  e o empurra para o final, alinhando todos os cards.
+*/
+.card > div:last-child {
+  margin-top: auto;
+}
+
+
+.thumb {
+  height: 170px; /* altura do container */
+  border-radius: 6px;
+  
+  /* --- MUDANÇA (Req. 1 - Imagem inteira) --- */
+  /* DE: background-size: cover; */
+  /* PARA: background-size: contain; */
+  background-size: contain; 
+  
+  /* --- ADIÇÃO (Req. 1 - Imagem inteira) --- */
+  /* Impede que a imagem se repita caso seja pequena */
+  background-repeat: no-repeat;
+  
+  background-position: center;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+  
+/* REMOVIDO BLOCO .thumb DUPLICADO QUE ESTAVA AQUI 
+   (Ele continha "background-size: cover;" e estava quebrando o layout)
+*/
   
   .title { /* nome do produto*/
     font-size: 14px;
@@ -411,3 +441,379 @@ a.card-link {
 .auth-container p a:hover {
     text-decoration: underline;
 }
+
+/* ============================================= */
+/* --- INÍCIO: NOVOS ESTILOS (Minha Conta) --- */
+/* ============================================= */
+
+/* Como .container é global (1100px), a página "Minha Conta" 
+   usará essa largura. Para forçar os 900px do seu <style>
+   original, vamos aplicar a regra .container especificamente
+   quando ele estiver dentro de um <main> (o que acontece
+   na tela_minha_conta.php, mas não na index.php).
+   
+   Isso pode ser arriscado se outras páginas usarem <main class="container">.
+   A melhor abordagem seria adicionar uma classe no <main>
+   ex: <main class="container minha-conta-main">
+   e usar .minha-conta-main { max-width: 900px; }
+   
+   Porém, seguindo a lógica de apenas mover os estilos,
+   farei a sobrescrita mais simples.
+*/
+
+/* O container principal da "Minha Conta" será mais estreito */
+main.container {
+    max-width: 900px;
+}
+
+.conta-secao {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 30px;
+}
+
+.conta-secao h2 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Card de Endereço */
+.endereco-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    position: relative;
+    line-height: 1.6;
+}
+
+.endereco-card p { margin: 0 0 5px 0; font-size: 0.95rem; color: #333; }
+.endereco-card .rua-principal { font-weight: bold; color: #000; font-size: 1.1rem; }
+.endereco-card .cep-cidade { font-size: 0.9rem; color: #555; }
+.endereco-card-opcoes { position: absolute; top: 20px; right: 20px; }
+.endereco-card-opcoes a { font-size: 0.9rem; margin-left: 15px; text-decoration: none; color: #007bff; }
+
+/* Botão Adicionar Endereço */
+.btn-adicionar-endereco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px 20px; 
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 600;
+    background-color: #2968C8;
+    transition: opacity 0.2s;
+    box-sizing: border-box;
+}
+.btn-adicionar-endereco:hover { opacity: 0.9; }
+.btn-adicionar-endereco span { font-size: 1.5rem; font-weight: 300; margin-right: 10px; line-height: 1; }
+
+/* Tabela de dados pessoais */
+.dados-pessoais { width: 100%; }
+.dados-pessoais td { padding: 8px 0; font-size: 1rem; }
+.dados-pessoais td:first-child { font-weight: 500; color: #555; width: 100px; }
+
+/* Estilo das Abas */
+.tabs-container {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 25px;
+}
+.tab-button {
+    padding: 12px 20px;
+    border: none;
+    background-color: transparent;
+    font-size: 1.1rem;
+    color: #555;
+    cursor: pointer;
+    position: relative;
+    top: 1px; /* Para alinhar com a borda inferior */
+    border-bottom: 3px solid transparent;
+}
+.tab-button.active {
+    color: #2968C8;
+    font-weight: 600;
+    border-bottom-color: #2968C8;
+}
+
+/* Painéis das Abas */
+.tab-painel {
+    display: none; /* Escondido por padrão */
+}
+.tab-painel.active {
+    display: block; /* Mostra o painel ativo */
+}
+
+/* Cabeçalho de Data (ex: "19 de agosto de 2024") */
+.data-grupo-compras {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #333;
+}
+.data-grupo-compras:first-of-type {
+    margin-top: 0;
+}
+
+/* Card de Compra (Baseado na imagem de referência) */
+.compra-card {
+    display: flex;
+    flex-wrap: wrap; /* Para mobile */
+    gap: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    background-color: #fff;
+}
+.compra-imagem {
+    width: 80px;
+    height: 80px;
+}
+.compra-imagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.compra-detalhes {
+    flex: 3; /* Cresce mais */
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+}
+.compra-detalhes span {
+    font-size: 0.9rem;
+    color: #555;
+}
+.compra-detalhes .compra-status {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #00a650; /* Verde "Entregue" */
+    margin-bottom: 2px;
+}
+.compra-detalhes .compra-data-entrega {
+    margin-bottom: 8px;
+}
+.compra-detalhes .compra-titulo {
+    font-size: 1.1rem;
+    color: #000;
+    font-weight: 500;
+    margin: 0;
+}
+.compra-detalhes .compra-unidades {
+    margin-top: 4px;
+    color: #777;
+}
+
+.compra-vendedor {
+    flex: 1.5;
+    min-width: 150px;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.compra-vendedor a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.compra-acoes {
+    flex: 1.5;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+.btn-compra-primario, .btn-compra-secundario {
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+.btn-compra-primario {
+    background-color: #2968C8;
+    color: #fff;
+}
+.btn-compra-secundario {
+    background-color: #f0f0f0;
+    color: #2968C8;
+    border: 1px solid #ddd;
+}
+/* ============================================= */
+/* --- FIM: NOVOS ESTILOS (Minha Conta) --- */
+/* ============================================= */
+
+.recomendacoes-swiper {
+    width: 90%; 
+    margin: 0 auto; 
+    padding-bottom: 30px; 
+}
+
+/* * 1. REGRA REMOVIDA
+ * A regra "width: 170px !important;" foi removida.
+ * Agora, a largura do slide será controlada pela configuração
+ * 'slidesPerView' no seu JavaScript (ex: 5 por vez).
+*/
+.recomendacoes-swiper .swiper-slide {
+    display: flex; 
+    justify-content: center;
+    align-items: flex-start;
+    /* Adiciona a propriedade height: auto para garantir que o swiper se ajuste */
+    height: auto; 
+}
+
+.recomendacoes-swiper .swiper-slide a.card-link {
+    display: block; 
+    text-decoration: none; 
+    color: inherit; 
+    /* Garante que o link preencha o slide */
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.recomendacoes-container .card {
+    /* Herda a maioria dos estilos do .card global (linha 161) */
+    
+    /* 2. MODIFICADO (para bater com o .card global) */
+    /* Garante que o card preencha o slide e se comporte como o global */
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+    width: 100%;
+    
+    /* Estilos que já estavam aqui (mantidos) */
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    position: relative;
+    
+    /* 3. REMOVIDO */
+    /* font-size: 0.85em; (removido para usar o padrão) */
+    
+    /* 4. ADICIONADO (para bater com o .card global, linha 163) */
+    padding: 12px;
+}
+
+.recomendacoes-container .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.recomendacoes-container .card .badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    /* 5. MODIFICADO (para bater com o .badge global, linha 208) */
+    background-color: transparent;
+    color: #2a9d8f;
+    font-weight: 700;
+    font-size: 1em; /* Tamanho padrão */
+    padding: 0;
+    z-index: 10;
+}
+
+.recomendacoes-container .card .thumb {
+    width: 100%;
+    
+    /* 6. MODIFICADO (para bater com o .thumb global, linha 177) */
+    height: 170px; 
+    background-size: contain; 
+    background-repeat: no-repeat;
+    background-position: center center;
+    
+    /* 7. MODIFICADO (para bater com o .thumb global, linha 186) */
+    margin-bottom: 12px;
+    border-bottom: none; /* (removida a borda que existia) */
+}
+
+.recomendacoes-container .card .details {
+    /* 8. MODIFICADO (padding removido daqui, pois foi para o .card pai) */
+    padding: 0; 
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; 
+}
+
+.recomendacoes-container .card .title {
+    /* 9. MODIFICADO (para bater com o .title global, linha 188) */
+    font-size: 14px;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    font-weight: bolder;
+    color: #333;
+    min-height: 42px;
+    
+    /* (propriedades de clamp/height removidas) */
+    overflow: visible;
+    display: block;
+}
+
+.recomendacoes-container .card .card-avaliacao {
+    /* 10. MODIFICADO (para bater com o .card-avaliacao global, linha 246) */
+    margin-top: 4px;
+    margin-bottom: 8px;
+    min-height: 18px; 
+    font-size: 18px; /* (tamanho da estrela global) */
+    color: #ccc; 
+}
+
+.recomendacoes-container .card .star {
+    margin-right: 1px; /* (para bater com o global, linha 252) */
+}
+.recomendacoes-container .card .star.filled {
+  color: #FFC107; /* (para bater com o global, linha 258) */
+}
+
+.recomendacoes-container .card .price-container {
+    display: flex;
+    align-items: baseline;
+    margin-top: auto; /* Esta é a regra mais importante para o alinhamento */
+    margin-bottom: 8px; 
+}
+
+.recomendacoes-container .card .price-container .old {
+    /* 11. MODIFICADO (para bater com o .old global, linha 201) */
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 8px;
+}
+
+.recomendacoes-container .card .price-container .price {
+    /* 12. MODIFICADO (para bater com o .price global, linha 196) */
+    font-weight: 700;
+    font-size: 18px;
+    color: #000;
+}
+
+.recomendacoes-container .card .btn-card-add {
+    background-color: #3498db; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px; 
+    font-size: 0.9em; /* Um pouco menor que o texto do card */
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s ease;
+    margin-top: 5px; 
+}
+

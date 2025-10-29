@@ -310,8 +310,14 @@ try {
 
     <script>
         // --- Variáveis globais ---
-        let subtotalCompra= <?php echo $total_carrinho; ?>;
         let map = null; // Referência global para o mapa Leaflet
+        
+        // ==========================================================
+        // --- (INÍCIO DA CORREÇÃO) ---
+        // Tenta ler do localStorage primeiro (vindo do "Comprar Agora" ou "Carrinho")
+        let subtotalStorage = localStorage.getItem("totalCompra");
+        // Se não achar, usa o valor do PHP (fallback, que geralmente será 0)
+        let subtotalCompra = parseFloat(subtotalStorage) || <?php echo $total_carrinho; ?>;
         
         // (O JavaScript das funções mostrarModal, fecharModal, atualizarResumoEntrega, 
         // geolocalização, etc., permanece o mesmo)
@@ -618,21 +624,15 @@ try {
                     if (inputRua && inputRua.value.trim() === '') {
                         if(erroRua) erroRua.style.display = 'block';
                         inputRua.classList.add('input-erro');
-isValid = false;
+                        isValid = false;
                     }
                     // REMOVIDO: Validação de nome e telefone
 
                     if (isValid) {
-                        // 1. Coletar dados do formulário
-                        
-                        // --- INÍCIO DA MODIFICAÇÃO ---
-                        
-                        // Pegar dados do ViaCEP (preenchidos nos campos hidden)
+                        // 1. Coletar dados do formulário (campos de endereço)
                         const inputBairro = document.getElementById('bairro');
                         const inputCidade = document.getElementById('cidade');
                         const inputEstado = document.getElementById('estado');
-
-                        // Combinar complemento e info_adicional no campo 'complemento'
                         let complementoFinal = inputComplemento ? inputComplemento.value.trim() : '';
                         let infoAdicional = inputInfoAdicional ? inputInfoAdicional.value.trim() : '';
                         
@@ -641,39 +641,55 @@ isValid = false;
                         } else if (infoAdicional) {
                             complementoFinal = infoAdicional;
                         }
-                        
-                        // Monta o payload SOMENTE com campos da tabela 'enderecos'
-                        const dadosEndereco = {
-                            tipo: 'endereco', 
+
+                        // 2. Criar o payload para o 'salvar_endereco.php'
+                        //    (Este é o objeto que será salvo no BD)
+                        const payloadEndereco = {
                             cep: inputCep ? inputCep.value : '',
                             rua: inputRua ? inputRua.value : '',
                             numero: checkboxSemNumero.checked ? 'S/N' : (inputNumero ? inputNumero.value : ''),
-                            complemento: complementoFinal, // Campo combinado
+                            complemento: complementoFinal,
                             bairro: inputBairro ? inputBairro.value : '',
                             cidade: inputCidade ? inputCidade.value : '',
                             estado: inputEstado ? inputEstado.value : ''
-                            // 'pais' usará o DEFAULT 'Brasil' do SQL
                         };
-                        // --- FIM DA MODIFICAÇÃO ---
-                        
-                        localStorage.setItem('dadosEntrega', JSON.stringify(dadosEndereco));
 
-                        // 2. Enviar dados para o PHP via fetch
+                        // 3. Enviar dados para o PHP via fetch
                         fetch('Banco de dados/salvar_endereco.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Accept': 'application/json'
                             },
-                            body: JSON.stringify(dadosEndereco)
+                            body: JSON.stringify(payloadEndereco) // Envia só os dados do endereço
                         })
                         .then(response => response.json())
                         .then(data => {
                             if (data.sucesso) {
-                                // 3. Atualizar a tela principal com o novo endereço
-                                const detalhesEnderecoDiv = document.querySelector('#enviar-endereco').closest('.opcao-bloco').querySelector('.opcao-detalhes');
-                                const novoEndereco = data.endereco; // Pega os dados retornados pelo PHP
+                                // 4. SUCESSO! Pegar o endereço retornado (que tem o NOVO ID)
+                                const novoEndereco = data.endereco; // ex: {id: 7, rua: "...", ...}
+
+                                // 5. (O GRANDE FIX) Criar o objeto COMPLETO para o localStorage
+                                //    usando os dados do PHP (para nome/cpf/fone)
+                                //    e o 'novoEndereco' retornado (para id/rua/etc)
+                                const dadosEntregaCompleto = {
+                                    tipo: 'endereco',
+                                    endereco_id: novoEndereco.id, // <-- O ID CRÍTICO
+                                    nome: '<?php echo htmlspecialchars($nome_usuario_completo); ?>', 
+                                    documento: '<?php echo htmlspecialchars($usuario_cpf); ?>',
+                                    endereco: `${novoEndereco.rua}, ${novoEndereco.numero}`,
+                                    bairro: novoEndereco.bairro,
+                                    cep: novoEndereco.cep,
+                                    municipio: novoEndereco.cidade,
+                                    uf: novoEndereco.estado,
+                                    fone: '<?php echo htmlspecialchars($usuario_telefone); ?>'
+                                };
                                 
+                                // 6. (O GRANDE FIX) Salvar o objeto COMPLETO no localStorage
+                                localStorage.setItem('dadosEntrega', JSON.stringify(dadosEntregaCompleto));
+
+                                // 7. Atualizar a tela principal (HTML)
+                                const detalhesEnderecoDiv = document.querySelector('#enviar-endereco').closest('.opcao-bloco').querySelector('.opcao-detalhes');
                                 if (detalhesEnderecoDiv) {
                                     detalhesEnderecoDiv.innerHTML = `
                                         <p style="font-weight: 600; font-size: 15px;">
@@ -682,14 +698,15 @@ isValid = false;
                                         <p style="margin: 5px 0;">
                                             ${novoEndereco.cep} - ${novoEndereco.cidade} - ${novoEndereco.estado}
                                         </p>
-                                        <p class="tipo-endereco">Recebe: <?php echo htmlspecialchars($nome_usuario_completo); ?></p> <a href="#" class="link-acao" onclick="abrirModalEnderecoComLocalizacao()">Alterar ou escolher outro endereço</a>
+                                        <p class="tipo-endereco">Recebe: <?php echo htmlspecialchars($nome_usuario_completo); ?></p> 
+                                        <a href="#" class="link-acao" onclick="abrirModalEnderecoComLocalizacao()">Alterar ou escolher outro endereço</a>
                                     `;
                                 }
                                 
-                                // 4. Fechar o modal
+                                // 8. Fechar o modal
                                 fecharModal('modal-editar-endereco');
                                 
-                                // 5. Garantir que a opção "Enviar no endereço" esteja selecionada
+                                // 9. Garantir que a opção "Enviar no endereço" esteja selecionada
                                 const radioEndereco = document.getElementById('enviar-endereco');
                                 if (radioEndereco) {
                                     radioEndereco.checked = true;
@@ -704,7 +721,6 @@ isValid = false;
                             console.error('Erro no fetch:', error);
                             alert('Erro de comunicação. Tente novamente.');
                         });
-                        
                     }
                 });
             } else {
@@ -863,19 +879,20 @@ isValid = false;
                         try { dadosEditados = dadosEditadosJSON ? JSON.parse(dadosEditadosJSON) : null; } catch(e){}
 
                         if(dadosEditados && dadosEditados.tipo === 'endereco') {
-                             // Já está salvo
+                             // Já está salvo (provavelmente de um modal)
                         } else if (<?php echo json_encode($endereco_padrao); ?>) {
                             const phpEndereco = <?php echo json_encode($endereco_padrao); ?>;
                             const dadosHomeDefault = {
                                 tipo: 'endereco',
+                                endereco_id: phpEndereco ? phpEndereco.id : null, // <-- ADICIONADO
                                 nome: '<?php echo htmlspecialchars($nome_usuario_completo); ?>', 
-                                documento: '<?php echo htmlspecialchars($usuario_cpf); ?>', // <-- MODIFICADO
+                                documento: '<?php echo htmlspecialchars($usuario_cpf); ?>',
                                 endereco: `${phpEndereco.rua}, ${phpEndereco.numero}`,
                                 bairro: phpEndereco.bairro,
                                 cep: phpEndereco.cep,
                                 municipio: phpEndereco.cidade,
                                 uf: phpEndereco.estado,
-                                fone: '<?php echo htmlspecialchars($usuario_telefone); ?>' // <-- MODIFICADO
+                                fone: '<?php echo htmlspecialchars($usuario_telefone); ?>'
                             };
                             localStorage.setItem('dadosEntrega', JSON.stringify(dadosHomeDefault));
                         } else {
@@ -891,14 +908,10 @@ isValid = false;
                         if (!dadosAgencia || dadosAgencia.tipo !== 'agencia') {
                              const dadosDefaultAgencia = {
                                 tipo: 'agencia',
+                                endereco_id: null, // <-- ADICIONADO
                                 nome: 'Agência - LOJA 1', 
                                 documento: 'ISENTO',
-                                endereco: 'RUA LUIZ CAMILO DE CAMARGO, 581',
-                                bairro: 'Centro',
-                                municipio: 'Hortolândia',
-                                cep: '13184-230',
-                                uf: 'SP',
-                                fone: '(19) 3888-8888'
+                                // ... resto dos dados ...
                             };
                              localStorage.setItem('dadosEntrega', JSON.stringify(dadosDefaultAgencia));
                         }

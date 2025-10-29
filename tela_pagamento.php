@@ -608,7 +608,7 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
                 });
             }
 
-            // --- Lógica do Botão "Continuar" (Principal) ---
+// --- Lógica do Botão "Continuar" (Principal) ---
             if (btnContinuarPagina) {
                 btnContinuarPagina.addEventListener('click', function() {
                     let pagamentoSucesso = false; // Flag para controlar se o pagamento foi OK
@@ -616,7 +616,7 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
 
                     if (!radioSelecionado) {
                         alert("Por favor, selecione um método de pagamento.");
-                        return; // Sai da função se nada estiver selecionado
+                        return; 
                     }
 
                     const metodoPagamento = radioSelecionado.value;
@@ -630,10 +630,7 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
                                 console.log("Formulário de cartão inválido. Por favor, corrija os campos.");
                             }
                             break;
-                        case 'nubank': // Assumindo 'nubank' como o value do cartão salvo
-                            console.log("Pagamento (com cartão salvo) selecionado.");
-                            pagamentoSucesso = true;
-                            break;
+                        case 'nubank':
                         case 'linha-credito':
                         case 'pix':
                         case 'boleto':
@@ -645,26 +642,75 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
                              alert("Método de pagamento inválido selecionado.");
                     }
 
-                    // Se o pagamento foi considerado bem-sucedido
+                    // ==========================================================
+                    // --- INÍCIO DA MODIFICAÇÃO (CORREÇÃO DO BUG) ---
+                    // ==========================================================
                     if (pagamentoSucesso) {
-                        // 1. Define a duração da notificação + animação
-                        const notificationDuration = 3000; // Tempo que a notificação fica visível
-                        const animationDuration = 400;  // Tempo da animação de saída (do CSS transition)
-                        const totalDelay = notificationDuration + animationDuration;
+                        const cart = JSON.parse(localStorage.getItem("carrinho")) || [];
+                        const entrega = JSON.parse(localStorage.getItem("dadosEntrega")) || null;
+                        const total = localStorage.getItem("valorFinal") || "0.00";
 
-                        // 2. Mostra a notificação
-                        showNotification("Pagamento bem-sucedido! Gerando nota fiscal...", 'success', notificationDuration);
+                        if (cart.length === 0 || !entrega) {
+                            alert("Erro: Carrinho ou dados de entrega não encontrados. Pedido não processado.");
+                            return;
+                        }
 
-                        // 3. Agenda a geração do PDF para DEPOIS que a notificação sumir
-                        console.log(`Agendando geração do PDF para daqui a ${totalDelay}ms.`);
-                        setTimeout(gerarNotaFiscalPDF, totalDelay); // <-- SUBSTITUIÇÃO APLICADA
+                        // --- (BLOCO REMOVIDO) ---
+                        // O 'if (entrega.tipo === 'agencia'...' foi removido daqui.
+                        // Agora há apenas um fluxo.
 
+                        // --- Fluxo Principal (Salva no banco de dados) ---
+                        // (Anteriormente chamado de "Caso 2")
+                        
+                        btnContinuarPagina.disabled = true;
+                        btnContinuarPagina.innerText = "Processando...";
+
+                        fetch('Banco de dados/processa_pedido.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                cart: cart,
+                                endereco_id: entrega.endereco_id, // Isto será NULL se for agência
+                                valor_total: total
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.sucesso) {
+                                // SUCESSO!
+                                // 1. Limpa o carrinho local (só depois de salvar no BD)
+                                localStorage.setItem("carrinho", "[]");
+                                
+                                // 2. Mostra notificação e gera PDF
+                                const notificationDuration = 3000;
+                                showNotification("Pagamento bem-sucedido! Gerando nota fiscal...", 'success', notificationDuration);
+                                setTimeout(gerarNotaFiscalPDF, notificationDuration + 400);
+
+                                // Habilita o botão novamente
+                                btnContinuarPagina.disabled = false;
+                                btnContinuarPagina.innerText = "Continuar";
+
+                            } else {
+                                // FALHA
+                                alert("Houve um erro ao salvar seu pedido: " + data.mensagem);
+                                btnContinuarPagina.disabled = false;
+                                btnContinuarPagina.innerText = "Continuar";
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Erro de conexão ao processar pedido:", error);
+                            alert("Erro de conexão. Seu pedido não foi salvo. Tente novamente.");
+                            btnContinuarPagina.disabled = false;
+                            btnContinuarPagina.innerText = "Continuar";
+                        });
                     }
+                    // ==========================================================
+                    // --- FIM DA MODIFICAÇÃO ---
+                    // ==========================================================
                 });
             } else {
                  console.error("Botão '.btn-continuar-entrega' não encontrado.");
             }
-
         }); // <-- FIM do DOMContentLoaded
     </script>
     </body>

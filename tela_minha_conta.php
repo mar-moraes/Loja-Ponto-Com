@@ -10,6 +10,10 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $usuario_id = $_SESSION['usuario_id'];
 
+// 1.1 Verifica se o usuário é um fornecedor (definido no login)
+$is_fornecedor = (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] == 'fornecedor');
+
+
 // 2. Busca os dados pessoais do usuário
 try {
     $stmt_user = $pdo->prepare("SELECT nome, email, cpf, telefone FROM usuarios WHERE id = ?");
@@ -29,8 +33,44 @@ try {
     error_log("Erro ao buscar endereços: " . $e->getMessage());
 }
 
+// ==========================================================
+// --- HISTÓRICO DE COMPRAS ---
+// ==========================================================
+try {
+    // 4. Busca o histórico de pedidos e seus itens
+    $sql_pedidos = "
+        SELECT 
+            p.id as pedido_id,
+            p.data_pedido,
+            p.status as pedido_status,
+            pi.quantidade,
+            prod.nome as produto_nome,
+            prod.imagem_url as produto_imagem
+        FROM PEDIDOS p
+        JOIN PEDIDO_ITENS pi ON p.id = pi.pedido_id
+        JOIN PRODUTOS prod ON pi.produto_id = prod.id
+        WHERE p.usuario_id = ?
+        ORDER BY p.data_pedido DESC, p.id DESC, prod.nome ASC
+    ";
+    $stmt_pedidos = $pdo->prepare($sql_pedidos);
+    $stmt_pedidos->execute([$usuario_id]);
+    $itens_de_pedidos = $stmt_pedidos->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    $itens_de_pedidos = [];
+    error_log("Erro ao buscar histórico de pedidos: ". $e->getMessage());
+}
+// ==========================================================
+// --- FIM DA LÓGICA ---
+// ==========================================================
+
+
 // Pega o primeiro nome para o header
 $nome_usuario = explode(' ', $usuario['nome'])[0];
+
+// Configura o fuso horário e local para formatar datas em português
+date_default_timezone_set('America/Sao_Paulo');
+setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 ?>
 <!doctype html>
 <html lang="pt-BR">
@@ -38,117 +78,28 @@ $nome_usuario = explode(' ', $usuario['nome'])[0];
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Minha Conta - Loja Ponto Com</title>
+  
   <link rel="stylesheet" href="estilos/style.css">
   
   <style>
-    /* Estilos para a página "Minha Conta", inspirados na referência */
-    .container {
-        max-width: 900px; /* Mais estreito para uma página de conta */
-        margin-top: 40px;
-        margin-bottom: 40px;
-    }
-    
-    .conta-secao {
-        background-color: #ffffff;
-        border-radius: 8px;
-        padding: 24px;
-        margin-bottom: 30px;
-        /* box-shadow: 0 2px 4px rgba(0,0,0,0.05); */
+    /* Estilos copiados de tela_gerenciar_produtos.html */
+    #lista-produtos {
+      display: flex;          
+      flex-wrap: wrap;        
+      justify-content: flex-start; 
+      gap: 20px; /* Adicionado gap para espaçamento */
     }
 
-    .conta-secao h2 {
-        margin-top: 0;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #eee;
+    #lista-produtos .card {
+      flex-grow: 0;
+      flex-shrink: 0;
     }
 
-    /* Card de Endereço */
-    .endereco-card {
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 15px;
-        position: relative;
-        line-height: 1.6;
-    }
+    /* --- INÍCIO DA MODIFICAÇÃO --- */
+    /* Estilo para o novo botão de adicionar produto */
     
-    .endereco-card p {
-        margin: 0 0 5px 0;
-        font-size: 0.95rem;
-        color: #333;
-    }
-    
-    .endereco-card .rua-principal {
-        font-weight: bold;
-        color: #000;
-        font-size: 1.1rem;
-    }
-    
-    .endereco-card .cep-cidade {
-        font-size: 0.9rem;
-        color: #555;
-    }
-
-    .endereco-card-opcoes {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-    }
-    
-    .endereco-card-opcoes a {
-        font-size: 0.9rem;
-        margin-left: 15px;
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    /* =================================== */
-    /* BOTÃO ADICIONAR NOVO - MODIFICADO   */
-    /* =================================== */
-    .btn-adicionar-endereco {
-        display: flex;
-        align-items: center;
-        justify-content: center; /* Centraliza o conteúdo */
-        width: 100%;
-        padding: 14px 20px; /* Padding padrão dos botões */
-        border: none; /* Remove a borda */
-        border-radius: 8px;
-        text-decoration: none;
-        color: #FFFFFF; /* Texto branco */
-        font-size: 1rem; /* Tamanho padrão (16px) */
-        font-weight: 600; /* Peso padrão */
-        background-color: #2968C8; /* Cor azul padrão */
-        transition: opacity 0.2s;
-        box-sizing: border-box;
-    }
-    
-    .btn-adicionar-endereco:hover {
-        opacity: 0.9; /* Efeito hover padrão */
-    }
-
-    .btn-adicionar-endereco span {
-        font-size: 1.5rem; /* '+' um pouco menor */
-        font-weight: 300;
-        margin-right: 10px; /* Espaço entre o '+' e o texto */
-        line-height: 1;
-    }
-    
-    /* Tabela de dados pessoais */
-    .dados-pessoais {
-        width: 100%;
-    }
-    .dados-pessoais td {
-        padding: 8px 0;
-        font-size: 1rem;
-    }
-    .dados-pessoais td:first-child {
-        font-weight: 500;
-        color: #555;
-        width: 100px;
-    }
-
   </style>
-</head>
+  </head>
 <body>
 
     <header class="topbar">
@@ -176,70 +127,264 @@ $nome_usuario = explode(' ', $usuario['nome'])[0];
         </div>
         </nav>
     </header>
-
-  <main class="container">
+    
+    <main class="container">
     <h1>Minha Conta</h1>
 
-    <section class="conta-secao">
-        <h2>Dados Pessoais</h2>
-        <table class="dados-pessoais">
-            <tr>
-                <td>Nome:</td>
-                <td><?php echo htmlspecialchars($usuario['nome']); ?></td>
-            </tr>
-            <tr>
-                <td>Email:</td>
-                <td><?php echo htmlspecialchars($usuario['email']); ?></td>
-            </tr>
-            <tr>
-                <td>CPF:</td>
-                <td><?php echo htmlspecialchars(substr($usuario['cpf'], 0, 3) . '.***.***-' . substr($usuario['cpf'], -2)); ?></td>
-            </tr>
-            <tr>
-                <td>Telefone:</td>
-                <td><?php echo htmlspecialchars($usuario['telefone']); ?></td>
-            </tr>
-        </table>
+    <div class="tabs-container">
+        <button class="tab-button active" data-tab="painel-conta">Minha Conta</button>
+        <button class="tab-button" data-tab="painel-compras">Compras feitas</button>
+        
+        <?php if ($is_fornecedor): ?>
+            <button class="tab-button" data-tab="painel-produtos">Meus produtos</button>
+        <?php endif; ?>
+        </div>
+
+    <div id="painel-conta" class="tab-painel active">
+        <section class="conta-secao">
+            <h2>Dados Pessoais</h2>
+            <table class="dados-pessoais">
+                <tr>
+                    <td>Nome:</td>
+                    <td><?php echo htmlspecialchars($usuario['nome']); ?></td>
+                </tr>
+                <tr>
+                    <td>Email:</td>
+                    <td><?php echo htmlspecialchars($usuario['email']); ?></td>
+                </tr>
+                <tr>
+                    <td>CPF:</td>
+                    <td><?php echo htmlspecialchars(substr($usuario['cpf'], 0, 3) . '.***.***-' . substr($usuario['cpf'], -2)); ?></td>
+                </tr>
+                <tr>
+                    <td>Telefone:</td>
+                    <td><?php echo htmlspecialchars($usuario['telefone']); ?></td>
+                </tr>
+            </table>
         </section>
 
-    <section class="conta-secao">
-        <h2>Endereços</h2>
+        <section class="conta-secao">
+            <h2>Endereços</h2>
 
-        <?php if (empty($enderecos)): ?>
-            <p>Nenhum endereço cadastrado.</p>
+            <?php if (empty($enderecos)): ?>
+                <p>Nenhum endereço cadastrado.</p>
+            <?php endif; ?>
+
+            <?php foreach ($enderecos as $endereco): ?>
+                <div class="endereco-card">
+                    <div class="endereco-card-opcoes">
+                        <a href="tela_editar_endereco.php?id=<?php echo $endereco['id']; ?>">Editar</a>
+                        <a href="Banco de dados/processa_excluir_endereco.php?id=<?php echo $endereco['id']; ?>" 
+                           onclick="return confirm('Tem certeza que deseja excluir este endereço?');">Excluir</a>
+                    </div>
+                    
+                    <p class="rua-principal">
+                        <?php 
+                            echo htmlspecialchars($endereco['rua']) . ', ' . htmlspecialchars($endereco['numero']); 
+                            if (!empty($endereco['complemento'])) {
+                                echo ' - ' . htmlspecialchars($endereco['complemento']);
+                            }
+                        ?>
+                    </p>
+                    <p class="cep-cidade">
+                        CEP <?php echo htmlspecialchars($endereco['cep']); ?> - 
+                        <?php echo htmlspecialchars($endereco['cidade']); ?> - 
+                        <?php echo htmlspecialchars($endereco['estado']); ?>
+                    </p>
+                    <p><?php echo htmlspecialchars($usuario['nome']); ?></p>
+                </div>
+            <?php endforeach; ?>
+
+            <a href="tela_novo_endereco.php" class="btn-adicionar-endereco">
+                <span>+</span> Adicionar novo endereço
+            </a>
+        </section>
+    </div> 
+    
+    <div id="painel-compras" class="tab-painel">
+        
+        <?php if (empty($itens_de_pedidos)): ?>
+            <section class="conta-secao">
+                <h2>Minhas Compras</h2>
+                <p>Você ainda não fez nenhuma compra.</p>
+            </section>
+        <?php else: ?>
+            <?php
+            $data_atual_grupo = ""; // Para controlar o cabeçalho de data
+            
+            foreach ($itens_de_pedidos as $item):
+                $data_pedido = new DateTime($item['data_pedido']);
+                // Formata a data (ex: "19 de agosto de 2024")
+                $data_formatada_cabecalho = strftime('%d de %B de %Y', $data_pedido->getTimestamp());
+                // Formata a data (ex: "20 de agosto")
+                $data_formatada_item = strftime('%d de %B', $data_pedido->getTimestamp());
+
+                // Se a data mudou, imprime um novo cabeçalho de data
+                if ($data_formatada_cabecalho != $data_atual_grupo):
+                    $data_atual_grupo = $data_formatada_cabecalho;
+            ?>
+                    <h3 class="data-grupo-compras"><?php echo htmlspecialchars($data_formatada_cabecalho); ?></h3>
+            <?php 
+                endif; 
+                
+                // --- Agora, renderiza o card do item (baseado na imagem) ---
+            ?>
+                <div class="compra-card">
+                    <div class="compra-imagem">
+                        <img src="<?php echo htmlspecialchars($item['produto_imagem'] ?? 'imagens/placeholder.png'); ?>" alt="Imagem do Produto">
+                    </div>
+                    <div class="compra-detalhes">
+                        <span class="compra-status" style="color: #ff8c00;"> <?php echo htmlspecialchars(ucfirst($item['pedido_status'])); ?>
+                        </span>
+                        <span class="compra-data-entrega">
+                             Pedido feito em <?php echo htmlspecialchars($data_formatada_item); ?>
+                        </span>
+                        <p class="compra-titulo"><?php echo htmlspecialchars($item['produto_nome']); ?></p>
+                        <span class="compra-unidades"><?php echo htmlspecialchars($item['quantidade']); ?> unidade(s)</span>
+                    </div>
+                    <div class="compra-vendedor">
+                        <span>Vendido por LOJA LTDA</span>
+                    </div>
+                    <div class="compra-acoes">
+                        <a href="#" class="btn-compra-primario">Ver compra</a>
+                        <a href="#" class="btn-compra-secundario" onclick="alert('Funcionalidade ainda não implementada'); return false;">Comprar novamente</a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         <?php endif; ?>
 
-        <?php foreach ($enderecos as $endereco): ?>
-            <div class="endereco-card">
-                <div class="endereco-card-opcoes">
-                    <a href="tela_editar_endereco.php?id=<?php echo $endereco['id']; ?>">Editar</a>
-                    <a href="Banco de dados/processa_excluir_endereco.php?id=<?php echo $endereco['id']; ?>" 
-                       onclick="return confirm('Tem certeza que deseja excluir este endereço?');">Excluir</a>
-                </div>
-                
-                <p class="rua-principal">
-                    <?php 
-                        echo htmlspecialchars($endereco['rua']) . ', ' . htmlspecialchars($endereco['numero']); 
-                        if (!empty($endereco['complemento'])) {
-                            echo ' - ' . htmlspecialchars($endereco['complemento']);
-                        }
-                    ?>
-                </p>
-                <p class="cep-cidade">
-                    CEP <?php echo htmlspecialchars($endereco['cep']); ?> - 
-                    <?php echo htmlspecialchars($endereco['cidade']); ?> - 
-                    <?php echo htmlspecialchars($endereco['estado']); ?>
-                </p>
-                <p><?php echo htmlspecialchars($usuario['nome']); ?></p>
-            </div>
-        <?php endforeach; ?>
-
-        <a href="tela_novo_endereco.php" class="btn-adicionar-endereco">
-            <span>+</span> Adicionar novo endereço
-        </a>
-    </section>
+    </div>
     
-  </main>
+    <?php if ($is_fornecedor): ?>
+    <div id="painel-produtos" class="tab-painel">
+        
+        <section class="conta-secao">
+            <h2>Meus Produtos (Rascunhos)</h2>
+
+            <div class="controls" style="margin-bottom: 20px;">
+              <label for="sort-produtos">Ordenar por</label>
+              <select id="sort-produtos" aria-label="Ordenar por">
+                <option>Mais relevantes</option>
+                <option>Menor preço</option>
+                <option>Maior preço</option>
+              </select>
+            </div>
+
+            <p id="sem-produtos-aviso" style="display: none;">Você ainda não adicionou nenhum produto.</p>
+
+            <section class="grid" id="lista-produtos" style="padding: 0; border: none;"></section>
+
+            <a href="tela_produto_do_fornecedor.html" 
+              class="btn-adicionar-endereco" 
+              onclick="localStorage.removeItem('editarProduto')">
+                <span>+</span> Adicionar novo produto
+            </a>
+        </section>
+
+    </div>
+    <?php endif; ?>
+    </main>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lógica original das abas
+        const tabs = document.querySelectorAll('.tab-button');
+        const panels = document.querySelectorAll('.tab-painel');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                const targetPanelId = tab.getAttribute('data-tab');
+                document.getElementById(targetPanelId).classList.add('active');
+            });
+        });
+
+        // --- INÍCIO DA MODIFICAÇÃO (Script de Gerenciar Produtos) ---
+        
+        const containerProdutos = document.getElementById("lista-produtos");
+
+        // Só executa o script de produtos se o container existir (ou seja, se for fornecedor)
+        if (containerProdutos) {
+          let produtos = JSON.parse(localStorage.getItem("produtosCadastrados")) || [];
+          
+          const avisoSemProdutos = document.getElementById("sem-produtos-aviso");
+          const controls = document.querySelector('#painel-produtos .controls');
+
+
+          function atualizarTelaProdutos() {
+            containerProdutos.innerHTML = ""; // Limpa a tela
+
+            if (produtos.length === 0) {
+                // Se não há produtos, mostra o aviso e esconde os controles
+                if (avisoSemProdutos) avisoSemProdutos.style.display = 'block';
+                if (controls) controls.style.display = 'none';
+            } else {
+                // Se há produtos, esconde o aviso e mostra os controles
+                if (avisoSemProdutos) avisoSemProdutos.style.display = 'none';
+                if (controls) controls.style.display = 'block'; // 'block' ou 'flex'
+                
+                // Popula a lista (código que já existia)
+                produtos.forEach((p, index) => {
+                  const card = document.createElement("article");
+                  card.classList.add("card");
+                  card.dataset.price = p.precoFinal;
+
+                  card.innerHTML = `
+                    <div class="thumb" style="background-image:url('${p.img}')"></div>
+                    <div class="title">${p.titulo}</div>
+                    <div>
+                      <span class="old">R$ ${p.preco}</span>
+                      <span class="price">R$ ${p.precoFinal}</span>
+                      <span class="badge">${p.desconto > 0 ? p.desconto + "% OFF" : ""}</span>
+                    </div>
+                    <button class="editar-btn" data-index="${index}">✏️ Editar</button>
+                    <button class="excluir-btn" data-index="${index}">🗑 Excluir</button>
+                  `;
+                  containerProdutos.appendChild(card);
+                });
+            }
+
+
+            // Evento para excluir produto (melhorado)
+            document.querySelectorAll("#lista-produtos .excluir-btn").forEach(btn => {
+              btn.addEventListener("click", e => {
+                const i_excluir = e.target.dataset.index;
+                
+                const editarInfo = JSON.parse(localStorage.getItem("editarProduto"));
+
+                produtos.splice(i_excluir, 1); // Remove do array
+                localStorage.setItem("produtosCadastrados", JSON.stringify(produtos));
+
+                if (editarInfo) {
+                    if (editarInfo.index == i_excluir) {
+                        localStorage.removeItem("editarProduto");
+                    } else if (editarInfo.index > i_excluir) {
+                        editarInfo.index = editarInfo.index - 1;
+                        localStorage.setItem("editarProduto", JSON.stringify(editarInfo));
+                    }
+                }
+
+                atualizarTelaProdutos(); // Atualiza a pagina
+              });
+            });
+
+            // Evento para editar produto (precisa ser redeclarado aqui)
+            document.querySelectorAll("#lista-produtos .editar-btn").forEach(btn => {
+              btn.addEventListener("click", e => {
+                const i = e.target.dataset.index;
+                localStorage.setItem("editarProduto", JSON.stringify({ index: i, dados: produtos[i] }));
+                window.location.href = "tela_produto_do_fornecedor.html"; // leva para tela de edição
+              });
+            });
+          }
+
+          atualizarTelaProdutos();
+        }
+        // --- FIM DA MODIFICAÇÃO (Script de Gerenciar Produtos) ---
+    });
+  </script>
   
 </body>
 </html>

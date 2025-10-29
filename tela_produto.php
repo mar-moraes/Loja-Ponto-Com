@@ -467,8 +467,16 @@ $meu_comentario_js = $minha_avaliacao ? $minha_avaliacao['comentario'] : '';
 
   btnComprar.addEventListener("click", () => {
     const produto = getDadosProduto();
+    
+    // (NOVA ADIÇÃO) Salva ESTE item como o carrinho ATUAL
+    // Isso sobrescreve qualquer carrinho existente, 
+    // que é o comportamento esperado de "Comprar Agora".
+    localStorage.setItem("carrinho", JSON.stringify([produto])); 
+    
+    // (EXISTENTE) Calcula o total e salva
     const totalDaCompra = produto.price * produto.quantidade;
     localStorage.setItem("totalCompra", totalDaCompra.toFixed(2));
+    
     window.location.href = "tela_entrega.php";
   });
 

@@ -13,10 +13,10 @@ $usuario_id = $_SESSION['usuario_id'];
 $dados = json_decode(file_get_contents('php://input'), true);
 $carrinhoJS = $dados['carrinho'] ?? [];
 
-if (empty($carrinhoJS)) {
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Carrinho vazio recebido.']);
-    exit();
-}
+// if (empty($carrinhoJS)) {
+//     echo json_encode(['sucesso' => false, 'mensagem' => 'Carrinho vazio recebido.']);
+//     exit();
+// }
 
 try {
     // Inicia uma transação para garantir consistência

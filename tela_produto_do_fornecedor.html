@@ -164,12 +164,17 @@
             
             <div class="imagem-principal-container" style="display: flex; flex-direction: column; flex: 1;">
               
-              <img alt="Clique aqui para selecionar as imagens" 
+              <label for="produto-imagens" 
+                     id="imagem-placeholder" 
+                     style="background-color: #f0f0f0; border: 1px dashed #ccc; height: 100%; display: flex; align-items: center; justify-content: center; width: 100%; cursor: pointer; color: #555; text-align: center; box-sizing: border-box;">
+                  Clique aqui para selecionar as imagens
+              </label>
+  
+              <img alt="Imagem principal do produto" 
                    id="imagem-principal" 
-                   style="background-color: #f0f0f0; border: 1px dashed #ccc; height: 100%; display: block; width: 100%; cursor: pointer; object-fit: contain; color: #555; text-align: center; padding-top: 180px; box-sizing: border-box;"
-                   onclick="document.getElementById('produto-imagens').click();">
+                   style="border: 1px solid #eee; height: 100%; display: none; width: 100%; object-fit: contain; box-sizing: border-box; max-height: none;">
               
-              </div>
+            </div>
         </div>
         
       </div>
@@ -198,7 +203,7 @@
           </div>
           
           <div style="width: 100%; margin-top: 10px;">
-            <button type="button" onclick="calcular()" style="padding: 10px 15px; cursor: pointer; border-radius: 6px; border: 1px solid #ddd; background: #f0f0f0;">
+            <button type="button" onclick="calcular()" style="padding: 10px 15px; cursor: pointer; border-radius: 6px; border: none; background-color: rgba(41, 104, 200, 0.1); color: #2968C8; font-weight: 600;">
               Calcular desconto
             </button>
           </div>
@@ -307,11 +312,11 @@
         </script>
 
         <div style="margin-top: auto; display: flex; gap: 10px; padding-top: 20px; border-top: 1px solid #eee;">
-          <button type="submit" style="flex: 1; background:#00b347;color:white;padding:12px 20px;border:none;border-radius:6px;cursor:pointer; font-size: 16px; font-weight: 600;">
+          <button type="submit" style="flex: 1; background:#2968C8;color:white;padding:10px 15px;border:none;border-radius:6px;cursor:pointer; font-size: 16px; font-weight: 600;">
             📤 Enviar Produto
           </button>
 
-          <button type="button" onclick="salvarRascunho()" style="flex: 1; background:#f1c40f;color:black;padding:12px 20px;border:none;border-radius:6px;cursor:pointer; font-size: 16px; font-weight: 600;">
+          <button type="button" onclick="salvarRascunho()" style="flex: 1; background: rgba(41, 104, 200, 0.1); color: #2968C8; padding: 10px 15px;border:none;border-radius:6px;cursor:pointer; font-size: 16px; font-weight: 600;">
             💾 Salvar como Rascunho
           </button>
         </div>
@@ -430,6 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Script de Upload de Imagem (CORRIGIDO) ---
     const fileInput = document.getElementById('produto-imagens');
     const mainImage = document.getElementById('imagem-principal');
+    const imagePlaceholder = document.getElementById('imagem-placeholder'); // <-- ADICIONADO
     const thumbnailsContainer = document.getElementById('thumbnails-container');
     const formProduto = document.getElementById('form-produto');
 
@@ -439,14 +445,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (files.length === 0) {
             // Se o usuário cancelar a seleção, limpa tudo
             selectedFiles = []; 
-            mainImage.src = ""; // Limpa a imagem principal
-            mainImage.alt = "Clique aqui para selecionar as imagens";
-            // Restaura o estilo do placeholder
-            mainImage.style.paddingTop = '180px'; 
-            mainImage.style.border = '1px dashed #ccc';
-            mainImage.style.backgroundColor = '#f0f0f0';
-            mainImage.style.color = '#555';
-            thumbnailsContainer.innerHTML = ''; // Limpa thumbnails
+            mainImage.src = ""; 
+            
+            // --- MODIFICADO ---
+            // Esconde a imagem e mostra o placeholder
+            mainImage.style.display = 'none'; 
+            imagePlaceholder.style.display = 'flex'; 
+            
+            thumbnailsContainer.innerHTML = ''; 
             return;
         }
         
@@ -458,12 +464,43 @@ document.addEventListener('DOMContentLoaded', () => {
         readerMain.onload = (ev) => {
             mainImage.src = ev.target.result;
             mainImage.alt = "Imagem principal do produto";
-            mainImage.style.paddingTop = '0';
-            mainImage.style.border = '1px solid #eee';
-            mainImage.style.backgroundColor = '#fff';
-            mainImage.style.color = 'transparent'; // Esconde o texto alternativo
+            
+            // --- MODIFICADO ---
+            // Esconde o placeholder e mostra a imagem
+            imagePlaceholder.style.display = 'none';
+            mainImage.style.display = 'block';
         };
         readerMain.readAsDataURL(firstFile);
+
+        // 2. Carrega TODAS as imagens como thumbnails
+        thumbnailsContainer.innerHTML = ''; 
+        
+        selectedFiles.forEach((file, index) => {
+            const readerThumb = new FileReader();
+            const thumbImg = document.createElement('img');
+            thumbImg.alt = `Thumbnail ${index + 1}`;
+            thumbImg.classList.add('thumb-img');
+
+            if (index === 0) {
+                thumbImg.classList.add('active');
+            }
+            
+            readerThumb.onload = (ev) => {
+                thumbImg.src = ev.target.result; 
+            };
+            
+            thumbImg.addEventListener('click', () => {
+                mainImage.src = thumbImg.src; 
+                thumbnailsContainer.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+                thumbImg.classList.add('active');
+            });
+
+            thumbnailsContainer.appendChild(thumbImg);
+            readerThumb.readAsDataURL(file); 
+        });
+        
+    });
+    // --- Fim do script de Upload de Imagem ---
 
         // 2. Carrega TODAS as imagens como thumbnails
         thumbnailsContainer.innerHTML = ''; 
@@ -510,9 +547,15 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault(); 
         
         if (selectedFiles.length === 0) {
-            alert("Por favor, selecione pelo menos uma imagem para o produto.");
-            return;
+            // Verifica se está em modo de edição (se a imagem principal já tem um 'src' que não é um blob)
+            const mainImgSrc = document.getElementById('imagem-principal').src;
+            if (!mainImgSrc || mainImgSrc.startsWith('blob:')) {
+                 alert("Por favor, selecione pelo menos uma imagem para o produto.");
+                 return;
+            }
+            // Se a imagem não é blob, é um rascunho salvo, então pode prosseguir
         }
+
 
         const submitButton = formProduto.querySelector('button[type="submit"]');
         submitButton.disabled = true;
@@ -520,12 +563,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const formData = new FormData(formProduto);
 
-        formData.append('imagem_principal', selectedFiles[0]);
-        
-        for (let i = 1; i < selectedFiles.length; i++) {
-            formData.append('thumbnails[]', selectedFiles[i]); 
+        // Envia apenas os arquivos NOVOS
+        // O back-end precisará saber lidar com "nenhuma imagem nova"
+        if (selectedFiles.length > 0) {
+            formData.append('imagem_principal', selectedFiles[0]);
+            
+            for (let i = 1; i < selectedFiles.length; i++) {
+                formData.append('thumbnails[]', selectedFiles[i]); 
+            }
         }
         
+        // Adiciona o ID do produto se estiver em modo de edição (para o back-end saber que é um UPDATE)
+        const editarInfo = JSON.parse(localStorage.getItem("editarProduto"));
+        if (editarInfo && editarInfo.dados.id_db) { // Assumindo que você salve o ID do banco
+             formData.append('produto_id', editarInfo.dados.id_db);
+        }
+        
+
         try {
             const response = await fetch('Banco de dados/processa_novo_produto.php', {
                 method: 'POST',
@@ -534,10 +588,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const resultado = await response.json();
 
+            // --- INÍCIO DA CORREÇÃO 3 ---
             if (resultado.sucesso) {
                 alert('✅ ' + resultado.mensagem);
+                localStorage.removeItem("editarProduto"); // Limpa o rascunho
                 window.location.href = 'index.php'; 
             } else {
+            // --- FIM DA CORREÇÃO 3 ---
                 alert('❌ Erro: ' + resultado.mensagem);
             }
 
@@ -551,7 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // --- Fim do script de Envio do Formulário ---
 
-});
+
 </script>
 
 <script>
@@ -600,15 +657,22 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("produto-titulo").value = p.titulo;
     document.getElementById("produto-preco").value = p.preco;
     document.getElementById("produto-badge").value = p.desconto;
-    document.getElementById("imagem-principal").src = p.img;
     
+    // --- INÍCIO DA MODIFICAÇÃO (Rascunho) ---
     const mainImage = document.getElementById("imagem-principal");
+    const imagePlaceholder = document.getElementById("imagem-placeholder"); // <-- ADICIONADO
+    
+    mainImage.src = p.img;
     mainImage.alt = "Imagem principal do produto";
-    mainImage.style.paddingTop = '0';
-    mainImage.style.border = '1px solid #eee';
-    mainImage.style.backgroundColor = '#fff';
+    
+    // Esconde o placeholder e mostra a imagem
+    if (imagePlaceholder) {
+        imagePlaceholder.style.display = 'none';
+    }
+    mainImage.style.display = 'block';
+    // --- FIM DA MODIFICAÇÃO (Rascunho) ---
 
-    // --- INÍCIO DA MODIFICAÇÃO ---
+
     // Encontra o botão "Salvar como Rascunho"
     const btnRascunho = document.querySelector('button[onclick="salvarRascunho()"]');
     if (btnRascunho) {
@@ -620,6 +684,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- FIM DA MODIFICAÇÃO ---
   }
 });
+
+    if (btnRascunho) {
+        // Muda o texto do botão
+        btnRascunho.textContent = "💾 Salvar Alterações no Rascunho";
+        // MUDA A FUNÇÃO que o botão chama
+        btnRascunho.setAttribute("onclick", "salvarAlteracoes()");
+    }
+    // --- FIM DA MODIFICAÇÃO ---
+
 
 // Esta função é chamada para SALVAR UM RASCUNHO NOVO
 function salvarRascunho() {
@@ -637,7 +710,7 @@ function salvarRascunho() {
   alert("💾 Produto salvo como rascunho. Redirecionando...");
   
   // Redireciona o usuário para a tela de gerenciamento
-  window.location.href = "tela_gerenciar_produtos.html";
+  window.location.href = "tela_minha_conta.php"; // Modificado para tela_minha_conta.php
 }
 
 
@@ -658,7 +731,7 @@ function salvarAlteracoes() {
   alert("✅ Rascunho atualizado com sucesso!");
   
   // Redireciona para a tela de gerenciamento
-  window.location.href = "tela_gerenciar_produtos.html";
+  window.location.href = "tela_minha_conta.php"; // Modificado para tela_minha_conta.php
 }
 </script>
 

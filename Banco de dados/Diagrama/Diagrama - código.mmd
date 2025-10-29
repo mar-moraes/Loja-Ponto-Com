@@ -1,5 +1,5 @@
 erDiagram
-    USERS {
+    usuarios {
         int id PK
         string nome
         string email
@@ -10,49 +10,57 @@ erDiagram
         string tipo
     }
 
-    ADDRESSES {
+    enderecos {
         int id PK
         int usuario_id FK
         string cep
         string rua
         string numero
+        string complemento
         string bairro
         string cidade
         string estado
         string pais
     }
 
-    CART {
+    carrinho {
         int id PK
         int usuario_id FK
         datetime data_atualizacao
     }
 
-    CART_ITEMS {
+    carrinho_itens {
         int id PK
         int carrinho_id FK
         int produto_id FK
         int quantidade
     }
 
-    CATEGORIES {
+    categorias {
         int id PK
         string nome
         string descricao
     }
 
-    PRODUCTS {
+    produtos {
         int id PK
         string nome
         string descricao
         float preco
+        int desconto
         int categoria_id FK
         int estoque
         string imagem_url
         string status
     }
 
-    ORDERS {
+    produto_imagens {
+        int id PK
+        int produto_id FK
+        string url_imagem
+    }
+
+    pedidos {
         int id PK
         int usuario_id FK
         int endereco_id FK
@@ -61,7 +69,7 @@ erDiagram
         float valor_total
     }
 
-    ORDER_ITEMS {
+    pedido_itens {
         int id PK
         int pedido_id FK
         int produto_id FK
@@ -69,7 +77,7 @@ erDiagram
         float preco_unitario
     }
 
-    PAYMENTS {
+    pagamentos {
         int id PK
         int pedido_id FK
         string metodo
@@ -78,7 +86,7 @@ erDiagram
         float valor_pago
     }
 
-    SHIPMENTS {
+    entregas {
         int id PK
         int pedido_id FK
         string codigo_rastreio
@@ -87,7 +95,7 @@ erDiagram
         string status_entrega
     }
 
-    REVIEWS {
+    avaliacoes {
         int id PK
         int usuario_id FK
         int produto_id FK
@@ -97,21 +105,22 @@ erDiagram
     }
 
     %% Definição das Relações
-    USERS ||--o{ ADDRESSES : "possui"
-    USERS ||--|| CART : "tem_um"
-    USERS ||--o{ ORDERS : "faz"
-    USERS ||--o{ REVIEWS : "escreve"
+    usuarios ||--o{ enderecos : "possui"
+    usuarios ||--|| carrinho : "tem_um"
+    usuarios ||--o{ pedidos : "faz"
+    usuarios ||--o{ avaliacoes : "escreve"
 
-    ADDRESSES ||--o{ ORDERS : "envia_para"
+    enderecos ||--o{ pedidos : "envia_para"
 
-    CATEGORIES ||--o{ PRODUCTS : "contém"
+    categorias ||--o{ produtos : "contém"
 
-    PRODUCTS ||--o{ REVIEWS : "recebe"
-    PRODUCTS }o--o{ CART_ITEMS : "contido_em"
-    PRODUCTS }o--o{ ORDER_ITEMS : "contido_em"
+    produtos ||--o{ avaliacoes : "recebe"
+    produtos }o--o{ carrinho_itens : "contido_em"
+    produtos }o--o{ pedido_itens : "contido_em"
+    produtos ||--o{ produto_imagens : "tem_imagens"
 
-    CART ||--o{ CART_ITEMS : "contém_itens"
+    carrinho ||--o{ carrinho_itens : "contém_itens"
 
-    ORDERS ||--o{ ORDER_ITEMS : "contém_itens"
-    ORDERS ||--|| PAYMENTS : "gera"
-    ORDERS ||--|| SHIPMENTS : "gera"
+    pedidos ||--o{ pedido_itens : "contém_itens"
+    pedidos ||--o{ pagamentos : "gera"
+    pedidos ||--|| entregas : "gera"
