@@ -15,6 +15,7 @@ Marca	‎Coibeu
 Fabricante	‎C & B Global Importação e Exportação LTDA
 Certificação	‎INMETRO:0124
 Aparelhos compatíveis	‎smartphones, tablets, computadores
+
 Características especiais	‎Controle remoto, Entrada USB, Proteção de sobretensão, Temporizador
 Número de unidades	‎1
 Voltagem	‎110 Volts, 220 Volts
