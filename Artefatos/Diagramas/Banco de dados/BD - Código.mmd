@@ -1,0 +1,126 @@
+erDiagram
+    usuarios {
+        int id PK
+        string nome
+        string email
+        string cpf
+        string senha
+        string telefone
+        datetime data_cadastro
+        string tipo
+    }
+
+    enderecos {
+        int id PK
+        int usuario_id FK
+        string cep
+        string rua
+        string numero
+        string complemento
+        string bairro
+        string cidade
+        string estado
+        string pais
+    }
+
+    carrinho {
+        int id PK
+        int usuario_id FK
+        datetime data_atualizacao
+    }
+
+    carrinho_itens {
+        int id PK
+        int carrinho_id FK
+        int produto_id FK
+        int quantidade
+    }
+
+    categorias {
+        int id PK
+        string nome
+        string descricao
+    }
+
+    produtos {
+        int id PK
+        string nome
+        string descricao
+        float preco
+        int desconto
+        int categoria_id FK
+        int estoque
+        string imagem_url
+        string status
+    }
+
+    produto_imagens {
+        int id PK
+        int produto_id FK
+        string url_imagem
+    }
+
+    pedidos {
+        int id PK
+        int usuario_id FK
+        int endereco_id FK
+        datetime data_pedido
+        string status
+        float valor_total
+    }
+
+    pedido_itens {
+        int id PK
+        int pedido_id FK
+        int produto_id FK
+        int quantidade
+        float preco_unitario
+    }
+
+    pagamentos {
+        int id PK
+        int pedido_id FK
+        string metodo
+        string status
+        datetime data_pagamento
+        float valor_pago
+    }
+
+    entregas {
+        int id PK
+        int pedido_id FK
+        string codigo_rastreio
+        string transportadora
+        datetime data_envio
+        string status_entrega
+    }
+
+    avaliacoes {
+        int id PK
+        int usuario_id FK
+        int produto_id FK
+        int nota
+        string comentario
+        datetime data_avaliacao
+    }
+
+    %% Definição das Relações
+    usuarios ||--o{ enderecos : "possui"
+    usuarios ||--|| carrinho : "tem_um"
+    usuarios ||--o{ pedidos : "faz"
+    usuarios ||--o{ avaliacoes : "escreve"
+
+    enderecos ||--o{ pedidos : "envia_para"
+
+    categorias ||--o{ produtos : "contém"
+
+    produtos ||--o{ avaliacoes : "recebe"
+    produtos }o--o{ carrinho_itens : "contido_em"
+    produtos }o--o{ pedido_itens : "contido_em"
+    produtos ||--o{ produto_imagens : "tem_imagens"
+
+    carrinho ||--o{ carrinho_itens : "contém_itens"
+
+    pedidos ||--o{ pedido_itens : "contém_itens"
+    pedidos ||--o{ pagamentos : "gera"
+    pedidos ||--|| entregas : "gera"

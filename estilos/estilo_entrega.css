@@ -1,0 +1,566 @@
+/* =================================== */
+/* ESTILOS GERAIS E CABEÇALHO          */
+/* =================================== */
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #EDEDED;
+    color: #333;
+}
+
+/* Cabeçalho inspirado no ML */
+.topbar-entrega {
+    background-color: #FFDF00; 
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.actions-entrega {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-container .logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.user-menu {
+    display: flex;
+    gap: 20px;
+}
+
+.user-menu a {
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+
+    gap: 5px;
+}
+
+
+.user-menu i {
+    font-size: 16px;
+}
+
+.user-menu .fa-chevron-down {
+    font-size: 10px;
+}
+
+/* =================================== */
+/* LAYOUT PRINCIPAL (2 COLUNAS)        */
+/* =================================== */
+
+.entrega-layout-container {
+    max-width: 1100px;
+    margin: 28px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap; /* Permite quebrar em telas menores */
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.opcoes-entrega {
+    flex: 1; /* Ocupa o espaço disponível */
+    min-width: 400px;
+}
+
+.opcoes-entrega h2 {
+    font-size: 24px;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.resumo-compra {
+    flex-basis: 300px; /* Largura fixa */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    
+    /* Efeito "sticky" para acompanhar a rolagem */
+    position: sticky;
+    top: 28px;
+}
+
+/* =================================== */
+/* BLOCOS DE OPÇÃO DE ENTREGA (ESQUERDA) */
+/* =================================== */
+
+.opcao-bloco {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    display: flex;
+    padding: 20px;
+    
+    /* Borda sutil para o estado "selecionado" */
+    border-left: 4px solid transparent;
+}
+
+.opcao-bloco:hover {
+    border-color: #ccc;
+}
+
+.opcao-bloco.selecionado {
+    /* Cor azul dos seus botões */
+    border-color: #2968C8; 
+    border-left-width: 4px;
+}
+
+.opcao-bloco input[type="radio"] {
+    margin-top: 2px;
+    margin-right: 15px;
+    /* Cor azul dos seus botões */
+    accent-color: #2968C8; 
+    width: 20px;
+    height: 20px;
+}
+
+.opcao-label {
+    flex: 1;
+    cursor: pointer;
+}
+
+.opcao-titulo {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.preco-gratis {
+    color: #00a650; /* Verde */
+    font-weight: 600;
+}
+
+.distancia {
+    color: #00a650; /* Verde */
+    font-weight: 500;
+}
+
+.preco {
+    font-weight: 500;
+}
+
+.opcao-detalhes p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.4;
+}
+
+.opcao-detalhes .tipo-endereco {
+    font-size: 12px;
+    color: #777;
+    margin-top: 8px;
+}
+
+.link-acao {
+    color: #2968C8; /* Azul */
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.link-acao:hover {
+    text-decoration: underline;
+}
+
+.btn-continuar-entrega {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    /* Azul dos seus botões */
+    background-color: #2968C8; 
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 10px;
+}
+
+.btn-continuar-entrega:hover {
+    opacity: 0.9;
+}
+
+/* =================================== */
+/* RESUMO DA COMPRA (DIREITA)          */
+/* =================================== */
+
+.resumo-compra h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.resumo-linha {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.resumo-divisor {
+    height: 1px;
+    background-color: #eee;
+    margin: 15px 0;
+}
+
+.resumo-linha.total {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* =================================== */
+/* ESTILOS DOS MODAIS (SUBTELAS)       */
+/* =================================== */
+
+.modal-overlay {
+    display: none; /* Começa escondido */
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    
+    /* Centraliza o conteúdo */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-conteudo {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 25px;
+    width: 90%;
+    max-width: 600px; /* Padrão para o modal de endereço */
+    position: relative;
+    max-height: 90vh; /* Altura máxima */
+    overflow-y: auto; /* Permite rolar se o conteúdo for grande */
+}
+
+/* Modal de Retirada (maior) */
+.modal-conteudo.modal-grande {
+    max-width: 1000px;
+}
+
+.modal-fechar {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #888;
+    cursor: pointer;
+}
+
+.modal-conteudo h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+/* --- Estilos do Formulário (Modal 1) --- */
+
+.form-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-size: 14px;
+}
+
+.form-grupo {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.form-linha {
+    display: flex;
+    gap: 15px;
+}
+
+.form-grupo label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.form-grupo input[type="text"],
+.form-grupo input[type="search"],
+.form-grupo input[type="tel"],
+.form-grupo input[type="number"],
+.form-grupo textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box; /* Garante que o padding não estoure */
+}
+
+.form-grupo textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.link-form {
+    position: absolute;
+    right: 12px;
+    top: 35px; /* Ajuste manual */
+    font-size: 14px;
+    color: #2968C8;
+    text-decoration: none;
+}
+
+.checkbox-container {
+    /* As 3 linhas abaixo foram removidas */
+    /* position: absolute; */
+    /* right: 0; */
+    /* top: 35px; */ 
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap; /* Garante que "Sem número" não quebre a linha */
+}
+
+.checkbox-container label {
+    margin: 0;
+}
+
+.char-contador {
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+}
+
+.radio-grupo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+.radio-grupo label {
+    margin: 0;
+    font-weight: normal;
+    font-size: 16px;
+}
+.radio-grupo i {
+    color: #888;
+}
+
+.input-erro {
+    border-color: #d93025 !important; /* Vermelho erro */
+}
+.msg-erro {
+    color: #d93025;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+
+/* --- Estilos do Ponto de Retirada (Modal 2) --- */
+
+.subtitulo-modal {
+    font-size: 14px;
+    color: #555;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.retirada-layout {
+    display: flex;
+    height: 60vh; /* Altura fixa para o layout */
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.lista-agencias {
+    flex-basis: 40%; /* 40% da largura */
+    overflow-y: auto; /* Permite rolar a lista */
+    padding-right: 15px; /* Espaço antes do mapa */
+    border-right: 1px solid #eee;
+}
+
+.mapa-container {
+    flex: 1; /* Ocupa o resto do espaço */
+    padding-left: 15px;
+}
+.mapa-container #mapa {
+    width: 100%;
+    height: 100%; /* O 'height' vem da classe .retirada-layout */
+    border-radius: 6px;
+}
+.resultado-busca {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.agencia-item {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+.agencia-item h4 {
+    margin: 0 0 2px 0;
+    font-size: 16px;
+}
+.agencia-item p {
+    font-size: 14px;
+    color: #555;
+    margin: 5px 0;
+}
+.agencia-item i {
+    width: 15px;
+    text-align: center;
+    margin-right: 5px;
+    color: #888;
+}
+
+.agencia-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+.agencia-footer span {
+    font-size: 14px;
+}
+
+.btn-escolher {
+    /* Botão secundário (azul claro) */
+    background-color: rgba(41, 104, 200, 0.1); 
+    color: #2968C8;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-escolher:hover {
+    background-color: rgba(41, 104, 200, 0.2);
+}
+
+
+/* =================================== */
+/* NOVOS ESTILOS (ÍCONE DE BUSCA)      */
+/* =================================== */
+
+/* Define o container do input como relativo para posicionar o ícone dentro dele */
+.form-grupo-com-icone {
+    position: relative; 
+}
+
+/* Adiciona um padding à direita no input para o texto não ficar atrás do ícone */
+.form-grupo-com-icone input[type="search"] {
+    padding-right: 45px; /* Espaço para o ícone da lupa */
+}
+
+/* Estilos do ícone de busca (lupa) */
+.icone-busca {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #888;
+    cursor: pointer;
+    padding: 8px; /* Aumenta a área de clique */
+    transition: color 0.2s;
+}
+.icone-busca:hover {
+    color: #333; /* Cor mais escura no hover */
+}
+
+/* ===========================
+   REGRAS DE RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+    .entrega-layout-container {
+        padding: 10px;
+        gap: 15px;
+    }
+
+    /* Faz as opções de entrega ocuparem 100% da largura */
+    .opcoes-entrega {
+        min-width: 100%;
+        order: 1; /* Garante que venha primeiro */
+    }
+    
+    /* Faz o resumo ocupar 100% e desativa o "sticky" */
+    .resumo-compra {
+        flex-basis: 100%;
+        position: static; /* Desativa o "sticky" */
+        order: 2; /* Vem depois das opções */
+    }
+
+    /* --- Modal de Retirada (Mapa) --- */
+    
+    /* Faz a lista e o mapa empilharem verticalmente */
+    .retirada-layout {
+        flex-direction: column;
+        height: auto; /* Remove altura fixa */
+    }
+
+    /* Lista de agências */
+    .lista-agencias {
+        flex-basis: auto; /* Remove largura de 40% */
+        border-right: none; /* Remove borda lateral */
+        border-bottom: 1px solid #eee; /* Adiciona borda inferior */
+        padding-right: 0;
+        margin-bottom: 15px;
+        max-height: 40vh; /* Limita altura da lista */
+    }
+
+    /* Contêiner do mapa */
+    .mapa-container {
+        flex: 1;
+        padding-left: 0; /* Remove padding lateral */
+        min-height: 300px; /* Garante altura mínima para o mapa */
+    }
+    
+    /* --- Formulário de Novo Cartão (Tela de Pagamento) --- */
+    
+    /* O formulário de cartão já usa 'flex-wrap: wrap', 
+       então ele vai empilhar naturalmente. 
+       Podemos esconder a imagem do cartão para ganhar espaço.
+    */
+    .form-coluna-direita {
+        display: none;
+    }
+}

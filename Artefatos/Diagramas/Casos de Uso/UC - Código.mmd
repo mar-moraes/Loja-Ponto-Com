@@ -1,0 +1,49 @@
+flowchart TD
+    %% Atores
+    Visitante["Visitante"]
+    Cliente["Cliente"]
+    Fornecedor["Fornecedor"]
+    
+    %% Sistema e Casos de Uso
+    subgraph Sistema ["Sistema de Loja"]
+        VerProdutos["Ver Produtos"]
+        PesquisarProdutos["Pesquisar Produtos"]
+        VerDetalhes["Ver Detalhes do Produto"]
+        CriarConta["Criar Conta"]
+        FazerLogin["Fazer Login"]
+        AdicionarCarrinhoLocal["Adicionar ao Carrinho [Local]"]
+        
+        GerenciarEnderecos["Gerenciar Endereços"]
+        FinalizarCompra["Finalizar Compra"]
+        VerHistorico["Ver Histórico de Pedidos"]
+        AvaliarProduto["Avaliar Produto"]
+        SalvarItens["Salvar Itens"]
+        SincronizarCarrinho["Sincronizar Carrinho"]
+        
+        AdicionarNovoProduto["Adicionar Novo Produto"]
+        GerenciarMeusProdutos["Gerenciar Meus Produtos"]
+    end
+    
+    %% Relações de Herança (representadas como conexões)
+    Visitante -.-> Cliente
+    Visitante -.-> Fornecedor
+    
+    %% Associações Visitante
+    Visitante --> VerProdutos
+    Visitante --> PesquisarProdutos
+    Visitante --> VerDetalhes
+    Visitante --> CriarConta
+    Visitante --> FazerLogin
+    Visitante --> AdicionarCarrinhoLocal
+    
+    %% Associações Cliente
+    Cliente --> GerenciarEnderecos
+    Cliente --> FinalizarCompra
+    Cliente --> VerHistorico
+    Cliente --> AvaliarProduto
+    Cliente --> SalvarItens
+    Cliente --> SincronizarCarrinho
+    
+    %% Associações Fornecedor
+    Fornecedor --> AdicionarNovoProduto
+    Fornecedor --> GerenciarMeusProdutos

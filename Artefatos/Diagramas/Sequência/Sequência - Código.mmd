@@ -1,0 +1,40 @@
+sequenceDiagram
+    participant Cliente as Cliente (Navegador)
+    participant JS as JavaScript (Client-Side)
+    participant LocalStorage as localStorage
+    participant PHP as Servidor PHP (processa_pedido.php)
+    participant MySQL as Base de Dados (MySQL)
+
+    Cliente ->>+ JS: 1. Clica em "Continuar" (tela_pagamento.php)
+    JS ->> JS: 2. Valida formulário (Ex: Cartão)
+    JS ->>+ LocalStorage: 3. Ler dados('carrinho', 'dadosEntrega')
+    LocalStorage -->>- JS: 4. Retorna JSON do carrinho e entrega
+
+    JS ->>+ PHP: 5. Envia [POST] /processa_pedido.php (com JSON: cart, endereco_id, valor_total)
+    PHP ->> PHP: 6. Inicia sessão (session_start())
+    PHP ->> PHP: 7. Verifica se usuário está logado (SESSION['usuario_id'])
+    PHP ->> PHP: 8. Inclui conexao.php
+
+    PHP ->>+ MySQL: 9. beginTransaction()
+    PHP ->> MySQL: 10. INSERT INTO pedidos (usuario_id, endereco_id, ...)
+    MySQL -->> PHP: 11. Retorna pedido_id
+    
+    loop Para cada item no carrinho
+        PHP ->> MySQL: 12. INSERT INTO pedido_itens (pedido_id, produto_id, ...)
+        PHP ->> MySQL: 13. UPDATE produtos SET estoque = estoque - ?
+    end
+
+    PHP ->> MySQL: 14. [Opcional] SELECT id FROM carrinho WHERE usuario_id=...
+    PHP ->> MySQL: 15. DELETE FROM carrinho_itens WHERE carrinho_id=...
+
+    PHP ->>+ MySQL: 16. commit()
+    MySQL -->>- PHP: 17. Sucesso na Transação
+
+    PHP -->>- JS: 18. Retorna JSON {"sucesso": true, "pedido_id": ...}
+
+    JS ->>+ LocalStorage: 19. Limpa localStorage('carrinho')
+    LocalStorage -->>- JS: 
+    
+    JS ->> JS: 20. Chama gerarNotaFiscalPDF() (via jsPDF)
+    JS -->>- Cliente: 21. Mostra Notificação "Pagamento Aprovado"
+    JS -->> Cliente: 22. Aciona Download da Nota Fiscal (PDF)

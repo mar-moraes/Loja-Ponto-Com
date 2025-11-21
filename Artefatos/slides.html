@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loja LTDA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  
+  <style>
+/* 1. THE SETUP */
+* {
+  box-sizing: border-box;
+}
+
+body {
+ background-color: #020617; 
+ display: grid;
+ gap: 20px;
+ grid-template-columns: 1fr;
+ margin: 0;
+ min-height: 100vh;
+ padding: 20px 0;
+ place-items: start center; /* <-- CORRIGIDO */
+ font-family: 'Urbanist', sans-serif;
+}
+
+.slide-container {
+ background-color: #0f172a; 
+ border-radius: 8px;
+ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+ display: flex;
+ flex-direction: column;
+ height: 720px;
+ justify-content: center;
+ overflow: hidden;
+ padding: 60px;
+ position: relative;
+ width: 1280px;
+ border: 1px solid #334155;
+}
+
+/* 1.1 BACKGROUND STYLING */
+.slide-container::before {
+ content: '';
+ height: 100%;
+ left: 0;
+ position: absolute;
+ top: 0;
+ width: 100%;
+ z-index: 0;
+}
+
+.slide-container > * {
+ position: relative;
+ z-index: 1;
+}
+
+/* 2. CONSISTENT TYPOGRAPHY */
+.slide-container h1,
+.slide-container h2,
+.slide-container h3 {
+ color: #e2e8f0; 
+ font-weight: 700;
+ font-family: 'Urbanist', sans-serif;
+ margin: 0;
+}
+
+.slide-container p,
+.slide-container li,
+.slide-container .subtitle,
+.slide-container .number-label,
+.slide-container .legend li,
+.slide-container .chart-summary,
+.slide-container .bar .label,
+.slide-container th,
+.slide-container td,
+.slide-container .alternating-text-tile p,
+.slide-container .bleed-text-side p {
+ color: #94a3b8; 
+ font-family: 'Urbanist', sans-serif;
+}
+
+.slide-container h1 {
+ font-size: 70px;
+ color: #deff9a; 
+}
+
+.slide-container .slide-title {
+ font-size: 40px;
+ font-weight: 400;
+ margin-bottom: 40px;
+ text-align: left;
+ width: 100%;
+ color: #e2e8f0;
+}
+
+.slide-container h3 {
+ font-size: 32px;
+ font-weight: 400;
+ margin-bottom: 15px;
+ color: #deff9a;
+}
+
+.slide-container p,
+.slide-container li,
+.slide-container .subtitle,
+.slide-container .legend li,
+.slide-container .chart-summary,
+.slide-container .bar .label,
+.slide-container th,
+.slide-container td,
+.slide-container .alternating-text-tile p,
+.slide-container .bleed-text-side p {
+ font-size: 18px;
+ line-height: 1.5;
+}
+
+.slide-container .subtitle {
+ font-weight: 400;
+ margin: 20px auto;
+ color: #94a3b8;
+}
+
+.slide-container .content-area {
+ align-items: center;
+ display: flex;
+ flex-grow: 1;
+ justify-content: center;
+ width: 100%;
+ /* overflow: hidden; (REMOVIDO) */
+}
+
+/* 3. LAYOUT DEFINITIONS */
+.title-layout {
+ text-align: center;
+}
+
+.two-column {
+ align-items: flex-start;
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 50px;
+ width: 100%;
+}
+
+.two-column.tiled {
+ align-items: stretch;
+}
+
+.two-column.tiled > div {
+ background-color: #1e293b; 
+ border-radius: 12px;
+ border: 1px solid #334155; 
+ padding: 40px;
+ text-align: center;
+}
+
+.two-column.tiled h3 {
+ color: #deff9a;
+}
+
+.two-column ul {
+ list-style: disc;
+ margin: 0;
+ padding-left: 25px;
+}
+
+.two-column li {
+ margin-bottom: 15px;
+}
+
+.tiled-content {
+ align-items: stretch;
+ display: flex;
+ gap: 40px;
+ justify-content: center;
+ width: 100%;
+}
+
+.tile {
+ align-items: center;
+ background-color: #1e293b;
+ border-radius: 12px;
+ border: 1px solid #334155;
+ display: flex;
+ flex-direction: column;
+ flex: 1;
+ justify-content: flex-start;
+ padding: 30px;
+ text-align: center;
+}
+
+.tile .icon {
+ color: #deff9a; 
+ font-size: 48px;
+ margin-bottom: 20px;
+}
+
+.tile h3 {
+  color: #deff9a;
+}
+
+.bullet-list {
+ max-width: 900px;
+ width: 100%;
+}
+
+.bullet-list ul {
+ list-style: none;
+ margin: 0;
+ padding: 0;
+}
+
+.bullet-list li {
+ gap: 15px;
+ margin-bottom: 20px;
+ padding-left: 40px;
+ position: relative;
+}
+
+.bullet-list i {
+ color: #deff9a; 
+ font-size: 24px;
+ left: 0;
+ margin-top: 5px;
+ position: absolute;
+ text-align: center;
+ top: 0;
+}
+
+.bullet-list li strong {
+ color: #e2e8f0; 
+ font-weight: 700;
+}
+
+.section-title-layout {
+ align-items: center;
+ display: flex;
+ flex-direction: column;
+ height: 100%;
+ justify-content: center;
+ text-align: center;
+ width: 100%;
+}
+
+.section-title-layout h2 {
+ font-size: 60px;
+ margin-bottom: 20px;
+ color: #deff9a;
+}
+
+.section-title-layout p {
+ font-size: 22px;
+ margin: 0 auto;
+ max-width: 700px;
+ color: #94a3b8;
+}
+
+.section-title-layout hr {
+ background-color: #deff9a; 
+ border: none;
+ height: 5px;
+ margin: 30px auto;
+ width: 100px;
+}
+
+.slide-container.bleed-image-layout {
+ align-items: start;
+ display: grid;
+ gap: 50px;
+ grid-template-columns: 1fr 1fr;
+ padding: 0;
+ background-color: #0f172a; 
+}
+
+.slide-container.bleed-image-layout > .content-container {
+ padding: 60px 0 60px 60px;
+ background-color: #0f172a; 
+}
+
+.slide-container.bleed-image-layout > .image-container {
+ height: 100%;
+ overflow: hidden;
+ width: 100%;
+}
+
+.slide-container.bleed-image-layout img.bleed-image-side {
+ border-radius: 0 8px 8px 0;
+ height: 100%;
+ max-width: 100%;
+ max-height: 720px;
+ object-fit: cover;
+ object-position: center;
+ width: 100%;
+}
+
+.slide-container.bleed-image-layout .bleed-text-side {
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+}
+
+.slide-container.bleed-image-layout .bleed-text-side p {
+ color: #94a3b8; 
+ line-height: 1.6;
+ margin-bottom: 1rem;
+}
+
+.qa-layout {
+ text-align: center;
+ width: 100%;
+ align-self: center;
+}
+
+.qa-layout h2 {
+ font-size: 80px;
+ margin-bottom: 20px;
+ color: #deff9a;
+}
+
+.qa-layout p {
+ font-size: 22px;
+ color: #e2e8f0;
+}
+
+.qa-layout .contact-info {
+ color: #94a3b8;
+ font-size: 20px;
+ margin-top: 40px;
+}
+
+/* ADICIONADO ESTILOS PARA MERMAID */
+.mermaid-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px; 
+  overflow: auto; 
+}
+.mermaid {
+  background-color: #0f172a !important; 
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%; 
+  /* height: 100%; */
+}
+/* Estilos do Mermaid para o Tema Escuro */
+.mermaid .actor { fill: #1e293b; stroke: #94a3b8; }
+.mermaid .actor-line { stroke: #94a3b8; }
+.mermaid .messageLine0, .mermaid .messageLine1 { stroke: #94a3b8; }
+.mermaid .messageText { fill: #e2e8f0; }
+.mermaid .labelBox, .mermaid .labelText, .mermaid .loopText, .mermaid .loopLine { fill: #e2e8f0; stroke: #94a3b8; }
+.mermaid .activation0, .mermaid .activation1 { fill: #1e293b; stroke: #94a3b8; }
+.mermaid .note { fill: #1e293b; stroke: #94a3b8; color: #e2e8f0; }
+.mermaid .state-diagram .divider, .mermaid .state-diagram .divider-text, .mermaid .state-diagram .title-text { fill: #e2e8f0; }
+.mermaid .state-diagram .state, .mermaid .state-diagram .note { fill: #1e293b; stroke: #deff9a; color: #e2e8f0; }
+.mermaid .state-diagram .transition { stroke: #94a3b8; }
+.mermaid .state-diagram .stateLabel { fill: #e2e8f0; }
+.mermaid .er .entity, .mermaid .er .entityLabel { fill: #1e293b; stroke: #deff9a; }
+.mermaid .er .relationship, .mermaid .er .relationshipLabel { fill: #1e293b; stroke: #94a3B8; }
+.mermaid .er .cardinality { fill: #e2e8f0; }
+.mermaid .er .attributeBox { fill: #0f172a; stroke: #334155; }
+.mermaid .er .attributeBoxOdd { fill: #0f172a; }
+.mermaid .er .attributeBoxEven { fill: #1e293b; }
+.mermaid .er .attributeText { fill: #94a3b8; }
+.mermaid .er .entityLabel { fill: #deff9a; }
+.mermaid .use-case .actor { fill: #1e293b; stroke: #94a3B8; }
+.mermaid .use-case .actor-line { stroke: #94a3b8; }
+.mermaid .use-case .use-case { fill: #1e293b; stroke: #deff9a; }
+.mermaid .use-case .use-case-line { stroke: #94a3b8; }
+.mermaid .use-case text { fill: #e2e8f0; }
+.mermaid .use-case .boundary { fill: #0f172a; stroke: #334155; }
+.mermaid .use-case .boundaryTitle { fill: #e2e8f0; }
+
+
+/* 4. ESTILOS DE IMPRESSÃO PARA PDF */
+@media print {
+  /* Configura a página de impressão para paisagem (landscape) */
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+  
+  /* Reseta o body para impressão, remove grid/padding da tela */
+  body {
+    display: block;
+    padding: 0;
+    margin: 0;
+    background-color: #ffffff;
+    /* Força o navegador a imprimir as cores de fundo */
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+
+  /* Garante que o fundo e texto dos slides sejam impressos corretamente */
+  .slide-container,
+  .slide-container.bleed-image-layout,
+  .slide-container.bleed-image-layout > .content-container,
+  .mermaid,
+  .tile,
+  .two-column.tiled > div {
+      background-color: #0f172a !important; 
+  }
+  .two-column.tiled > div,
+  .tile {
+      background-color: #1e293b !important;
+  }
+  .slide-container h1, .slide-container h2, .slide-container h3,
+  .slide-container p, .slide-container li, .slide-container .subtitle,
+  .slide-container th, .slide-container td {
+      color: #94a3b8 !important;
+  }
+  .slide-container h1 { color: #deff9a !important; }
+  .slide-container .slide-title, .bullet-list li strong { color: #e2e8f0 !important; }
+  .slide-container h3, .tile .icon, .section-title-layout h2, .qa-layout h2, .bullet-list i { color: #deff9a !important; }
+
+/* A MÁGICA: Força cada slide a ser uma página separada */
+  .slide-container {
+    display: flex !important; /* Garante que está visível */
+    width: 100%;
+    height: 100vh; /* Ocupa a altura total da página de impressão */
+    margin: 0;
+    padding: 60px; /* Mantém o padding original */
+    box-shadow: none;
+    border: none;
+    overflow: hidden;
+    
+    /* Propriedade MODERNA para quebrar a página */
+    break-after: page;
+    /* Propriedade MODERNA para evitar quebra no meio */
+    break-inside: avoid;
+  }
+
+  /* Evita uma página em branco extra no final do PDF */
+  .slide-container:last-of-type {
+    break-after: avoid;
+  }
+  
+  /* Simplifica o layout 'bleed' para impressão, removendo a imagem */
+  .slide-container.bleed-image-layout > .image-container {
+    display: none;
+  }
+  .slide-container.bleed-image-layout {
+    grid-template-columns: 1fr;
+    height: 100vh !important;
+  }
+}
+
+/* --- ADIÇÃO PARA CORRIGIR DIAGRAMAS CORTADOS --- */
+  
+/* * 1. Remove a barra de rolagem e o limite de altura
+ * do container do diagrama.
+ */
+.mermaid-container {
+  overflow: visible !important; /* Remove a barra de rolagem */
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* * 2. Remove o limite de altura do 'wrapper' do mermaid 
+ */
+.mermaid {
+  max-height: none !important;
+}
+
+/* * 3. Esta é a regra principal:
+ * Força o diagrama (o SVG) a encolher para caber na página.
+ */
+.mermaid svg {
+  /* Força o diagrama a ter 100% da largura do container */
+  width: 100% !important; 
+  
+  /* Deixa a altura se ajustar automaticamente para manter a proporção */
+  height: auto !important;
+  
+  /* * Uma 'rede de segurança': garante que a altura do diagrama 
+   * nunca ultrapasse a altura visível da página (deixando
+   * espaço para o título e paddings).
+   */
+  max-height: 80vh !important;
+}
+/* --- FIM DA ADIÇÃO --- */
+  </style>
+</head>
+<body>
+
+<div class="slide-container" id="slide1">
+  <div class="title-layout">
+    <h1>Análise do sistema: Loja LTDA</h1>
+    <p class="subtitle">Uma Visão Geral da Arquitetura, Escalabilidade e Funcionalidades de um E-commerce Híbrido (PHP + JS).</p>
+  </div>
+</div>
+
+<div class="slide-container" id="slide2">
+  <div class="section-title-layout">
+    <hr>
+    <h2>Principais Funcionalidades</h2>
+  </div>
+</div>
+
+<div class="slide-container" id="slide3">
+  <h2 class="slide-title">Experiência do Cliente</h2>
+  <div class="content-area">
+    <div class="tiled-content">
+      <div class="tile">
+        <div class="icon"><i class="fa-solid fa-shopping-cart"></i></div>
+                <h3>Carrinho Híbrido</h3>
+        <p>Gerenciamento de carrinho via `localStorage` (visitante) com sincronização e merge automático com o BD após o login do cliente.</p>
+      </div>
+      <div class="tile">
+        <div class="icon"><i class="fa-solid fa-credit-card"></i></div>
+        <h3>Checkout Completo</h3>
+        <p>Fluxo de usuário desde o carrinho, seleção de endereço (com ViaCEP), pagamento (simulado) e geração de nota fiscal (via jsPDF).</p>
+      </div>
+      <div class="tile">
+        <div class="icon"><i class="fa-solid fa-user-cog"></i></div>
+        <h3>Gestão de Conta</h3>
+        <p>Clientes podem gerenciar múltiplos endereços, ver histórico de pedidos e postar/excluir avaliações (notas + comentários) de produtos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide-container" id="slide4">
+  <h2 class="slide-title">Painel do Fornecedor</h2>
+  <div class="content-area">
+    <div class="tiled-content">
+      <div class="tile">
+        <div class="icon"><i class="fa-solid fa-box-open"></i></div>
+        <h3>Gerenciamento de Produtos</h3>
+        <p>Fornecedores podem criar e enviar produtos para a loja, controlando estoque, preço e descontos.</p>
+      </div>
+      <div class="tile">
+        <div class="icon"><i class="fa-solid fa-save"></i></div>
+        <h3>Rascunhos Locais</h3>
+        <p>Um sistema de rascunhos baseado em `localStorage` permite que fornecedores salvem o trabalho de cadastro antes de enviar ao BD.</p>
+      </div>
+      <div class="tile">
+        <div class="icon"><i class="fa-solid fa-clipboard-list"></i></div>
+        <h3>Catálogo Detalhado</h3>
+        <p>O cadastro de produtos inclui múltiplas imagens, categorias (do BD), características dinâmicas e descrições formatadas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide-container" id="slide6">
+  <div class="section-title-layout">
+    <hr>
+    <h2>Arquitetura do Sistema</h2>
+    <p>Uma análise da arquitetura híbrida (PHP-SSR e Client-Side JS).</p>
+  </div>
+</div>
+
+<div class="slide-container bleed-image-layout" id="slide7">
+  <div class="content-container">
+    <h2 class="slide-title">Arquitetura Híbrida</h2>
+    <div class="content-area">
+      <div class="bleed-text-side">
+        <h3>Backend (PHP + MySQL)</h3>
+        <p>O PHP atua em duas frentes:
+          <br>1. <strong>SSR (Server-Side Rendering):</strong> Monta e envia páginas HTML prontas (Ex: `index.php`, `tela_produto.php`).
+          <br>2. <strong>API "Headless":</strong> Scripts em `Banco de dados/` (Ex: `processa_pedido.php`) recebem `fetch` (JSON) do cliente para executar lógica de negócios.
+        </p>
+        
+        <h3>Frontend (JS + `localStorage`)</h3>
+        <p>O JavaScript no cliente gerencia o estado (carrinho local, rascunhos), controla a UI (mapas, carrosséis) e consome as APIs do PHP e de terceiros (ViaCEP).</p>
+      </div>
+    </div>
+  </div>
+  <div class="image-container">
+    </div>
+</div>
+
+<div class="slide-container" id="slide8">
+  <h2 class="slide-title">Arquitetura em Ação: Fluxo de Checkout</h2>
+  <div class="content-area mermaid-container">
+    <div class="mermaid">
+sequenceDiagram
+  participant Cliente as Cliente (Navegador)
+  participant JS as JavaScript (Client-Side)
+  participant LocalStorage as localStorage
+  participant PHP as Servidor PHP (processa_pedido.php)
+  participant MySQL as Base de Dados (MySQL)
+
+  Cliente ->>+ JS: 1. Clica em "Continuar"
+  JS ->> JS: 2. Valida formulário
+  JS ->>+ LocalStorage: 3. Ler dados('carrinho', 'dadosEntrega')
+  LocalStorage -->>- JS: 4. Retorna JSON
+  
+  JS ->>+ PHP: "5. Envia [POST] /processa_pedido.php"
+  
+  PHP ->> PHP: 6. Inicia sessão (session_start())
+  PHP ->> PHP: 7. Verifica se usuário está logado
+  PHP ->>+ MySQL: 8. beginTransaction()
+  PHP ->> MySQL: 9. INSERT INTO pedidos
+    loop Para cada item no carrinho
+    PHP ->> MySQL: 10. INSERT INTO pedido_itens
+    PHP ->> MySQL: 11. UPDATE produtos SET estoque = ...
+  end
+  PHP ->> MySQL: 12. DELETE FROM carrinho_itens
+  PHP ->>+ MySQL: 13. commit()
+  MySQL -->>- PHP: 14. Sucesso
+  PHP -->>- JS: 15. Retorna JSON {"sucesso": true}
+  JS ->>+ LocalStorage: 16. Limpa localStorage('carrinho')
+  LocalStorage -->>- JS: 
+  JS ->> JS: 17. Chama gerarNotaFiscalPDF()
+  JS -->>- Cliente: 18. Mostra Notificação "Aprovado"
+    </div>
+  </div>
+</div>
+
+<div class="slide-container" id="slide9">
+  <h2 class="slide-title">Arquitetura de Dados: Schema do BD</h2>
+    <div class="content-area mermaid-container" style="overflow-x: auto;"> 
+    <div class="mermaid">
+erDiagram
+    usuarios {
+        int id PK
+        string nome
+        string email
+        string cpf
+        string senha
+        string telefone
+        datetime data_cadastro
+        string tipo
+    }
+
+    enderecos {
+        int id PK
+        int usuario_id FK
+        string cep
+        string rua
+        string numero
+        string complemento
+        string bairro
+        string cidade
+        string estado
+        string pais
+    }
+
+    carrinho {
+        int id PK
+        int usuario_id FK
+        datetime data_atualizacao
+    }
+
+    carrinho_itens {
+        int id PK
+        int carrinho_id FK
+        int produto_id FK
+        int quantidade
+    }
+
+    categorias {
+        int id PK
+        string nome
+        string descricao
+    }
+
+    produtos {
+        int id PK
+        string nome
+        string descricao
+        float preco
+        int desconto
+        int categoria_id FK
+        int estoque
+        string imagem_url
+        string status
+    }
+
+    produto_imagens {
+        int id PK
+        int produto_id FK
+        string url_imagem
+    }
+
+    pedidos {
+        int id PK
+        int usuario_id FK
+        int endereco_id FK
+        datetime data_pedido
+        string status
+        float valor_total
+    }
+
+    pedido_itens {
+        int id PK
+        int pedido_id FK
+        int produto_id FK
+        int quantidade
+        float preco_unitario
+    }
+
+    pagamentos {
+        int id PK
+        int pedido_id FK
+        string metodo
+        string status
+        datetime data_pagamento
+        float valor_pago
+    }
+
+    entregas {
+        int id PK
+        int pedido_id FK
+        string codigo_rastreio
+        string transportadora
+        datetime data_envio
+        string status_entrega
+    }
+
+    avaliacoes {
+        int id PK
+        int usuario_id FK
+        int produto_id FK
+        int nota
+        string comentario
+        datetime data_avaliacao
+    }
+
+    %% Definição das Relações
+    usuarios ||--o{ enderecos : "possui"
+    usuarios ||--|| carrinho : "tem_um"
+    usuarios ||--o{ pedidos : "faz"
+    usuarios ||--o{ avaliacoes : "escreve"
+
+    enderecos ||--o{ pedidos : "envia_para"
+
+    categorias ||--o{ produtos : "contém"
+
+    produtos ||--o{ avaliacoes : "recebe"
+    produtos }o--o{ carrinho_itens : "contido_em"
+    produtos }o--o{ pedido_itens : "contido_em"
+    produtos ||--o{ produto_imagens : "tem_imagens"
+
+    carrinho ||--o{ carrinho_itens : "contém_itens"
+
+    pedidos ||--o{ pedido_itens : "contém_itens"
+    pedidos ||--o{ pagamentos : "gera"
+    pedidos ||--|| entregas : "gera"
+    </div>
+  </div>
+</div>
+
+<div class="slide-container" id="slide10">
+  <h2 class="slide-title">Comportamento: Ciclo de Vida do Pedido</h2>
+  <div class="content-area mermaid-container">
+    <div class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --> Pendente : Cliente inicia o checkout
+  Pendente --> Processando : Pagamento aprovado
+  Processando --> Enviado : Fornecedor despacha o produto
+  Enviado --> [*] : (Fim do fluxo atual)
+  
+  Pendente --> Cancelado : Falha no pagamento
+  Processando --> Cancelado : Estoque falha
+  Cancelado --> [*]
+    </div>
+  </div>
+</div>
+
+<div class="slide-container" id="slide11">
+  <div class="section-title-layout">
+    <hr>
+    <h2>Estratégia de Testes</h2>
+  </div>
+</div>
+
+<div class="slide-container" id="slide12">
+  <h2 class="slide-title">Recomendações de Testes</h2>
+  <div class="content-area">
+    <div class="bullet-list">
+      <ul>
+        <li><i class="fa-solid fa-check-circle"></i> <strong>Testes Unitários (PHP):</strong> Usar PHPUnit para isolar e testar a lógica de negócios em scripts críticos (Ex: `processa_pedido.php`). Garantir que o cálculo de total e a atualização de estoque estejam corretos.</li>
+        <li><i class="fa-solid fa-check-circle"></i> <strong>Testes Unitários (JS):</strong> Usar Jest para testar a lógica do cliente (Ex: A função de "merge" do carrinho em `tela_carrinho.php`).</li>
+        <li><i class="fa-solid fa-check-circle"></i> <strong>Testes de Integração:</strong> Testar a comunicação entre o `fetch` do JS e a API do PHP, garantindo que os contratos de JSON (entrada e saída) estão corretos.</li>
+        <li><i class="fa-solid fa-check-circle"></i> <strong>Testes E2E (End-to-End):</strong> Usar ferramentas como Cypress para simular o fluxo completo do usuário: "Adicionar ao carrinho", "Fazer Login", "Finalizar Compra".</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide-container" id="slide13">
+  <div class="section-title-layout">
+    <hr>
+    <h2>Análise de Escalabilidade</h2>
+    <p>Avaliação da capacidade do sistema de crescer e lidar com mais tráfego.</p>
+  </div>
+</div>
+
+<div class="slide-container" id="slide14">
+  <h2 class="slide-title">Escalabilidade: Prós e Contras</h2>
+  <div class="content-area">
+    <div class="two-column tiled">
+      <div>
+        <h3>Pontos Fortes</h3>
+        <p><strong>PHP "Shared-Nothing":</strong> O PHP é horizontalmente escalável. O uso de CDNs para bibliotecas (jsPDF, Leaflet) alivia a carga do servidor.
+        <br><br><strong>Schema do BD Otimizado:</strong> O uso correto de índices e chaves estrangeiras (`.sql`) garante consultas rápidas.</p>
+      </div>
+      <div>
+        <h3>Gargalos</h3>
+        <p><strong>Gerenciamento de Sessão:</strong> `session_start()` em arquivos locais impede a escalabilidade horizontal. A solução é usar um DB de sessão (Ex: Redis).
+        <br><br><strong>Consultas Pesadas:</strong> `ORDER BY RAND()` e `AVG()` na home são gargalos que precisam de cache.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide-container" id="slide15">
+  <h2 class="slide-title">Principais Pontos de Melhora</h2>
+  <div class="content-area">
+    <div class="bullet-list">
+      <ul>
+        <li><i class="fa-solid fa-triangle-exclamation"></i> <strong>Segurança (Crítico):</strong> Corrigir a vulnerabilidade de "Adulteração de Preço". O back-end (`processa_pedido.php`) deve buscar os preços no BD, ignorando os preços enviados pelo cliente.</li>
+        <li><i class="fa-solid fa-shield-halved"></i> <strong>Validação de Uploads:</strong> Implementar verificação de MIME type em `processa_novo_produto.php` para prevenir upload de arquivos maliciosos.</li>
+        <li><i class="fa-solid fa-code-branch"></i> <strong>Manutenibilidade (DRY):</strong> Substituir o HTML repetido do cabeçalho e rodapé por `require 'templates/header.php';` para centralizar a manutenção.</li>
+        <li><i class="fa-solid fa-database"></i> <strong>Centralização do Estado:</strong> Migrar a lógica de "Rascunhos" do `localStorage` (volátil) para o BD (com status='rascunho'), garantindo que o usuário não perca seu trabalho.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide-container" id="slide16">
+  <div class="qa-layout">
+    <h2>Obrigado</h2>
+  </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // 1. Inicializa o Mermaid com seu tema
+        mermaid.initialize({
+            startOnLoad: false, // Controlamos manualmente a renderização
+            theme: 'base',
+            themeVariables: {
+                'primaryColor': '#1e293b',
+                'primaryTextColor': '#e2e8f0',
+                'secondaryColor': '#0f172a',
+                'tertiaryColor': '#1e293b',
+                'primaryBorderColor': '#deff9a',
+                'secondaryBorderColor': '#94a3b8',
+                'lineColor': '#94a3b8',
+                'textColor': '#e2e8f0',
+                'clusterBkg': '#0f172a',
+                'clusterBorder': '#334155',
+                'mainBkg': '#1e293b',
+                'nodeBorder': '#deff9a',
+                'actorBorder': '#94a3b8',
+                'actorBkg': '#1e293b',
+                'transition': '#94a3b8',
+                'arrowheadColor': '#94a3b8',
+                'fontSize': '16px',
+                'stateLabelFontSize': '14px',
+                'actorFontSize': '14px',
+                'messageFontSize': '14px',
+                'noteFontSize': '14px'
+            }
+        });
+
+        // 2. Renderiza TODOS os diagramas da página
+        // Isso corrige os diagramas que não apareciam
+        mermaid.run();
+        
+        // A lógica de navegação por setas foi removida
+        // para garantir que TODOS os slides fiquem visíveis para impressão.
+    });
+</script>
+
+</body>
+</html>

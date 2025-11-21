@@ -1,0 +1,819 @@
+/* ===========================
+   VARIÁVEIS DE COR E PADRÕES
+   =========================== */
+   :root {
+    --yellow: #ffdf00;
+    --muted: #efefef;
+    --card-bg: #ffffff;
+    --text: #222;
+  }
+  
+  * {
+    box-sizing: border-box;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+  }
+  
+  body {
+    margin: 0;
+    background: var(--muted);
+    color: var(--text);
+  }
+  
+  /* barra fixa */
+  .topbar {
+    background: var(--yellow);
+    padding: 10px 0; /* Define altura pelo padding vertical */
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+
+  /* Container principal dentro da barra */
+  .topbar .actions {
+    max-width: 1100px; /* Largura máxima do conteúdo */
+    margin: 0 auto;     /* Centraliza o container */
+    padding: 0 20px;  /* Padding horizontal DE 20px (define o recuo do logo) */
+    height: auto;       
+
+    display: flex;
+    justify-content: space-between; /* Empurra logo e resto para as pontas */
+    align-items: center;
+    /* Sem gap aqui */
+  }
+
+  /* Container específico do logo (opcional, mas bom para consistência) */
+  /* .topbar .logo-container {
+  } */
+
+  /* Espaçamento APENAS para os itens da direita */
+  .topbar .actions > form { /* Adiciona espaçamento antes do form se ele não for o primeiro item (caso logo exista)*/
+      margin-left: 20px; /* Ou use gap no container dos itens da direita */
+  }
+
+  .topbar .actions > div:last-child { /* Seleciona a div dos links "Crie sua conta", "Entre", "Carrinho" */
+    display: flex;
+    gap: 30px; /* Mantém o gap entre os links da direita */
+    align-items: center;
+  }
+
+  .topbar a {
+    color: #000;
+    text-decoration: none;
+  }
+  
+  /* logotipo (imagem central)*/
+/* Swiper Hero (Carrossel) */
+.hero {
+  height: 350px; /* Altura do banner */
+  background: #f3f3f3; /* Fundo enquanto as imagens carregam */
+  border-bottom: 1px solid #e6e6e6;
+  
+  /* Remove o 'display: flex' para o swiper preencher */
+  display: block; 
+  align-items: initial;
+  justify-content: initial;
+  position: relative;
+}
+
+/* Você pode remover a regra .logo, ela não é mais usada */
+/* .logo {
+  display: none;
+} */
+
+/* =================================== */
+/* ADICIONE ESTES ESTILOS NOVOS        */
+/* =================================== */
+.hero-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+/* ISSO É O QUE VOCÊ QUER DE VOLTA (USAR) */
+.hero-swiper .swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Centraliza a imagem de fundo */
+  background-position: center;
+  background-size: cover; /* <-- VOLTAMOS PARA 'COVER' */
+}
+/* Estiliza as setas e bolinhas com a cor 
+  amarela principal do seu site (var(--yellow))
+ 
+*/
+.hero-swiper .swiper-button-prev,
+.hero-swiper .swiper-button-next {
+  color: var(--yellow);
+  font-weight: bold;
+
+  opacity: 0; /* Esconde as setas por padrão */
+  transition: opacity 0.2s ease-in-out; /* Adiciona um fade suave */
+}
+
+/* Mostra as setas quando o mouse passa sobre o container .hero */
+.hero:hover .swiper-button-prev,
+.hero:hover .swiper-button-next {
+  opacity: 1; /* Mostra as setas */
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+  background-color: var(--yellow);
+}
+  /* layout do container*/
+  .container {
+    width: 1100px;
+    max-width: calc(100% - 40px); /* posição dele na página */
+    margin: 28px auto; /* sua centralização na página*/
+  }
+  
+  /* "ordenar por"*/
+  .controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 18px;
+    color: #6b6b6b;
+  }
+  
+  .controls select { /* tamanho do botão respectivo ao "ordenar por" */
+    margin-left: 10px; /* sua posação na página*/
+    padding: 6px; /* largura do "botão" 'mais relevantes'*/
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+  
+  /* lista de produtos */
+.grid {
+  display: grid;
+  
+  /* DE: grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    PARA: Forçar 4 colunas
+  */
+  grid-template-columns: repeat(4, 1fr);
+  
+  gap: 18px; /* largura do container*/
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  
+  /* --- ADIÇÃO (Req. 2 - Altura igual) --- */
+  /* Faz o card ocupar 100% da altura da célula do grid */
+  height: 100%;
+}
+
+/* --- ADIÇÃO (Req. 2 - Altura igual) --- */
+/* Seleciona o último <div> dentro do .card (que contém o preço)
+  e o empurra para o final, alinhando todos os cards.
+*/
+.card > div:last-child {
+  margin-top: auto;
+}
+
+
+.thumb {
+  height: 170px; /* altura do container */
+  border-radius: 6px;
+  
+  /* --- MUDANÇA (Req. 1 - Imagem inteira) --- */
+  /* DE: background-size: cover; */
+  /* PARA: background-size: contain; */
+  background-size: contain; 
+  
+  /* --- ADIÇÃO (Req. 1 - Imagem inteira) --- */
+  /* Impede que a imagem se repita caso seja pequena */
+  background-repeat: no-repeat;
+  
+  background-position: center;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+  
+/* REMOVIDO BLOCO .thumb DUPLICADO QUE ESTAVA AQUI 
+   (Ele continha "background-size: cover;" e estava quebrando o layout)
+*/
+  
+  .title { /* nome do produto*/
+    font-size: 14px;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    font-weight: bolder;
+    color: #333;
+    min-height: 42px;
+  }
+  
+  .price {
+    font-weight: 700;
+    font-size: 18px;
+    color: #000;
+  }
+  
+  .old { /* se desejar adicionar um valor antigo */
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 8px;
+  }
+  
+  .badge {
+    color: #2a9d8f;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+  
+  .parcel {
+    font-size: 12px;
+    color: #777;
+  }
+  
+  /* responsividade */
+  @media (max-width: 600px) {
+    .hero {
+      height: 140px;
+    }
+  
+    .topbar {
+      height: 52px;
+      padding: 0 12px;
+    }
+  
+    .controls {
+      justify-content: flex-start;
+    }
+  }
+  
+/* --- ADIÇÃO PARA LINKS DE PRODUTO --- */
+
+/* Remove a decoração de link padrão dos cards */
+/* Substitua o bloco "a.card-link:hover .card { ... }" por este: */
+
+/* Efeito de levantar o card no hover (para todos os cards) */
+.card:hover,
+a.card-link:hover .card {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Efeito de zoom na imagem (thumb) no hover (para todos os cards) */
+/* .card:hover .thumb,
+a.card-link:hover .thumb {
+  transform: scale(1.05);
+} */
+
+/* E por fim, remova a 'transition' duplicada 
+  da regra 'a.card-link .card' 
+*/
+a.card-link .card {
+  /* transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; */ /* <-- REMOVA OU COMENTE ESTA LINHA */
+  flex-grow: 1; 
+} 
+
+a.card-link:hover .card {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Corrige o tamanho de cards que são links 
+  para que se alinhem com os outros.
+*/
+a.card-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none; /* Remove o sublinhado do link */
+}
+
+
+/* =================================== */
+/* ESTILOS DA AVALIAÇÃO (ESTRELAS) NO CARD */
+/* =================================== */
+
+.card-avaliacao {
+  /* Espaçamento entre o título e as estrelas, e as estrelas e o preço */
+  margin-top: 4px;
+  margin-bottom: 8px;
+  /* Garante que o layout não quebre mesmo se não houver estrelas */
+  min-height: 18px; 
+}
+
+.card-avaliacao .star {
+  font-size: 18px;    /* Tamanho menor para o card */
+  color: #ccc;       /* Cor da estrela vazia */
+  margin-right: 1px;
+}
+
+/* Cor da estrela preenchida (mesma de estilo_produto.css) */
+.card-avaliacao .star.filled {
+  color: #FFC107; 
+}
+
+/* ===========================
+   REGRAS DE RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+    /* Ajusta o cabeçalho */
+    .topbar .actions {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 15px; /* Menos padding lateral */
+    }
+    
+    /* Faz a barra de pesquisa ocupar 100% e ir para baixo */
+    .topbar .actions form {
+        width: 100%;
+        order: 3; /* Coloca o form por último */
+        margin-left: 0;
+    }
+    
+    /* Alinha o logo e os links de conta/carrinho */
+    .topbar .actions .logo-container {
+        flex-grow: 1; /* Ocupa espaço à esquerda */
+    }
+    .topbar .actions > div:last-child {
+        width: auto; /* Links de "Entre", "Carrinho" */
+        gap: 15px; /* Menos espaço entre os links */
+    }
+    
+    /* Reduz o padding do container principal */
+    .container {
+        width: calc(100% - 20px);
+        margin: 15px auto;
+    }
+
+    /* Ajusta a grade para uma coluna em telas muito pequenas */
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+    }
+}
+/* =================================== */
+/* ESTILOS DE AUTENTICAÇÃO (Login/Cadastro) */
+/* =================================== */
+
+/* Centraliza o container do formulário na página */
+.auth-container {
+    width: 100%;
+    max-width: 450px; /* Define uma largura máxima para o formulário */
+    margin: 28px auto; /* Centraliza (mesma margem do .container) */
+    padding: 24px;
+    background: var(--card-bg); /* Reutiliza a variável de fundo do card */
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+.auth-container h1 {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+/* O formulário em si */
+.auth-container form {
+    display: flex;
+    flex-direction: column; /* <-- CORREÇÃO PRINCIPAL: Força o empilhamento vertical */
+    gap: 18px; /* Espaço entre os campos (labels) */
+}
+
+/* O <label> que contém (Texto + Input) */
+.auth-container form label {
+    display: block; /* Garante que o label se comporte como um bloco */
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* O <input> dentro do <label> */
+.auth-container form input[type="text"],
+.auth-container form input[type="email"],
+.auth-container form input[type="tel"],
+.auth-container form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-top: 6px; /* Espaço entre o texto do label e o input */
+    box-sizing: border-box; /* Garante que o padding não estoure a largura */
+}
+
+/* O botão de submit */
+.auth-container form button {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #2968C8; /* Padrão azul dos outros botões */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 10px; /* Espaço extra antes do botão */
+}
+
+.auth-container form button:hover {
+    opacity: 0.9;
+}
+
+/* O link "Já possui conta?" */
+.auth-container p {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 20px;
+    color: #555;
+}
+
+.auth-container p a {
+    color: #2968C8; /* Azul padrão */
+    text-decoration: none;
+    font-weight: 500;
+}
+.auth-container p a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================= */
+/* --- INÍCIO: NOVOS ESTILOS (Minha Conta) --- */
+/* ============================================= */
+
+/* Como .container é global (1100px), a página "Minha Conta" 
+   usará essa largura. Para forçar os 900px do seu <style>
+   original, vamos aplicar a regra .container especificamente
+   quando ele estiver dentro de um <main> (o que acontece
+   na tela_minha_conta.php, mas não na index.php).
+   
+   Isso pode ser arriscado se outras páginas usarem <main class="container">.
+   A melhor abordagem seria adicionar uma classe no <main>
+   ex: <main class="container minha-conta-main">
+   e usar .minha-conta-main { max-width: 900px; }
+   
+   Porém, seguindo a lógica de apenas mover os estilos,
+   farei a sobrescrita mais simples.
+*/
+
+/* O container principal da "Minha Conta" será mais estreito */
+main.container {
+    max-width: 900px;
+}
+
+.conta-secao {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 30px;
+}
+
+.conta-secao h2 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Card de Endereço */
+.endereco-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    position: relative;
+    line-height: 1.6;
+}
+
+.endereco-card p { margin: 0 0 5px 0; font-size: 0.95rem; color: #333; }
+.endereco-card .rua-principal { font-weight: bold; color: #000; font-size: 1.1rem; }
+.endereco-card .cep-cidade { font-size: 0.9rem; color: #555; }
+.endereco-card-opcoes { position: absolute; top: 20px; right: 20px; }
+.endereco-card-opcoes a { font-size: 0.9rem; margin-left: 15px; text-decoration: none; color: #007bff; }
+
+/* Botão Adicionar Endereço */
+.btn-adicionar-endereco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px 20px; 
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 600;
+    background-color: #2968C8;
+    transition: opacity 0.2s;
+    box-sizing: border-box;
+}
+.btn-adicionar-endereco:hover { opacity: 0.9; }
+.btn-adicionar-endereco span { font-size: 1.5rem; font-weight: 300; margin-right: 10px; line-height: 1; }
+
+/* Tabela de dados pessoais */
+.dados-pessoais { width: 100%; }
+.dados-pessoais td { padding: 8px 0; font-size: 1rem; }
+.dados-pessoais td:first-child { font-weight: 500; color: #555; width: 100px; }
+
+/* Estilo das Abas */
+.tabs-container {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 25px;
+}
+.tab-button {
+    padding: 12px 20px;
+    border: none;
+    background-color: transparent;
+    font-size: 1.1rem;
+    color: #555;
+    cursor: pointer;
+    position: relative;
+    top: 1px; /* Para alinhar com a borda inferior */
+    border-bottom: 3px solid transparent;
+}
+.tab-button.active {
+    color: #2968C8;
+    font-weight: 600;
+    border-bottom-color: #2968C8;
+}
+
+/* Painéis das Abas */
+.tab-painel {
+    display: none; /* Escondido por padrão */
+}
+.tab-painel.active {
+    display: block; /* Mostra o painel ativo */
+}
+
+/* Cabeçalho de Data (ex: "19 de agosto de 2024") */
+.data-grupo-compras {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #333;
+}
+.data-grupo-compras:first-of-type {
+    margin-top: 0;
+}
+
+/* Card de Compra (Baseado na imagem de referência) */
+.compra-card {
+    display: flex;
+    flex-wrap: wrap; /* Para mobile */
+    gap: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    background-color: #fff;
+}
+.compra-imagem {
+    width: 80px;
+    height: 80px;
+}
+.compra-imagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.compra-detalhes {
+    flex: 3; /* Cresce mais */
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+}
+.compra-detalhes span {
+    font-size: 0.9rem;
+    color: #555;
+}
+.compra-detalhes .compra-status {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #00a650; /* Verde "Entregue" */
+    margin-bottom: 2px;
+}
+.compra-detalhes .compra-data-entrega {
+    margin-bottom: 8px;
+}
+.compra-detalhes .compra-titulo {
+    font-size: 1.1rem;
+    color: #000;
+    font-weight: 500;
+    margin: 0;
+}
+.compra-detalhes .compra-unidades {
+    margin-top: 4px;
+    color: #777;
+}
+
+.compra-vendedor {
+    flex: 1.5;
+    min-width: 150px;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.compra-vendedor a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.compra-acoes {
+    flex: 1.5;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+.btn-compra-primario, .btn-compra-secundario {
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+.btn-compra-primario {
+    background-color: #2968C8;
+    color: #fff;
+}
+.btn-compra-secundario {
+    background-color: #f0f0f0;
+    color: #2968C8;
+    border: 1px solid #ddd;
+}
+/* ============================================= */
+/* --- FIM: NOVOS ESTILOS (Minha Conta) --- */
+/* ============================================= */
+
+.recomendacoes-swiper {
+    width: 90%; 
+    margin: 0 auto; 
+    padding-bottom: 30px; 
+}
+
+/* * 1. REGRA REMOVIDA
+ * A regra "width: 170px !important;" foi removida.
+ * Agora, a largura do slide será controlada pela configuração
+ * 'slidesPerView' no seu JavaScript (ex: 5 por vez).
+*/
+.recomendacoes-swiper .swiper-slide {
+    display: flex; 
+    justify-content: center;
+    align-items: flex-start;
+    /* Adiciona a propriedade height: auto para garantir que o swiper se ajuste */
+    height: auto; 
+}
+
+.recomendacoes-swiper .swiper-slide a.card-link {
+    display: block; 
+    text-decoration: none; 
+    color: inherit; 
+    /* Garante que o link preencha o slide */
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.recomendacoes-container .card {
+    /* Herda a maioria dos estilos do .card global (linha 161) */
+    
+    /* 2. MODIFICADO (para bater com o .card global) */
+    /* Garante que o card preencha o slide e se comporte como o global */
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+    width: 100%;
+    
+    /* Estilos que já estavam aqui (mantidos) */
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    position: relative;
+    
+    /* 3. REMOVIDO */
+    /* font-size: 0.85em; (removido para usar o padrão) */
+    
+    /* 4. ADICIONADO (para bater com o .card global, linha 163) */
+    padding: 12px;
+}
+
+.recomendacoes-container .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.recomendacoes-container .card .badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    /* 5. MODIFICADO (para bater com o .badge global, linha 208) */
+    background-color: transparent;
+    color: #2a9d8f;
+    font-weight: 700;
+    font-size: 1em; /* Tamanho padrão */
+    padding: 0;
+    z-index: 10;
+}
+
+.recomendacoes-container .card .thumb {
+    width: 100%;
+    
+    /* 6. MODIFICADO (para bater com o .thumb global, linha 177) */
+    height: 170px; 
+    background-size: contain; 
+    background-repeat: no-repeat;
+    background-position: center center;
+    
+    /* 7. MODIFICADO (para bater com o .thumb global, linha 186) */
+    margin-bottom: 12px;
+    border-bottom: none; /* (removida a borda que existia) */
+}
+
+.recomendacoes-container .card .details {
+    /* 8. MODIFICADO (padding removido daqui, pois foi para o .card pai) */
+    padding: 0; 
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; 
+}
+
+.recomendacoes-container .card .title {
+    /* 9. MODIFICADO (para bater com o .title global, linha 188) */
+    font-size: 14px;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    font-weight: bolder;
+    color: #333;
+    min-height: 42px;
+    
+    /* (propriedades de clamp/height removidas) */
+    overflow: visible;
+    display: block;
+}
+
+.recomendacoes-container .card .card-avaliacao {
+    /* 10. MODIFICADO (para bater com o .card-avaliacao global, linha 246) */
+    margin-top: 4px;
+    margin-bottom: 8px;
+    min-height: 18px; 
+    font-size: 18px; /* (tamanho da estrela global) */
+    color: #ccc; 
+}
+
+.recomendacoes-container .card .star {
+    margin-right: 1px; /* (para bater com o global, linha 252) */
+}
+.recomendacoes-container .card .star.filled {
+  color: #FFC107; /* (para bater com o global, linha 258) */
+}
+
+.recomendacoes-container .card .price-container {
+    display: flex;
+    align-items: baseline;
+    margin-top: auto; /* Esta é a regra mais importante para o alinhamento */
+    margin-bottom: 8px; 
+}
+
+.recomendacoes-container .card .price-container .old {
+    /* 11. MODIFICADO (para bater com o .old global, linha 201) */
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 8px;
+}
+
+.recomendacoes-container .card .price-container .price {
+    /* 12. MODIFICADO (para bater com o .price global, linha 196) */
+    font-weight: 700;
+    font-size: 18px;
+    color: #000;
+}
+
+.recomendacoes-container .card .btn-card-add {
+    background-color: #3498db; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px; 
+    font-size: 0.9em; /* Um pouco menor que o texto do card */
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s ease;
+    margin-top: 5px; 
+}
+

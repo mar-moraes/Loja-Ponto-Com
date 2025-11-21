@@ -1,0 +1,357 @@
+/* Estilo básico para o contador */
+.contador-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /*<-- AQUI ESTÁ A CENTRALIZAÇÃO */
+
+  margin-right: 100px; /* <-- RETIRE SE TIVER ALGUM ERRO NO REAJUSTE DE TELA-*/ 
+
+  gap: 6px; /* vindo do style inline */
+  border: 1px solid #ccc;
+  font-family: Arial, sans-serif;
+  border-radius: 5px; /* Adicionado para arredondar o container */
+
+}
+
+/* Regra original, com uma transição suave adicionada */
+.contador-container button {
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  border: none;
+  background-color: #f0f0f0;
+  color: #3483FA;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  
+  /* --- ADIÇÃO --- */
+  /* Adiciona transição suave para o efeito de hover */
+  transition: background-color 0.2s, color 0.2s; 
+}
+
+/* --- ADIÇÃO (HOVER PRETO) --- */
+/* Hover SÓ se aplica se o botão NÃO tiver a classe .disabled */
+.contador-container button:not(.disabled):hover {
+  background-color: #ECF3FC; /* Fundo preto */
+  color: #3483FA;           /* Ícone branco */
+}
+
+/* --- ADIÇÃO (CLASSE DESABILITADA) --- */
+/* Estilo para o botão de menos quando a quantidade é 1 */
+.contador-container button.disabled {
+  color: #ccc;          /* Cor cinza para o ícone */
+  cursor: not-allowed; /* Muda o cursor */
+  opacity: 0.7;
+}
+
+/* (Opcional) Remove o hover preto do botão desabilitado */
+.contador-container button.disabled:hover {
+  background-color: #f0f0f0; /* Mantém o fundo original */
+  color: #ccc;                /* Mantém a cor cinza */
+}
+
+/* Arredonda os botões das pontas */
+.contador-container button:first-child {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.contador-container button:last-child {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+
+.contador-numero {
+  min-width: 40px; /* vindo do style inline */
+  text-align: center;
+  font-weight: 500; /* vindo do style inline */
+  font-size: 16px;
+}
+
+body {
+  color: grey;
+  width: 100%;
+  background-color: #EDEDED;
+;
+}
+
+/* .body img {
+  border: none;
+  height: 10px;
+  width: 10px;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+
+} */
+
+.painel {
+  color: rgb(65, 60, 60);
+  width: 100%;
+  border: 1px solid hsl(0, 14%, 90%);
+  background-color: #f0f0f0;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.produto {
+  background-color: #FFFFFF;
+  border: 1px solid #8f8d8d;
+  padding: 10px;
+  box-sizing: content-box;
+  display: flex;
+  align-items: center;
+}
+
+/* 🔹 Classe responsável por controlar o tamanho e estilo da imagem do produto */
+.produto img {
+  width: 100px;      
+  height: 100px;
+  padding: 4px;
+  object-fit: cover; 
+  border: 2px solid #333;
+  border-radius: 8px;
+}
+
+.produto p {
+  font-family: Arial, sans-serif;
+  margin-left: 10px;
+  margin-right: 30px;
+  font-size: 15px;
+  color: black;
+}
+
+/* =================================== */
+/* NOVOS ESTILOS - Layout do Carrinho */
+/* =================================== */
+
+/* Este é o novo container principal que segura 
+  o painel de produtos e o painel de resumo.
+  Usamos flex para colocá-los lado a lado.
+*/
+.carrinho-layout-container {
+  display: flex;
+  flex-wrap: wrap; /* Em telas pequenas, o resumo pode quebrar para baixo */
+  gap: 20px; /* Espaço entre os produtos e o resumo */
+  
+  /* Alinha com o padding do header */
+  padding: 20px 40px; 
+  
+  /* Alinha os dois painéis pelo topo */
+  align-items: flex-start; 
+}
+
+/* Ajuste no painel de produtos (que já existe).
+  Fazemos ele ocupar o espaço disponível.
+*/
+#painel-carrinho.painel {
+  flex: 1; /* O painel de produtos cresce para ocupar o espaço */
+  min-width: 400px; /* Largura mínima antes de quebrar */
+  margin: 0; /* Remove margens extras */
+  padding: 20px; /* Garante o padding */
+}
+
+/* Este é o novo painel de resumo/total.
+*/
+.resumo-container {
+  /* Estilos copiados do <div> inline que existia antes */
+  background-color: #FFFFFF;
+  border-radius: 8px; /* <-- MUDADO (era 4px) */
+  padding: 20px;
+  
+  /* Define uma largura fixa para o painel de resumo */
+  flex-basis: 300px; 
+  flex-grow: 0;
+  flex-shrink: 0;
+  
+  /* Efeito "sticky" para o painel acompanhar a rolagem */
+  position: sticky;
+  /* 28px (padding do container da tela_entrega) */
+  top: 28px; /* <-- MUDADO (era 84px) */
+
+  border: 1px solid #ddd; /* <-- ADICIONADO */
+}
+
+/* ESTILO DO BOTÃO "CONTINUAR" MANTIDO CONFORME ORIGINAL */
+.btn-continuar {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  font-weight: lighter;
+  /* Usando o amarelo da sua barra superior (style.css) */
+  background-color: #2968C8; 
+  color: #FFFFFF;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px; /* Espaço entre o total e o botão */
+  /* text-transform: uppercase; Deixa o texto em maiúsculas */
+}
+
+.btn-continuar:hover {
+  opacity: 0.9; /* Efeito simples ao passar o mouse */
+}
+/* ... (seu código .btn-continuar) ... */
+
+/* =================================== */
+/* NOVOS ESTILOS - Resumo da Compra   */
+/* =================================== */
+
+/* Estilo para o título "resumo da compra" */
+.resumo-container h3 {
+  color: #333; /* <-- MUDADO (era black) */
+  font-size: 18px; /* <-- MUDADO (era 20px) */
+  font-weight: 500;
+  margin-top: 0; /* <-- MUDADO */
+  margin-bottom: 20px; /* <-- MUDADO (era margin: 0 0 15px 0) */
+  /* text-align: center; <-- REMOVIDO */
+}
+
+/* A borda separadora */
+#resumo-separador {
+  /* width: 100%; <-- REMOVIDO */
+  height: 1px;
+  background-color: #eee; /* <-- MUDADO (era #e0e0e0) */
+  margin: 15px 0; /* <-- MUDADO (era margin-bottom: 15px) */
+  display: none; /* Começa escondido, JS vai mostrar */
+}
+
+/* O container do Total (Total: R$ 0,00) */
+#total-container {
+  display: none; /* Começa escondido, JS vai mostrar como 'flex' */
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600; /* <-- MUDADO (era bold) */
+  color: #333; /* <-- MUDADO (era black) */
+  margin-bottom: 10px; /* <-- ADICIONADO (para bater com .resumo-linha) */
+}
+
+/* =================================== */
+/* ESTILOS DAS RECOMENDAÇÕES (SWIPER)  */
+/* =================================== */
+
+/* O container principal da seção */
+.recomendacoes-container {
+  /* Alinha este container com o .carrinho-layout-container */
+  padding: 24px;
+  margin: 0 40px 28px 40px; /* Margem (top 0, laterais 40px, baixo 28px) */
+  
+  /* Estilo de "card" branco */
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+.recomendacoes-container h2 {
+  /* Título (baseado em estilo_produto.css) */
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.recomendacoes-swiper {
+  width: 100%;
+  overflow: hidden;
+  /* Adiciona padding para as setas não ficarem
+     coladas nas bordas do container */
+  padding: 0 10px;
+}
+
+/* O .card já é estilizado pelo style.css,
+   mas o .swiper-slide precisa de ajustes */
+.recomendacoes-swiper .swiper-slide {
+  display: flex;
+  height: auto; /* Permite que o card defina a altura */
+}
+
+/* Faz o <a> e o <article> preencherem o slide */
+.recomendacoes-swiper .swiper-slide .card-link,
+.recomendacoes-swiper .swiper-slide .card {
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* Estilo das setas (usando o azul da página) */
+.recomendacoes-swiper .swiper-button-prev,
+.recomendacoes-swiper .swiper-button-next {
+  color: #2968C8; /* Azul dos botões */
+  font-weight: bold;
+  top: 45%; /* Centraliza verticalmente (considerando o card) */
+}
+
+/* Ajusta posição das setas para fora dos slides */
+.recomendacoes-swiper .swiper-button-prev {
+  left: -5px; /* Posição seta esquerda */
+}
+.recomendacoes-swiper .swiper-button-next {
+  right: -5px; /* Posição seta direita */
+}
+/* ===========================
+   REGRAS DE RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+    .carrinho-layout-container {
+        padding: 10px;
+    }
+    
+    /* Faz o resumo ocupar 100% e desativa o "sticky" */
+    .resumo-container {
+        flex-basis: 100%;
+        position: static; /* Desativa o "sticky" */
+    }
+
+    /* Ajusta o padding do contêiner de recomendações */
+    .recomendacoes-container {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    /* --- Regras para o produto gerado por JavaScript --- */
+    
+    /* Força o produto no carrinho a empilhar verticalmente */
+    /* Usamos !important para sobrescrever o "style" inline do JS */
+    .produto[style*="display: flex"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    
+    /* Faz a imagem ocupar 100% da largura do card */
+    .produto img {
+        width: 100%;
+        height: 150px;
+        margin-bottom: 10px;
+    }
+    
+    /* Força o container (título, contador, preço) a empilhar */
+    div[style*="display: flex; justify-content: space-between;"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+        width: 100%;
+    }
+    
+    /* Ajusta o contador para não ter margem excessiva */
+    .contador-container {
+        margin-right: 0;
+    }
+
+    /* Permite que os botões (Comprar, Salvar, Excluir) quebrem a linha */
+    div[style*="display: flex; align-items: center; gap: 15px;"] {
+        flex-wrap: wrap;
+    }
+}
