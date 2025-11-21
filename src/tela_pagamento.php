@@ -13,46 +13,48 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escolha como pagar</title>
-  <link rel="stylesheet" href="estilos/style.css"> 
-  <link rel="stylesheet" href="estilos/estilo_entrega.css">
-  <link rel="stylesheet" href="estilos/estilo_pagamento.css">
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  
-  </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolha como pagar</title>
+    <link rel="stylesheet" href="../assets/estilos/style.css">
+    <link rel="stylesheet" href="../assets/estilos/estilo_entrega.css">
+    <link rel="stylesheet" href="../assets/estilos/estilo_pagamento.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
 <body>
 
-     <header class="topbar">
-      <nav class="actions">
-        <div class="logo-container">
-          <a href="index.php">
-            <img src="imagens/exemplo-logo.png"" alt="Logo" style="width: 40px; height: 40px;">
-          </a>
-        </div>
-        <div class="user-menu">
-          <a href="tela_minha_conta.php">Contato</a>
-        </div>
-      </nav>
+    <header class="topbar">
+        <nav class="actions">
+            <div class="logo-container">
+                <a href="index.php">
+                    <img src="../assets/imagens/exemplo-logo.png"" alt=" Logo" style="width: 40px; height: 40px;">
+                </a>
+            </div>
+            <div class="user-menu">
+                <a href="tela_minha_conta.php">Contato</a>
+            </div>
+        </nav>
     </header>
 
-<main class="entrega-layout-container">
-        
+    <main class="entrega-layout-container">
+
         <div class="opcoes-entrega">
             <h2>Escolha como pagar</h2>
-            
+
             <form id="form-pagamento">
-                
+
                 <h4 class="subtitulo-pagamento">Recomendados</h4>
 
                 <div class="opcao-bloco selecionado">
                     <input type="radio" id="linha-credito" name="forma-pagamento" value="linha-credito" checked>
-                    <span class="icone-linha-credito">$</span> 
+                    <span class="icone-linha-credito">$</span>
                     <label for="linha-credito" class="opcao-label">
                         <div class="opcao-titulo">
                             <span>Linha de Crédito</span>
@@ -90,21 +92,21 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
                 <div class="opcao-bloco">
                     <input type="radio" id="novo-cartao" name="forma-pagamento" value="novo-cartao">
                     <i class="fa-regular fa-credit-card icone-pagamento"></i>
-                    
+
                     <label for="novo-cartao" class="opcao-label">
                         <div class="opcao-titulo">
                             <span>Novo cartão de crédito</span>
                         </div>
-                    
+
                         <div class="formulario-novo-cartao" id="formulario-novo-cartao">
-                            
+
                             <div class="form-coluna-esquerda">
                                 <div class="form-grupo" id="grupo-numero-cartao">
                                     <label for="numero-cartao">Número do cartão</label>
                                     <input type="text" id="numero-cartao" placeholder="1234 1234 1234 1234">
                                     <span class="msg-erro-pagamento"><i class="fa-solid fa-circle-exclamation"></i> Preencha este campo.</span>
                                 </div>
-                                
+
                                 <div class="form-grupo" id="grupo-nome-titular">
                                     <label for="nome-titular">Nome do titular</label>
                                     <input type="text" id="nome-titular" placeholder="Ex.: Fulano Silva">
@@ -134,20 +136,21 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
                                         </select>
                                         <input type="text" id="documento" placeholder="999.999.999-99" style="flex: 1;">
                                     </div>
-                                     <span class="msg-erro-pagamento"><i class="fa-solid fa-circle-exclamation"></i> Preencha este campo.</span>
+                                    <span class="msg-erro-pagamento"><i class="fa-solid fa-circle-exclamation"></i> Preencha este campo.</span>
                                 </div>
-                            </div> 
+                            </div>
                             <!-- Retirado -->
                             <!-- <div class="form-coluna-direita">
-                                <img src="imagens/cartao-generico.png" alt="Cartão de crédito">
+                                <img src="../assets/imagens/cartao-generico.png" alt="Cartão de crédito">
                             </div> -->
 
                         </div>
-                    </label> </div>
+                    </label>
+                </div>
 
 
                 <h4 class="subtitulo-pagamento">Outros meios de pagamento</h4>
-                
+
                 <div class="opcao-bloco">
                     <input type="radio" id="boleto" name="forma-pagamento" value="boleto">
                     <i class="fa-solid fa-barcode icone-pagamento"></i>
@@ -160,27 +163,27 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
                         </div>
                     </label>
                 </div>
-                
+
                 <button type="button" class="btn-continuar-entrega">Continuar</button>
             </form>
         </div>
 
-        
+
         <aside class="resumo-compra">
             <h3>Resumo da compra</h3>
-            
+
             <div class="resumo-linha">
                 <span>Produto</span>
                 <span id="resumo-produto-valor">R$ 0,00</span>
             </div>
-            
+
             <div class="resumo-linha">
                 <span>Frete</span>
                 <span id="resumo-frete-valor">R$ 0,00</span>
             </div>
-            
+
             <a href="#" class="link-cupom">Inserir código do cupom</a>
-            
+
             <div class="resumo-linha total">
                 <span>Você pagará</span>
                 <span id="resumo-total-valor">R$ 0,00</span>
@@ -188,7 +191,7 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
         </aside>
 
     </main>
-    
+
     <div id="success-notification" class="notification success hidden">
         <i class="fas fa-check-circle notification-icon"></i>
         <span class="notification-message">Pagamento bem-sucedido! Gerando nota fiscal...</span>
@@ -198,7 +201,9 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
     <script>
         // --- Função para gerar a Nota Fiscal (PDF) ---
         function gerarNotaFiscalPDF() {
-            const { jsPDF } = window.jspdf;
+            const {
+                jsPDF
+            } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
             const subtotal = localStorage.getItem("totalCompra") || "0.00";
             const frete = localStorage.getItem("valorFrete") || "0.00";
@@ -209,7 +214,17 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
             const fTotal = parseFloat(total).toFixed(2).replace(".", ",");
 
             const dadosEntregaJSON = localStorage.getItem('dadosEntrega');
-            const fallbackEntrega = { tipo: 'endereco', nome: 'Fulano Silva', documento: '123.456.789-00', endereco: 'Exemplo Fictício, 123', bairro: 'Centro', cep: '13180-000', municipio: 'Hortolândia', uf: 'SP', fone: '(19) 99999-9999' };
+            const fallbackEntrega = {
+                tipo: 'endereco',
+                nome: 'Fulano Silva',
+                documento: '123.456.789-00',
+                endereco: 'Exemplo Fictício, 123',
+                bairro: 'Centro',
+                cep: '13180-000',
+                municipio: 'Hortolândia',
+                uf: 'SP',
+                fone: '(19) 99999-9999'
+            };
             let entrega;
             try {
                 entrega = dadosEntregaJSON ? JSON.parse(dadosEntregaJSON) : fallbackEntrega;
@@ -226,7 +241,9 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
 
             // --- Cabeçalho e Dados (Emitente/Destinatário) ---
             doc.setFontSize(18);
-            doc.text("NOTA FISCAL", colCentro, 20, { align: 'center' });
+            doc.text("NOTA FISCAL", colCentro, 20, {
+                align: 'center'
+            });
             doc.setFontSize(10);
             doc.setFont("helvetica", "bold");
             doc.text("DADOS DO EMITENTE", margemEsq, 35);
@@ -272,8 +289,8 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
             // Dados Dinâmicos da Seção de Entrega (com Truncamento)
             doc.setFontSize(10);
             const col1_largura = 109; // Largura da primeira coluna
-            const col2_largura = 39;  // Largura da segunda coluna
-            const col3_largura = 39;  // Largura da terceira coluna
+            const col2_largura = 39; // Largura da segunda coluna
+            const col3_largura = 39; // Largura da terceira coluna
 
             // LINHA 1
             let nomeSplit = doc.splitTextToSize(entrega.nome || '', col1_largura);
@@ -308,27 +325,39 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
             doc.text("Qtd.", margemEsq, y);
             doc.text("Un.", margemEsq + 15, y);
             doc.text("Descrição", margemEsq + 30, y);
-            doc.text("Valor Unit.", margemEsq + 140, y, { align: 'right' }); // Alinhado à direita
-            doc.text("Valor Total", margemEsq + 170, y, { align: 'right' }); // Alinhado à direita
+            doc.text("Valor Unit.", margemEsq + 140, y, {
+                align: 'right'
+            }); // Alinhado à direita
+            doc.text("Valor Total", margemEsq + 170, y, {
+                align: 'right'
+            }); // Alinhado à direita
             doc.line(margemEsq, y + 2, margemDir, y + 2); // Linha abaixo dos cabeçalhos
             y += 7;
             // Linha do Produto
             doc.text("1", margemEsq, y);
             doc.text("UN", margemEsq + 15, y);
             doc.text("Produto Exemplo Comprado no Site", margemEsq + 30, y);
-            doc.text(fSubtotal, margemEsq + 140, y, { align: 'right' });
-            doc.text(fSubtotal, margemEsq + 170, y, { align: 'right' });
+            doc.text(fSubtotal, margemEsq + 140, y, {
+                align: 'right'
+            });
+            doc.text(fSubtotal, margemEsq + 170, y, {
+                align: 'right'
+            });
             y += 7;
             // Linha do Frete (se houver)
             if (parseFloat(frete) > 0) {
-                 doc.text("1", margemEsq, y);
-                 doc.text("UN", margemEsq + 15, y);
-                 doc.text("Serviço de Entrega (Frete)", margemEsq + 30, y);
-                 doc.text(fFrete, margemEsq + 140, y, { align: 'right' });
-                 doc.text(fFrete, margemEsq + 170, y, { align: 'right' });
-                 y += 7;
+                doc.text("1", margemEsq, y);
+                doc.text("UN", margemEsq + 15, y);
+                doc.text("Serviço de Entrega (Frete)", margemEsq + 30, y);
+                doc.text(fFrete, margemEsq + 140, y, {
+                    align: 'right'
+                });
+                doc.text(fFrete, margemEsq + 170, y, {
+                    align: 'right'
+                });
+                y += 7;
             }
-             y += 3; // Espaço antes da próxima seção
+            y += 3; // Espaço antes da próxima seção
 
             // --- CÁLCULO DO IMPOSTO ---
             doc.setFont("helvetica", "bold");
@@ -363,16 +392,34 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
             // Valores da Seção de Imposto
             doc.setFontSize(10);
             // Primeira linha de valores (alinhados à direita antes da linha vertical)
-            doc.text("0,00", 47, y + 7, { align: 'right' });
-            doc.text("0,00", 72, y + 7, { align: 'right' });
-            doc.text("0,00", 144, y + 7, { align: 'right' });
-            doc.text(fSubtotal, 199, y + 7, { align: 'right' }); // Total Produtos
+            doc.text("0,00", 47, y + 7, {
+                align: 'right'
+            });
+            doc.text("0,00", 72, y + 7, {
+                align: 'right'
+            });
+            doc.text("0,00", 144, y + 7, {
+                align: 'right'
+            });
+            doc.text(fSubtotal, 199, y + 7, {
+                align: 'right'
+            }); // Total Produtos
             // Segunda linha de valores
-            doc.text(fFrete, 47, y + 17, { align: 'right' }); // Valor Frete
-            doc.text("0,00", 72, y + 17, { align: 'right' });
-            doc.text("0,00", 104, y + 17, { align: 'right' });
-            doc.text("0,00", 158, y + 17, { align: 'right' });
-            doc.text(fTotal, 199, y + 17, { align: 'right' }); // Valor Total Nota
+            doc.text(fFrete, 47, y + 17, {
+                align: 'right'
+            }); // Valor Frete
+            doc.text("0,00", 72, y + 17, {
+                align: 'right'
+            });
+            doc.text("0,00", 104, y + 17, {
+                align: 'right'
+            });
+            doc.text("0,00", 158, y + 17, {
+                align: 'right'
+            });
+            doc.text(fTotal, 199, y + 17, {
+                align: 'right'
+            }); // Valor Total Nota
             y += 25; // Avança Y para a próxima seção
 
             // --- Datas ---
@@ -422,25 +469,25 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
 
             const closeButton = notification.querySelector('.notification-close');
             if (closeButton) {
-                 // Remove listener antigo para evitar duplicação
-                 closeButton.removeEventListener('click', hideNotification);
-                 // Adiciona novo listener
-                 closeButton.addEventListener('click', hideNotification);
+                // Remove listener antigo para evitar duplicação
+                closeButton.removeEventListener('click', hideNotification);
+                // Adiciona novo listener
+                closeButton.addEventListener('click', hideNotification);
             }
         }
 
         function hideNotification() {
             const notification = document.getElementById('success-notification');
-             if (!notification) return;
+            if (!notification) return;
 
             clearTimeout(notificationTimeout);
             notification.classList.remove('show');
-             // Adiciona 'hidden' após a transição CSS para poder usar display: none se necessário
-             // (o CSS atual usa visibility/opacity, então não é estritamente necessário)
-             setTimeout(() => {
-                 notification.classList.add('hidden');
-                 notification.style.display = 'none'; // Esconde após animação
-             }, 400); // Deve ser igual à duração da transição no CSS (0.4s)
+            // Adiciona 'hidden' após a transição CSS para poder usar display: none se necessário
+            // (o CSS atual usa visibility/opacity, então não é estritamente necessário)
+            setTimeout(() => {
+                notification.classList.add('hidden');
+                notification.style.display = 'none'; // Esconde após animação
+            }, 400); // Deve ser igual à duração da transição no CSS (0.4s)
         }
 
 
@@ -453,6 +500,7 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
                 if (isNaN(numero)) return "R$ 0,00";
                 return "R$ " + numero.toFixed(2).replace(".", ",");
             }
+
             function formatarFrete(valorStr) {
                 const numero = parseFloat(valorStr);
                 if (isNaN(numero) || numero === 0) return "GRÁTIS";
@@ -504,49 +552,49 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
                 });
             }
             if (inputVencimento) {
-                 inputVencimento.setAttribute('maxlength', '5'); // MM/AA
-                 inputVencimento.addEventListener('input', (e) => {
-                     let valor = e.target.value.replace(/\D/g, '').substring(0, 4);
-                     if (valor.length > 2) valor = valor.substring(0, 2) + '/' + valor.substring(2);
-                     e.target.value = valor;
-                 });
+                inputVencimento.setAttribute('maxlength', '5'); // MM/AA
+                inputVencimento.addEventListener('input', (e) => {
+                    let valor = e.target.value.replace(/\D/g, '').substring(0, 4);
+                    if (valor.length > 2) valor = valor.substring(0, 2) + '/' + valor.substring(2);
+                    e.target.value = valor;
+                });
             }
-             if (inputCvv) {
-                 inputCvv.setAttribute('maxlength', '4'); // Alguns cartões têm 4 dígitos
-                 inputCvv.addEventListener('input', (e) => {
-                     e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
-                 });
+            if (inputCvv) {
+                inputCvv.setAttribute('maxlength', '4'); // Alguns cartões têm 4 dígitos
+                inputCvv.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+                });
             }
-             if (inputDocumento && selectTipoDocumento) {
-                 const aplicarMascaraDocumento = () => {
-                     let valor = inputDocumento.value.replace(/\D/g, '');
-                     const tipo = selectTipoDocumento.value;
-                     if (tipo === 'CPF') {
-                         inputDocumento.placeholder = '000.000.000-00';
-                         inputDocumento.setAttribute('maxlength', '14');
-                         valor = valor.substring(0, 11);
-                         valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-                         valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-                         valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                     } else { // CNPJ
-                         inputDocumento.placeholder = '00.000.000/0000-00';
-                         inputDocumento.setAttribute('maxlength', '18');
-                         valor = valor.substring(0, 14);
-                         valor = valor.replace(/(\d{2})(\d)/, '$1.$2');
-                         valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-                         valor = valor.replace(/(\d{3})(\d)/, '$1/$2');
-                         valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
-                     }
-                     inputDocumento.value = valor;
-                 };
-                 inputDocumento.addEventListener('input', aplicarMascaraDocumento);
-                 selectTipoDocumento.addEventListener('change', () => {
-                     inputDocumento.value = ''; // Limpa ao trocar o tipo
-                     aplicarMascaraDocumento(); // Aplica placeholder e maxlength corretos
-                 });
-                 // Define placeholder inicial
-                 aplicarMascaraDocumento();
-             }
+            if (inputDocumento && selectTipoDocumento) {
+                const aplicarMascaraDocumento = () => {
+                    let valor = inputDocumento.value.replace(/\D/g, '');
+                    const tipo = selectTipoDocumento.value;
+                    if (tipo === 'CPF') {
+                        inputDocumento.placeholder = '000.000.000-00';
+                        inputDocumento.setAttribute('maxlength', '14');
+                        valor = valor.substring(0, 11);
+                        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+                        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+                        valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    } else { // CNPJ
+                        inputDocumento.placeholder = '00.000.000/0000-00';
+                        inputDocumento.setAttribute('maxlength', '18');
+                        valor = valor.substring(0, 14);
+                        valor = valor.replace(/(\d{2})(\d)/, '$1.$2');
+                        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+                        valor = valor.replace(/(\d{3})(\d)/, '$1/$2');
+                        valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
+                    }
+                    inputDocumento.value = valor;
+                };
+                inputDocumento.addEventListener('input', aplicarMascaraDocumento);
+                selectTipoDocumento.addEventListener('change', () => {
+                    inputDocumento.value = ''; // Limpa ao trocar o tipo
+                    aplicarMascaraDocumento(); // Aplica placeholder e maxlength corretos
+                });
+                // Define placeholder inicial
+                aplicarMascaraDocumento();
+            }
 
             // --- Lógica de Seleção dos Blocos e Exibição do Formulário ---
             document.querySelectorAll('input[name="forma-pagamento"]').forEach(radio => {
@@ -559,44 +607,62 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
 
                     // Mostra ou esconde o formulário de novo cartão
                     if (formNovoCartao) {
-                         formNovoCartao.style.display = radioNovoCartao && radioNovoCartao.checked ? 'flex' : 'none';
-                         if (!(radioNovoCartao && radioNovoCartao.checked)) {
-                             resetarErrosCartao(); // Limpa erros se esconder o form
-                         }
+                        formNovoCartao.style.display = radioNovoCartao && radioNovoCartao.checked ? 'flex' : 'none';
+                        if (!(radioNovoCartao && radioNovoCartao.checked)) {
+                            resetarErrosCartao(); // Limpa erros se esconder o form
+                        }
                     }
                 });
             });
-             // Garante estado inicial correto do formulário de cartão
-             if (formNovoCartao) {
-                 formNovoCartao.style.display = radioNovoCartao && radioNovoCartao.checked ? 'flex' : 'none';
-             }
+            // Garante estado inicial correto do formulário de cartão
+            if (formNovoCartao) {
+                formNovoCartao.style.display = radioNovoCartao && radioNovoCartao.checked ? 'flex' : 'none';
+            }
 
             // --- Funções de Validação e Reset ---
             function validarFormularioCartao() {
                 let isValid = true;
                 resetarErrosCartao(); // Limpa erros antigos
-                const campos = [
-                    { input: inputNumero, grupo: grupoNumero, minLength: 19 }, // 16 digitos + 3 espaços
-                    { input: inputNome, grupo: grupoNome },
-                    { input: inputVencimento, grupo: grupoVencimento, minLength: 5 }, // MM/AA
-                    { input: inputCvv, grupo: grupoCvv, minLength: 3 },
-                    { input: inputDocumento, grupo: grupoDocumento, minLength: (selectTipoDocumento.value === 'CPF' ? 14 : 18) }
+                const campos = [{
+                        input: inputNumero,
+                        grupo: grupoNumero,
+                        minLength: 19
+                    }, // 16 digitos + 3 espaços
+                    {
+                        input: inputNome,
+                        grupo: grupoNome
+                    },
+                    {
+                        input: inputVencimento,
+                        grupo: grupoVencimento,
+                        minLength: 5
+                    }, // MM/AA
+                    {
+                        input: inputCvv,
+                        grupo: grupoCvv,
+                        minLength: 3
+                    },
+                    {
+                        input: inputDocumento,
+                        grupo: grupoDocumento,
+                        minLength: (selectTipoDocumento.value === 'CPF' ? 14 : 18)
+                    }
                 ];
 
                 campos.forEach(campo => {
-                     if (!campo.input || !campo.grupo) return; // Pula se elemento não existe
+                    if (!campo.input || !campo.grupo) return; // Pula se elemento não existe
 
-                     const valor = campo.input.value.trim();
-                     let invalido = valor === '';
-                     if (campo.minLength && valor.length < campo.minLength) {
-                         invalido = true;
-                     }
-                     // Adicionar validações mais específicas aqui se necessário (ex: data de vencimento válida)
+                    const valor = campo.input.value.trim();
+                    let invalido = valor === '';
+                    if (campo.minLength && valor.length < campo.minLength) {
+                        invalido = true;
+                    }
+                    // Adicionar validações mais específicas aqui se necessário (ex: data de vencimento válida)
 
-                     if (invalido) {
-                         campo.grupo.classList.add('campo-com-erro');
-                         isValid = false;
-                     }
+                    if (invalido) {
+                        campo.grupo.classList.add('campo-com-erro');
+                        isValid = false;
+                    }
                 });
                 return isValid;
             }
@@ -608,7 +674,7 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
                 });
             }
 
-// --- Lógica do Botão "Continuar" (Principal) ---
+            // --- Lógica do Botão "Continuar" (Principal) ---
             if (btnContinuarPagina) {
                 btnContinuarPagina.addEventListener('click', function() {
                     let pagamentoSucesso = false; // Flag para controlar se o pagamento foi OK
@@ -616,12 +682,12 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
 
                     if (!radioSelecionado) {
                         alert("Por favor, selecione um método de pagamento.");
-                        return; 
+                        return;
                     }
 
                     const metodoPagamento = radioSelecionado.value;
 
-                    switch(metodoPagamento) {
+                    switch (metodoPagamento) {
                         case 'novo-cartao':
                             if (validarFormularioCartao()) {
                                 console.log("Pagamento (com novo cartão) validado!");
@@ -638,8 +704,8 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
                             pagamentoSucesso = true;
                             break;
                         default:
-                             console.warn("Método de pagamento desconhecido:", metodoPagamento);
-                             alert("Método de pagamento inválido selecionado.");
+                            console.warn("Método de pagamento desconhecido:", metodoPagamento);
+                            alert("Método de pagamento inválido selecionado.");
                     }
 
                     // ==========================================================
@@ -661,57 +727,60 @@ $telefone_cliente = $_SESSION['usuario_telefone'] ?? 'N/A';
 
                         // --- Fluxo Principal (Salva no banco de dados) ---
                         // (Anteriormente chamado de "Caso 2")
-                        
+
                         btnContinuarPagina.disabled = true;
                         btnContinuarPagina.innerText = "Processando...";
 
-                        fetch('Banco de dados/processa_pedido.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                cart: cart,
-                                endereco_id: entrega.endereco_id, // Isto será NULL se for agência
-                                valor_total: total
+                        fetch('../Banco de dados/processa_pedido.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    cart: cart,
+                                    endereco_id: entrega.endereco_id, // Isto será NULL se for agência
+                                    valor_total: total
+                                })
                             })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.sucesso) {
-                                // SUCESSO!
-                                // 1. Limpa o carrinho local (só depois de salvar no BD)
-                                localStorage.setItem("carrinho", "[]");
-                                
-                                // 2. Mostra notificação e gera PDF
-                                const notificationDuration = 3000;
-                                showNotification("Pagamento bem-sucedido! Gerando nota fiscal...", 'success', notificationDuration);
-                                setTimeout(gerarNotaFiscalPDF, notificationDuration + 400);
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.sucesso) {
+                                    // SUCESSO!
+                                    // 1. Limpa o carrinho local (só depois de salvar no BD)
+                                    localStorage.setItem("carrinho", "[]");
 
-                                // Habilita o botão novamente
+                                    // 2. Mostra notificação e gera PDF
+                                    const notificationDuration = 3000;
+                                    showNotification("Pagamento bem-sucedido! Gerando nota fiscal...", 'success', notificationDuration);
+                                    setTimeout(gerarNotaFiscalPDF, notificationDuration + 400);
+
+                                    // Habilita o botão novamente
+                                    btnContinuarPagina.disabled = false;
+                                    btnContinuarPagina.innerText = "Continuar";
+
+                                } else {
+                                    // FALHA
+                                    alert("Houve um erro ao salvar seu pedido: " + data.mensagem);
+                                    btnContinuarPagina.disabled = false;
+                                    btnContinuarPagina.innerText = "Continuar";
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Erro de conexão ao processar pedido:", error);
+                                alert("Erro de conexão. Seu pedido não foi salvo. Tente novamente.");
                                 btnContinuarPagina.disabled = false;
                                 btnContinuarPagina.innerText = "Continuar";
-
-                            } else {
-                                // FALHA
-                                alert("Houve um erro ao salvar seu pedido: " + data.mensagem);
-                                btnContinuarPagina.disabled = false;
-                                btnContinuarPagina.innerText = "Continuar";
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Erro de conexão ao processar pedido:", error);
-                            alert("Erro de conexão. Seu pedido não foi salvo. Tente novamente.");
-                            btnContinuarPagina.disabled = false;
-                            btnContinuarPagina.innerText = "Continuar";
-                        });
+                            });
                     }
                     // ==========================================================
                     // --- FIM DA MODIFICAÇÃO ---
                     // ==========================================================
                 });
             } else {
-                 console.error("Botão '.btn-continuar-entrega' não encontrado.");
+                console.error("Botão '.btn-continuar-entrega' não encontrado.");
             }
         }); // <-- FIM do DOMContentLoaded
     </script>
-    </body>
+</body>
+
 </html>

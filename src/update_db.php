@@ -1,5 +1,5 @@
 <?php
-require 'Banco de dados/conexao.php';
+require '../Banco de dados/conexao.php';
 
 try {
     echo "Iniciando atualização do banco de dados...\n";

@@ -16,13 +16,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // 1. Validar Senhas
     if ($senha !== $confirma_senha) {
         // Se as senhas não batem, volta ao cadastro com erro
-        header("Location: ../tela_cadastro.html?erro=senhas_nao_conferem");
+        header("Location: ../src/tela_cadastro.html?erro=senhas_nao_conferem");
         exit();
     }
 
     // 2. Validar força da senha (mínimo 6 caracteres)
     if (strlen($senha) < 6) {
-        header("Location: ../tela_cadastro.html?erro=senha_curta");
+        header("Location: ../src/tela_cadastro.html?erro=senha_curta");
         exit();
     }
 
@@ -48,22 +48,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['usuario_nome'] = $nome;
         $_SESSION['usuario_tipo'] = $tipo_usuario; // Salva o tipo na sessão
         
-        header("Location: ../index.php"); // Redireciona para a nova index.php
+        header("Location: ../src/index.php"); // Redireciona para a nova index.php
         exit();
 
     } catch (PDOException $e) {
         // 7. Erro (provavelmente email ou CPF duplicado)
         if ($e->errorInfo[1] == 1062) { // 1062 é o código de "Entrada duplicada"
-            header("Location: ../tela_cadastro.html?erro=email_cpf_duplicado");
+            header("Location: ../src/tela_cadastro.html?erro=email_cpf_duplicado");
         } else {
             // Outro erro de banco
-            header("Location: ../tela_cadastro.html?erro=db_error");
+            header("Location: ../src/tela_cadastro.html?erro=db_error");
         }
         exit();
     }
 } else {
     // Se acessou o script sem ser por POST, volta ao cadastro
-    header("Location: ../tela_cadastro.html");
+    header("Location: ../src/tela_cadastro.html");
     exit();
 }
 ?>

@@ -60,7 +60,7 @@ if (!isset($_SESSION['usuario_id'])) {
         <h1>Adicionar Novo Endereço</h1>
         
         <div class="conta-secao">
-            <form action="Banco de dados/processa_novo_endereco.php" method="POST">
+            <form action="../Banco de dados/processa_novo_endereco.php" method="POST">
                 <div class="form-grupo">
                     <label for="cep">CEP:</label>
                     <input type="text" id="cep" name="cep" required>

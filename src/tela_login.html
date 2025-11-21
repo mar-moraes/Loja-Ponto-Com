@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cadastro - Loja Ponto Com</title>
+  <title>Login - Loja Ponto Com</title>
 
-  <link rel="stylesheet" href="estilos/style.css">
+  <link rel="stylesheet" href="../assets/estilos/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
 
@@ -14,7 +14,7 @@
     <nav class="actions"> 
       <div class="logo-container"> 
         <a href="index.php" style="display: flex; align-items: center;">
-          <img src="imagens/exemplo-logo.png" alt="Logo Loja" style="width: 40px; height: 40px;">
+          <img src="../assets/imagens/exemplo-logo.png" alt="Logo Loja" style="width: 40px; height: 40px;">
         </a>
       </div> 
       
@@ -23,7 +23,7 @@
                style="font-size: 16px; width: 100%; height: 40px; padding-left: 15px; padding-right: 45px; border-radius: 6px; border: none;">
         <button type="submit" 
                 style="position: absolute; right: 0; top: 0; height: 40px; width: 45px; border: none; background: transparent; cursor: pointer;">
-          <img src="imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px; opacity: 0.6;">
+          <img src="../assets/imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px; opacity: 0.6;">
         </button>
       </form>
       
@@ -32,34 +32,19 @@
         <a href="tela_login.html">Entre</a>
         <a href="tela_carrinho.php" style="display: flex; align-items: center; gap: 5px;">
           Carrinho
-          <img src="imagens/carrinho invertido.png" alt="Carrinho" style="width: 20px; height: 20px;">
+          <img src="../assets/imagens/carrinho invertido.png" alt="Carrinho" style="width: 20px; height: 20px;">
         </a>
       </div>
     </nav>
   </header>
 
   <main class="auth-container">
-    <h1>Crie sua conta</h1>
+    <h1>Entrar na sua conta</h1>
 
-    <form action="Banco de dados/processa_cadastro.php" method="POST">
-      <label>
-        Nome completo:
-        <input type="text" name="nome" required>
-      </label>
-
+    <form action="../Banco de dados/processa_login.php" method="POST">
       <label>
         E-mail:
         <input type="email" name="email" required>
-      </label>
-
-      <label>
-        CPF:
-        <input type="text" name="cpf" required>
-      </label>
-
-      <label>
-        Telefone:
-        <input type="tel" name="telefone">
       </label>
 
       <label>
@@ -67,17 +52,12 @@
         <input type="password" name="senha" required>
       </label>
 
-      <label>
-        Confirmar senha:
-        <input type="password" name="confirma_senha" required>
-      </label>
-
-      <button type="submit">Cadastrar</button>
+      <button type="submit">Entrar</button>
     </form>
 
-    <p>Já possui uma conta? <a href="tela_login.html">Entre aqui</a>.</p>
+    <p>Ainda não tem uma conta? <a href="tela_cadastro.html">Cadastre-se</a>.</p>
   </main>
 
-  <footer style="text-align:center; padding:20px; margin-top:40px;">© 2025 Loja</footer>
+  <footer style="text-align:center; padding:20px; margin-top:40px;">© 2025 Loja Ponto Com</footer>
 </body>
 </html>

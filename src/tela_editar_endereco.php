@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'Banco de dados/conexao.php';
+require '../Banco de dados/conexao.php';
 
 // Verifica se o usuário está logado
 if (!isset($_SESSION['usuario_id'])) {
@@ -85,7 +85,7 @@ try {
         <h1>Editar Endereço</h1>
         
         <div class="conta-secao">
-            <form action="Banco de dados/processa_editar_endereco.php" method="POST">
+            <form action="../Banco de dados/processa_editar_endereco.php" method="POST">
                 <input type="hidden" name="endereco_id" value="<?php echo $endereco['id']; ?>">
                 
                 <div class="form-grupo">

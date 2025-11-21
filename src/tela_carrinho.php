@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'Banco de dados/conexao.php'; // Inclui a conexão
+require '../Banco de dados/conexao.php'; // Inclui a conexão
 
 $usuario_logado = isset($_SESSION['usuario_nome']);
 $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '';
@@ -54,7 +54,7 @@ if ($usuario_logado) {
                     'id' => (int) $item['id'], // ID DO PRODUTO (Necessário para sincronizar_carrinho.php)
                     'title' => $item['title'],
                     'price' => (float) $item['price'],
-                    'img' => $item['img'] ?? 'imagens/placeholder.png',
+                    'img' => $item['img'] ?? '../assets/imagens/placeholder.png',
                     'quantidade' => (int) $item['quantidade']
                 ];
             }
@@ -71,8 +71,8 @@ if ($usuario_logado) {
   <meta charset="UTF-8">
   <title>Tela de Compras</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="estilos/style.css"/>
-  <link rel="stylesheet" href="estilos/estilo_carrinho.css">
+  <link rel="stylesheet" href="../assets/estilos/style.css"/>
+  <link rel="stylesheet" href="../assets/estilos/estilo_carrinho.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
   <style>
@@ -106,27 +106,27 @@ if ($usuario_logado) {
       <nav class="actions"> 
         <div class="logo-container"> 
             <a href="index.php" style="display: flex; align-items: center;">
-              <img src="imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px;">
+              <img src="../assets/imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px;">
             </a>
           </div> 
         
         <div style="position: relative; width: 600px; max-width: 100%;">
           <input type="search" id="pesquisa" placeholder="Buscar no carrinho/salvos..." style="font-size: 16px; width: 100%; height: 40px; padding-left: 15px; padding-right: 45px; border-radius: 6px; border: none; box-sizing: border-box;">
           <button type="button" style="position: absolute; right: 0; top: 0; height: 40px; width: 45px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            <img src="imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px; opacity: 0.6;">
+            <img src="../assets/imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px; opacity: 0.6;">
           </button>
         </div>
         <div style="display: flex; gap: 30px; align-items: center;">
           <?php if ($usuario_logado): ?>
             <a href="tela_minha_conta.php">Olá, <?php echo htmlspecialchars($nome_usuario); ?></a>
-            <a href="Banco de dados/logout.php">Sair</a>
+            <a href="../Banco de dados/logout.php">Sair</a>
           <?php else: ?>
             <a href="tela_cadastro.html">Crie a sua conta</a>
             <a href="tela_login.html">Entre</a>
           <?php endif; ?>
           <a href="tela_carrinho.php" style="display: flex; align-items: center; gap: 5px;">
             Carrinho
-            <img src="imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
+            <img src="../assets/imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
           </a>
         </div>
         </nav>
@@ -227,7 +227,7 @@ if ($usuario_logado) {
     // Linha de limpar filtro foi REMOVIDA
       
     if (carrinho.length === 0) {
-      painelCarrinho.innerHTML = "<p style=\"display: flex; align-items: center; justify-content: left;\"><img src=\"imagens/carrinho.png\" alt=\"\" style=\"width: 30px; height: 30px; margin-right: 5px;\"> Nenhum produto no carrinho. </p>";    
+      painelCarrinho.innerHTML = "<p style=\"display: flex; align-items: center; justify-content: left;\"><img src=\"../assets/imagens/carrinho.png\" alt=\"\" style=\"width: 30px; height: 30px; margin-right: 5px;\"> Nenhum produto no carrinho. </p>";    
       painelCarrinho.style.flexDirection = "initial"; 
       painelCarrinho.style.gap = "0";
     } else {
@@ -499,7 +499,7 @@ if ($usuario_logado) {
       localStorage.setItem("totalCompra", total.toFixed(2));
 
 
-      fetch('Banco de dados/sincronizar_carrinho.php', { 
+      fetch('../Banco de dados/sincronizar_carrinho.php', { 
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ carrinho: carrinho }) 
@@ -645,7 +645,7 @@ if ($usuario_logado) {
           wrapper.innerHTML = '<p style="text-align: center; width: 100%;">Carregando recomendações...</p>';
 
           // Chama o novo script PHP
-          fetch('Banco de dados/buscar_recomendacoes.php')
+          fetch('../Banco de dados/buscar_recomendacoes.php')
               .then(response => response.json())
               .then(data => {
                   if (data.sucesso && data.produtos.length > 0) {
@@ -667,7 +667,7 @@ if ($usuario_logado) {
                           }
 
                           const precoFinalFormatado = `R$ ${precoFinal.toFixed(2).replace('.', ',')}`;
-                          const imgUrl = produto.imagem_url ? produto.imagem_url : 'imagens/placeholder.png';
+                          const imgUrl = produto.imagem_url ? produto.imagem_url : '../assets/imagens/placeholder.png';
 
                           // Cria o HTML do card
                           // ATENÇÃO: Adicionamos data-id="${produto.id}" ao .card

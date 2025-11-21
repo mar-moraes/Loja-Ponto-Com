@@ -38,13 +38,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
             // 8. Redireciona para a página principal (ou index.html)
-            header("Location: ../index.php");
+            header("Location: ../src/index.php");
             exit();
             
             
         } else {
             // 9. Usuário ou senha incorretos
-            header("Location: ../tela_login.html?erro=login_invalido");
+            header("Location: ../src/tela_login.html?erro=login_invalido");
             exit();
         }
 
