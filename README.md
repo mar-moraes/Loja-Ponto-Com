@@ -2,7 +2,7 @@
 
 Este projeto foi desenvolvido como parte da avaliação da disciplina de Desenvolvimento Web 1. Trata-se de uma plataforma de e-commerce (Marketplace) onde usuários podem se cadastrar para comprar produtos e, opcionalmente, atuar como fornecedores para vender seus próprios itens.
 
-## 📄 Documentação e Artefatos
+## Documentação e Artefatos
 
 Mais informações detalhadas sobre o projeto podem ser encontradas na pasta `Artefatos`:
 - **Diretrizes_TrabalhoPrático.pdf**: Regras e escopo do trabalho.
@@ -18,7 +18,7 @@ Os diagramas do projeto estão disponíveis em `Artefatos/Diagramas`:
 
 ---
 
-## 🚀 Funcionalidades e Telas
+## Funcionalidades e Telas
 
 O sistema atende aos requisitos propostos através das seguintes telas e funcionalidades:
 
@@ -62,7 +62,7 @@ O sistema atende aos requisitos propostos através das seguintes telas e funcion
 
 ---
 
-## 🛠 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 - **Frontend**: HTML5, CSS3 (Vanilla), JavaScript (ES6+).
 - **Backend**: PHP (Vanilla).
@@ -71,7 +71,7 @@ O sistema atende aos requisitos propostos através das seguintes telas e funcion
 
 ---
 
-## ⚙️ Instalação e Execução
+## Instalação e Execução
 
 1. **Banco de Dados**:
    - Importe o arquivo `Banco de dados/bancodadosteste.sql` no seu SGBD MySQL.
@@ -86,7 +86,7 @@ O sistema atende aos requisitos propostos através das seguintes telas e funcion
 
 ---
 
-## 📈 Escalabilidade e Melhorias Futuras
+## Escalabilidade e Melhorias Futuras
 
 ### Pontos Fortes
 - **Estrutura Modular**: O código está organizado em pastas (`Banco de dados`, `estilos`, `imagens`), facilitando a manutenção.
@@ -99,7 +99,3 @@ O sistema atende aos requisitos propostos através das seguintes telas e funcion
 - **Testes Automatizados**: Adicionar testes unitários e de integração (atualmente inexistentes).
 - **Gateway de Pagamento Real**: Integrar com APIs reais (Stripe, Mercado Pago) em vez da simulação atual.
 - **API REST**: Transformar o backend em uma API RESTful para servir tanto a web quanto possíveis aplicativos móveis.
-
----
-
-*Documento gerado automaticamente pelo assistente de IA.*
