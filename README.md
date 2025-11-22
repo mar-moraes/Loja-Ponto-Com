@@ -373,49 +373,49 @@ git push origin feature/nova-funcionalidade
 
 ### Página Inicial
 
-![Página Inicial](assets/screenshots/home.png)
+![Página Inicial](Artefatos/Readme/Fotos%20do%20readme/homepage.jpg)
 *Catálogo de produtos com barra de busca e navegação por categorias*
 
 ---
 
 ### Detalhes do Produto
 
-![Produto](assets/screenshots/produto.png)
+![Produto](Artefatos/Readme/Fotos%20do%20readme/produto_1.jpg)
 *Visualização completa do produto com galeria de imagens, avaliações e especificações técnicas*
 
 ---
 
 ### Carrinho de Compras
 
-![Carrinho](assets/screenshots/carrinho.png)
+![Carrinho](Artefatos/Readme/Fotos%20do%20readme/carrinho.jpg)
 *Gestão de itens do carrinho com cálculo automático de subtotais e total*
 
 ---
 
 ### Checkout - Entrega
 
-![Entrega](assets/screenshots/entrega.png)
+![Entrega](Artefatos/Readme/Fotos%20do%20readme/entrega.jpg)
 *Seleção de endereço de entrega com opção de cadastrar novo endereço*
 
 ---
 
 ### Checkout - Pagamento
 
-![Pagamento](assets/screenshots/pagamento.png)
+![Pagamento](Artefatos/Readme/Fotos%20do%20readme/pagamento.jpg)
 *Múltiplas formas de pagamento: Cartão de Crédito, PIX e Boleto*
 
 ---
 
 ### Minha Conta
 
-![Minha Conta](assets/screenshots/minha_conta.png)
+![Minha Conta](Artefatos/Readme/Fotos%20do%20readme/minha_conta_endereço.jpg)
 *Perfil do usuário com histórico de compras e gestão de endereços*
 
 ---
 
 ### Painel do Fornecedor
 
-![Painel Fornecedor](assets/screenshots/painel_fornecedor.png)
+![Painel Fornecedor](Artefatos/Readme/Fotos%20do%20readme/fornecedor.jpg)
 *Gestão completa de produtos com sistema de rascunhos*
 
 ---
