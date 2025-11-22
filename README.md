@@ -102,68 +102,67 @@ Criar uma solução de marketplace que:
 ## Estrutura do Projeto
 
 ```
-Telas/
-├── src/                                    # Código-fonte das páginas
-│   ├── index.php                          # Página inicial (catálogo)
-│   ├── buscar.php                         # Sistema de busca
-│   ├── tela_login.html                    # Login de usuários
-│   ├── tela_cadastro.html                 # Cadastro de novos usuários
-│   ├── tela_produto.php                   # Detalhes do produto
-│   ├── tela_carrinho.php                  # Carrinho de compras
-│   ├── tela_entrega.php                   # Seleção de endereço
-│   ├── tela_pagamento.php                 # Pagamento
-│   ├── tela_minha_conta.php               # Perfil e histórico
-│   ├── tela_novo_endereco.php             # Cadastro de endereço
-│   ├── tela_editar_endereco.php           # Edição de endereço
-│   ├── tela_produto_do_fornecedor.php     # Gestão de produtos (fornecedor)
-│   ├── tela_gerenciar_produtos.php        # Listagem de produtos do fornecedor
-│   └── update_db.php                      # Atualização de dados do usuário
-│
-├── assets/                                # Recursos estáticos
-│   ├── estilos/                           # Arquivos CSS
-│   │   ├── estilo_cadastro.css
-│   │   ├── estilo_carrinho.css
-│   │   ├── estilo_inicial.css
-│   │   ├── estilo_login.css
-│   │   └── estilo_minha_conta.css
-│   ├── imagens/                           # Imagens do site
-│   │   └── produtos/                      # Uploads de produtos
-│   └── script.js                          # JavaScript global
-│
-├── Banco de dados/                        # Scripts e lógica do banco
-│   ├── bancodadosteste.sql                # Dump do banco de dados
-│   ├── conexao.php                        # Configuração de conexão
-│   ├── processa_login.php                 # Autenticação
-│   ├── processa_cadastro.php              # Registro de usuários
-│   ├── processa_novo_produto.php          # Cadastro de produtos
-│   ├── processa_pedido.php                # Finalização de compras
-│   ├── processa_avaliacao.php             # Sistema de avaliações
-│   ├── salvar_rascunho.php                # Salvar produtos incompletos
-│   ├── sincronizar_carrinho.php           # Sincronização do carrinho
-│   ├── buscar_categorias.php              # API de categorias
-│   ├── buscar_produto.php                 # API de produtos
-│   ├── buscar_recomendacoes.php           # Produtos recomendados
-│   ├── excluir_produto.php                # Exclusão de produtos
-│   ├── excluir_avaliacao.php              # Exclusão de avaliações
-│   └── logout.php                         # Encerramento de sessão
-│
-├── Artefatos/                             # Documentação do projeto
-│   ├── Diagramas/                         # Diagramas UML
-│   │   ├── Banco de dados/                # Modelo ER
-│   │   ├── Casos de Uso/                  # Diagrama de casos de uso
-│   │   ├── Estado/                        # Diagrama de estados
-│   │   └── Sequência/                     # Diagrama de sequência
-│   ├── Diretrizes_TrabalhoPrático.pdf     # Especificações do projeto
-│   ├── Telas e requisitos.pdf             # Requisitos funcionais
-│   └── slides.pdf                         # Apresentação
-│
-├── Testes/                                # Testes automatizados
-│   └── cypress/                           # Testes E2E
-│       ├── e2e/                           # Specs de teste
-│       └── support/                       # Utilitários de teste
-│
-├── .gitignore                             # Arquivos ignorados pelo Git
-└── README.md                              # Este arquivo
+src/                                        # Código-fonte das páginas
+├── index.php                               # Página inicial (catálogo)
+├── buscar.php                              # Sistema de busca
+├── tela_login.html                         # Login de usuários
+├── tela_cadastro.html                      # Cadastro de novos usuários
+├── tela_produto.php                        # Detalhes do produto
+├── tela_carrinho.php                       # Carrinho de compras
+├── tela_entrega.php                        # Seleção de endereço
+├── tela_pagamento.php                      # Pagamento
+├── tela_minha_conta.php                    # Perfil e histórico
+├── tela_novo_endereco.php                  # Cadastro de endereço
+├── tela_editar_endereco.php                # Edição de endereço
+├── tela_produto_do_fornecedor.php          # Gestão de produtos (fornecedor)
+├── tela_gerenciar_produtos.php             # Listagem de produtos do fornecedor
+└── update_db.php                           # Atualização de dados do usuário
+
+assets/                                     # Recursos estáticos
+├── estilos/                                # Arquivos CSS
+│   ├── estilo_cadastro.css
+│   ├── estilo_carrinho.css
+│   ├── estilo_inicial.css
+│   ├── estilo_login.css
+│   └── estilo_minha_conta.css
+├── imagens/                                # Imagens do site
+│   └── produtos/                           # Uploads de produtos
+└── script.js                               # JavaScript global
+
+Banco de dados/                             # Scripts e lógica do banco
+├── bancodadosteste.sql                     # Dump do banco de dados
+├── conexao.php                             # Configuração de conexão
+├── processa_login.php                      # Autenticação
+├── processa_cadastro.php                   # Registro de usuários
+├── processa_novo_produto.php               # Cadastro de produtos
+├── processa_pedido.php                     # Finalização de compras
+├── processa_avaliacao.php                  # Sistema de avaliações
+├── salvar_rascunho.php                     # Salvar produtos incompletos
+├── sincronizar_carrinho.php                # Sincronização do carrinho
+├── buscar_categorias.php                   # API de categorias
+├── buscar_produto.php                      # API de produtos
+├── buscar_recomendacoes.php                # Produtos recomendados
+├── excluir_produto.php                     # Exclusão de produtos
+├── excluir_avaliacao.php                   # Exclusão de avaliações
+└── logout.php                              # Encerramento de sessão
+
+Artefatos/                                  # Documentação do projeto
+├── Diagramas/                              # Diagramas UML
+│   ├── Banco de dados/                     # Modelo ER
+│   ├── Casos de Uso/                       # Diagrama de casos de uso
+│   ├── Estado/                             # Diagrama de estados
+│   └── Sequência/                          # Diagrama de sequência
+├── Diretrizes_TrabalhoPrático.pdf          # Especificações do projeto
+├── Telas e requisitos.pdf                  # Requisitos funcionais
+└── slides.pdf                              # Apresentação
+
+Testes/                                     # Testes automatizados
+└── cypress/                                # Testes E2E
+    ├── e2e/                                # Specs de teste
+    └── support/                            # Utilitários de teste
+
+.gitignore                                  # Arquivos ignorados pelo Git
+README.md                                   # Este arquivo
 ```
 
 ---
@@ -183,7 +182,7 @@ Telas/
 
 ```bash
 git clone https://github.com/KekkaiSensen/Projeto-de-desenvolvimento-web-.git
-cd Projeto-de-desenvolvimento-web-/Telas
+cd Projeto-de-desenvolvimento-web-
 ```
 
 #### 2. Configure o Banco de Dados
@@ -212,7 +211,7 @@ Edite o arquivo `Banco de dados/conexao.php` e ajuste as credenciais:
 ```php
 <?php
 $host = 'localhost';        // Host do banco de dados
-$dbname = 'loja_ponto_com'; // Nome do banco de dados
+$dbname = 'bancodadosteste'; // Nome do banco de dados
 $username = 'root';         // Seu usuário MySQL
 $password = '';             // Sua senha MySQL
 ?>
@@ -224,7 +223,7 @@ $password = '';             // Sua senha MySQL
 
 1. Copie a pasta do projeto para `htdocs/` (XAMPP) ou `www/` (WAMP)
 2. Inicie o Apache e MySQL pelo painel de controle
-3. Acesse: `http://localhost/Telas/src/index.php`
+3. Acesse: `http://localhost/src/index.php`
 
 ##### Usando o Servidor Embutido do PHP:
 
@@ -237,9 +236,9 @@ Acesse: `http://localhost:8000/index.php`
 
 #### 5. Acesse o Sistema
 
-- **Página Inicial**: `http://localhost/Telas/src/index.php`
-- **Login**: `http://localhost/Telas/src/tela_login.html`
-- **Cadastro**: `http://localhost/Telas/src/tela_cadastro.html`
+- **Página Inicial**: `http://localhost/src/index.php`
+- **Login**: `http://localhost/src/tela_login.html`
+- **Cadastro**: `http://localhost/src/tela_cadastro.html`
 
 ---
 
@@ -251,7 +250,7 @@ O projeto utiliza arquivo de configuração direto em PHP. Edite o arquivo `Banc
 <?php
 // Configurações do Banco de Dados
 $host = 'localhost';              // Host do MySQL
-$dbname = 'loja_ponto_com';       // Nome do banco de dados
+$dbname = 'bancodadosteste';       // Nome do banco de dados
 $username = 'root';               // Usuário do MySQL
 $password = '';                   // Senha do MySQL
 $charset = 'utf8mb4';             // Charset
@@ -279,7 +278,7 @@ try {
 | Variável | Descrição | Valor Padrão |
 |----------|-----------|--------------|
 | `$host` | Endereço do servidor MySQL | `localhost` |
-| `$dbname` | Nome do banco de dados | `loja_ponto_com` |
+| `$dbname` | Nome do banco de dados | `bancodadosteste` |
 | `$username` | Usuário do banco de dados | `root` |
 | `$password` | Senha do banco de dados | _(vazio)_ |
 
