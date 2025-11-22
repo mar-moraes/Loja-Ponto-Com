@@ -212,7 +212,7 @@ Edite o arquivo `Banco de dados/conexao.php` e ajuste as credenciais:
 ```php
 <?php
 $host = 'localhost';        // Host do banco de dados
-$dbname = 'loja_ponto_com'; // Nome do banco de dados
+$dbname = 'bancodadosteste'; // Nome do banco de dados
 $username = 'root';         // Seu usuário MySQL
 $password = '';             // Sua senha MySQL
 ?>
@@ -251,7 +251,7 @@ O projeto utiliza arquivo de configuração direto em PHP. Edite o arquivo `Banc
 <?php
 // Configurações do Banco de Dados
 $host = 'localhost';              // Host do MySQL
-$dbname = 'loja_ponto_com';       // Nome do banco de dados
+$dbname = 'bancodadosteste';       // Nome do banco de dados
 $username = 'root';               // Usuário do MySQL
 $password = '';                   // Senha do MySQL
 $charset = 'utf8mb4';             // Charset
@@ -279,7 +279,7 @@ try {
 | Variável | Descrição | Valor Padrão |
 |----------|-----------|--------------|
 | `$host` | Endereço do servidor MySQL | `localhost` |
-| `$dbname` | Nome do banco de dados | `loja_ponto_com` |
+| `$dbname` | Nome do banco de dados | `bancodadosteste` |
 | `$username` | Usuário do banco de dados | `root` |
 | `$password` | Senha do banco de dados | _(vazio)_ |
 
