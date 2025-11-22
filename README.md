@@ -183,7 +183,7 @@ README.md                                   # Este arquivo
 
 ```bash
 git clone https://github.com/KekkaiSensen/Projeto-de-desenvolvimento-web-.git
-cd Projeto-de-desenvolvimento-web-/Telas
+cd Projeto-de-desenvolvimento-web-
 ```
 
 #### 2. Configure o Banco de Dados
@@ -224,7 +224,7 @@ $password = '';             // Sua senha MySQL
 
 1. Copie a pasta do projeto para `htdocs/` (XAMPP) ou `www/` (WAMP)
 2. Inicie o Apache e MySQL pelo painel de controle
-3. Acesse: `http://localhost/Telas/src/index.php`
+3. Acesse: `http://localhost/src/index.php`
 
 ##### Usando o Servidor Embutido do PHP:
 
@@ -237,9 +237,9 @@ Acesse: `http://localhost:8000/index.php`
 
 #### 5. Acesse o Sistema
 
-- **Página Inicial**: `http://localhost/Telas/src/index.php`
-- **Login**: `http://localhost/Telas/src/tela_login.html`
-- **Cadastro**: `http://localhost/Telas/src/tela_cadastro.html`
+- **Página Inicial**: `http://localhost/src/index.php`
+- **Login**: `http://localhost/src/tela_login.html`
+- **Cadastro**: `http://localhost/src/tela_cadastro.html`
 
 ---
 
