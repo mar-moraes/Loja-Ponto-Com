@@ -162,6 +162,7 @@ Testes/                                     # Testes automatizados
     └── support/                            # Utilitários de teste
 
 .gitignore                                  # Arquivos ignorados pelo Git
+LICENSE                                     # Licença Apache 2.0
 README.md                                   # Este arquivo
 ```
 
