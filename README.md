@@ -468,13 +468,13 @@ npx cypress run
 
 ---
 
-## 📚 Documentação Adicional
+## Documentação Adicional
 
 Para mais informações sobre o projeto, consulte:
 
 - **[Diretrizes do Trabalho Prático](Artefatos/Diretrizes_TrabalhoPrático.pdf)**: Escopo e regras do projeto
 - **[Telas e Requisitos](Artefatos/Telas%20e%20requisitos.pdf)**: Detalhamento funcional
-- **[Apresentação do Projeto](Artefatos/slides.pdf)**: Slides da apresentação
+- **[Apresentação do Projeto](Artefatos/Slides/slides.pdf)**: Slides da apresentação
 
 ---
 
@@ -489,7 +489,6 @@ Para mais informações sobre o projeto, consulte:
 - [ ] Rastreamento de Pedidos
 - [ ] Relatórios e Dashboard para Fornecedores
 - [ ] API REST para integração com apps mobile
-- [ ] Sistema de Favoritos/Lista de Desejos
 - [ ] Comparação de Produtos
 
 ### Sugestões Técnicas
@@ -504,9 +503,29 @@ Para mais informações sobre o projeto, consulte:
 
 ---
 
-## 👥 Autores
+## Autores
 
-- **Equipe KekkaiSensen** - *Desenvolvimento Completo*
+<table width="100%">
+  <tr>
+    <td align="left" width="33%">
+      <a href="https://github.com/KekkaiSensen">
+        <img src="https://github.com/KekkaiSensen.png" width="80" />
+      </a>
+    </td>
+    <td align="center" width="33%">
+      <a href="https://github.com/Vanamaral">
+        <img src="https://github.com/Vanamaral.png" width="80" />
+      </a>
+    </td>
+    <td align="right" width="33%">
+      <a href="https://github.com/Igaust-5767">
+        <img src="https://github.com/Igaust-5767.png" width="80" />
+      </a>
+    </td>
+  </tr>
+</table>
+
+
 
 ---
 
@@ -519,7 +538,6 @@ Encontrou algum problema ou tem alguma sugestão? Abra uma [issue](https://githu
 
 <div align="center">
 
-**Desenvolvido com ❤️ por alunos do IFSP**
 
 [⬆ Voltar ao topo](#-loja-ponto-com--marketplace-de-compras-online)
 
