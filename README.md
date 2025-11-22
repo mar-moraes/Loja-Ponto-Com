@@ -469,7 +469,7 @@ npx cypress run
 
 ---
 
-## 📚 Documentação Adicional
+## Documentação Adicional
 
 Para mais informações sobre o projeto, consulte:
 
