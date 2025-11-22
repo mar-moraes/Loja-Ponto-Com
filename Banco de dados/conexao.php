@@ -2,7 +2,7 @@
 // Configurações do banco de dados
 $dsn = 'mysql:host=127.0.0.1;dbname=bancodadosteste'; // Altere "bancodadosteste" para o nome do seu banco de dados
 $dbusername = 'root'; // Usuário padrão do XAMPP/MySQL, mas pode variar conforme sua configuração
-$dbpassword = '1234'; // Galera, essa é senha do meu XAMPP/MySQL. Altere conforme sua configuração.
+$dbpassword = ''; // Galera, essa é senha do meu XAMPP/MySQL. Altere conforme sua configuração.
 
 try {
     // Cria a conexão PDO
