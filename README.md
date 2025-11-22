@@ -507,21 +507,26 @@ Para mais informações sobre o projeto, consulte:
 
 ## Autores
 
-<div style="display: flex; justify-content: space-between; align-items: center; width: 100%">
+<table width="100%">
+  <tr>
+    <td align="left" width="33%">
+      <a href="https://github.com/KekkaiSensen">
+        <img src="https://github.com/KekkaiSensen.png" width="80" />
+      </a>
+    </td>
+    <td align="center" width="33%">
+      <a href="https://github.com/Vanamaral">
+        <img src="https://github.com/Vanamaral.png" width="80" />
+      </a>
+    </td>
+    <td align="right" width="33%">
+      <a href="https://github.com/Igaust-5767">
+        <img src="https://github.com/Igaust-5767.png" width="80" />
+      </a>
+    </td>
+  </tr>
+</table>
 
-  <a href="https://github.com/KekkaiSensen">
-    <img src="https://github.com/KekkaiSensen.png" width="80" />
-  </a>
-
-  <a href="https://github.com/Vanamaral">
-    <img src="https://github.com/Vanamaral.png" width="80" />
-  </a>
-
-  <a href="https://github.com/Igaust-5767">
-    <img src="https://github.com/Igaust-5767.png" width="80" />
-  </a>
-
-</div>
 
 
 ---
