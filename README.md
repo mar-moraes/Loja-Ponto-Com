@@ -59,7 +59,7 @@ Criar uma solução de marketplace que:
 - ✅ **Controle de Estoque**: Gerenciar quantidade disponível
 - ✅ **Visualização de Vendas**: Acompanhar produtos vendidos
 
-### 🔧 Funcionalidades Técnicas
+### Funcionalidades Técnicas
 
 - ✅ **Sessões Persistentes**: Manutenção de estado do usuário
 - ✅ **Segurança**: Proteção contra SQL Injection e XSS
@@ -505,9 +505,19 @@ Para mais informações sobre o projeto, consulte:
 
 ---
 
-## 👥 Autores
+## Autores
 
-- **Equipe KekkaiSensen** - *Desenvolvimento Completo*
+- <a href="https://github.com/Igaust-5767">
+      <img src="https://github.com/Igaust-5767" width="80" />
+  </a>
+  
+- <a href="https://github.com/Vanamaral">
+      <img src="https://github.com/Vanamaral" width="80" />
+  </a>
+  
+- <a href="https://github.com/KekkaiSensen">
+      <img src="https://github.com/KekkaiSensen" width="80" />
+  </a>
 
 ---
 
@@ -520,7 +530,6 @@ Encontrou algum problema ou tem alguma sugestão? Abra uma [issue](https://githu
 
 <div align="center">
 
-**Desenvolvido com ❤️ por alunos do IFSP**
 
 [⬆ Voltar ao topo](#-loja-ponto-com--marketplace-de-compras-online)
 
