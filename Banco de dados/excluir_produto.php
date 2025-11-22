@@ -3,7 +3,7 @@ session_start();
 require 'conexao.php';
 
 if (!isset($_SESSION['usuario_id'])) {
-    header('Location: ../tela_login.html');
+    header('Location: ../src/tela_login.html');
     exit();
 }
 
@@ -14,7 +14,7 @@ try {
     $stmt = $pdo->prepare("DELETE FROM PRODUTOS WHERE id = ? AND usuario_id = ?");
     $stmt->execute([$id, $usuario_id]);
 
-    header('Location: ../tela_minha_conta.php?msg=produto_excluido');
+    header('Location: ../src/tela_minha_conta.php?msg=produto_excluido');
 } catch (PDOException $e) {
     die("Erro ao excluir: " . $e->getMessage());
 }

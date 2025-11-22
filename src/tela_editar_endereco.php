@@ -33,61 +33,78 @@ try {
 ?>
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Editar Endereço</title>
-  <link rel="stylesheet" href="estilos/style.css">
-  <style>
-    /* Estilos atualizados (copiados de tela_novo_endereco.php) */
-    .container { max-width: 600px; margin-top: 40px; }
-    
-    /* Estilo "card" branco */
-    .conta-secao {
-        background-color: #ffffff;
-        border-radius: 8px;
-        padding: 24px;
-        margin-top: 20px; /* Espaço do Título */
-        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-    }
-    
-    .form-grupo { margin-bottom: 15px; }
-    .form-grupo label { display: block; margin-bottom: 5px; font-weight: 500; }
-    .form-grupo input {
-        width: 100%;
-        padding: 10px;
-        font-size: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box; 
-    }
-    
-    /* Botão no padrão azul do site */
-    .btn-salvar {
-        width: 100%; /* Botão ocupa 100% da largura do card */
-        padding: 12px 20px;
-        font-size: 1rem;
-        font-weight: 600;
-        background-color: #2968C8; /* Cor padrão do site */
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: opacity 0.2s;
-    }
-    .btn-salvar:hover { 
-        opacity: 0.9; 
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editar Endereço</title>
+    <link rel="stylesheet" href="../assets/estilos/style.css">
+    <style>
+        /* Estilos atualizados (copiados de tela_novo_endereco.php) */
+        .container {
+            max-width: 600px;
+            margin-top: 40px;
+        }
+
+        /* Estilo "card" branco */
+        .conta-secao {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 20px;
+            /* Espaço do Título */
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+        }
+
+        .form-grupo {
+            margin-bottom: 15px;
+        }
+
+        .form-grupo label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-grupo input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        /* Botão no padrão azul do site */
+        .btn-salvar {
+            width: 100%;
+            /* Botão ocupa 100% da largura do card */
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: #2968C8;
+            /* Cor padrão do site */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-salvar:hover {
+            opacity: 0.9;
+        }
+    </style>
 </head>
+
 <body>
     <main class="container">
         <h1>Editar Endereço</h1>
-        
+
         <div class="conta-secao">
             <form action="../Banco de dados/processa_editar_endereco.php" method="POST">
                 <input type="hidden" name="endereco_id" value="<?php echo $endereco['id']; ?>">
-                
+
                 <div class="form-grupo">
                     <label for="cep">CEP:</label>
                     <input type="text" id="cep" name="cep" value="<?php echo htmlspecialchars($endereco['cep']); ?>" required>
@@ -112,11 +129,11 @@ try {
                     <label for="cidade">Cidade:</label>
                     <input type="text" id="cidade" name="cidade" value="<?php echo htmlspecialchars($endereco['cidade']); ?>" required>
                 </div>
-                
+
                 <div class="form-grupo">
                     <label for="estado">Estado: (Sigla, ex: SP)</label>
                     <input type="text" id="estado" name="estado" list="estados-lista" maxlength="2" value="<?php echo htmlspecialchars($endereco['estado']); ?>" required autocomplete="off">
-                    
+
                     <datalist id="estados-lista">
                         <option value="AC">Acre</option>
                         <option value="AL">Alagoas</option>
@@ -147,98 +164,101 @@ try {
                         <option value="TO">Tocantins</option>
                     </datalist>
                 </div>
-                
+
                 <button type="submit" class="btn-salvar">Salvar Alterações</button>
             </form>
         </div>
     </main>
 
     <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        
-        // --- Referências aos campos do formulário ---
-        const inputCep = document.getElementById('cep');
-        const inputRua = document.getElementById('rua');
-        const inputNumero = document.getElementById('numero');
-        const inputBairro = document.getElementById('bairro');
-        const inputCidade = document.getElementById('cidade');
-        const inputEstado = document.getElementById('estado');
+        document.addEventListener("DOMContentLoaded", () => {
 
-        // --- Função para buscar o CEP ---
-        function buscarCep() {
-            if (!inputCep) return; 
+            // --- Referências aos campos do formulário ---
+            const inputCep = document.getElementById('cep');
+            const inputRua = document.getElementById('rua');
+            const inputNumero = document.getElementById('numero');
+            const inputBairro = document.getElementById('bairro');
+            const inputCidade = document.getElementById('cidade');
+            const inputEstado = document.getElementById('estado');
 
-            const cep = inputCep.value.replace(/\D/g, ''); // Remove não dígitos
+            // --- Função para buscar o CEP ---
+            function buscarCep() {
+                if (!inputCep) return;
 
-            if (cep.length === 8) {
-                // Feedback visual de busca
-                inputRua.value = "Buscando...";
-                inputBairro.value = "Buscando...";
-                inputCidade.value = "Buscando...";
-                inputEstado.value = ""; // Limpa estado
+                const cep = inputCep.value.replace(/\D/g, ''); // Remove não dígitos
 
-                fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then(response => {
-                         if (!response.ok) { throw new Error('Erro na resposta da API ViaCEP'); }
-                         return response.json();
-                     })
-                    .then(data => {
-                        if (data.erro) {
-                            console.warn("CEP não encontrado na base do ViaCEP.");
+                if (cep.length === 8) {
+                    // Feedback visual de busca
+                    inputRua.value = "Buscando...";
+                    inputBairro.value = "Buscando...";
+                    inputCidade.value = "Buscando...";
+                    inputEstado.value = ""; // Limpa estado
+
+                    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erro na resposta da API ViaCEP');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.erro) {
+                                console.warn("CEP não encontrado na base do ViaCEP.");
+                                inputRua.value = "";
+                                inputBairro.value = "";
+                                inputCidade.value = "";
+                                inputRua.focus(); // Foca na rua para preenchimento manual
+                            } else {
+                                // Preenche todos os campos
+                                inputRua.value = data.logradouro || "";
+                                inputBairro.value = data.bairro || "";
+                                inputCidade.value = data.localidade || "";
+                                inputEstado.value = data.uf || "";
+
+                                inputNumero.focus(); // Foca no número para o usuário preencher
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erro ao consultar a API ViaCEP:', error);
+                            // Limpa campos em caso de erro
                             inputRua.value = "";
                             inputBairro.value = "";
                             inputCidade.value = "";
-                            inputRua.focus(); // Foca na rua para preenchimento manual
-                        } else {
-                            // Preenche todos os campos
-                            inputRua.value = data.logradouro || "";
-                            inputBairro.value = data.bairro || "";
-                            inputCidade.value = data.localidade || "";
-                            inputEstado.value = data.uf || "";
-                            
-                            inputNumero.focus(); // Foca no número para o usuário preencher
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro ao consultar a API ViaCEP:', error);
-                        // Limpa campos em caso de erro
-                        inputRua.value = ""; 
+                            inputEstado.value = "";
+                        });
+                } else if (cep.length > 0 && cep.length < 8) {
+                    if (inputRua && inputRua.value === "Buscando...") {
+                        inputRua.value = "";
                         inputBairro.value = "";
                         inputCidade.value = "";
-                        inputEstado.value = "";
-                    });
-            } else if (cep.length > 0 && cep.length < 8) {
-                 if(inputRua && inputRua.value === "Buscando...") {
-                    inputRua.value = "";
-                    inputBairro.value = "";
-                    inputCidade.value = "";
-                 }
-            } 
-            // Não limpa se o CEP estiver vazio, para manter os dados originais
-        }
-
-        // --- Adiciona os 'escutadores' de evento no campo CEP ---
-        if (inputCep) {
-            inputCep.addEventListener('blur', buscarCep); // Busca quando perde o foco
-            
-            inputCep.addEventListener('input', () => { 
-                 if(inputRua && inputRua.value === "Buscando...") {
-                    inputRua.value = "";
-                    inputBairro.value = "";
-                    inputCidade.value = "";
-                 }
-            });
-            
-            inputCep.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault(); // Evita submit do formulário
-                    buscarCep(); // Busca ao pressionar Enter
+                    }
                 }
-            });
-        } else {
-             console.error("Input 'cep' não encontrado.");
-        }
-    });
+                // Não limpa se o CEP estiver vazio, para manter os dados originais
+            }
+
+            // --- Adiciona os 'escutadores' de evento no campo CEP ---
+            if (inputCep) {
+                inputCep.addEventListener('blur', buscarCep); // Busca quando perde o foco
+
+                inputCep.addEventListener('input', () => {
+                    if (inputRua && inputRua.value === "Buscando...") {
+                        inputRua.value = "";
+                        inputBairro.value = "";
+                        inputCidade.value = "";
+                    }
+                });
+
+                inputCep.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault(); // Evita submit do formulário
+                        buscarCep(); // Busca ao pressionar Enter
+                    }
+                });
+            } else {
+                console.error("Input 'cep' não encontrado.");
+            }
+        });
     </script>
 </body>
+
 </html>

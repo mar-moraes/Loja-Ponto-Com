@@ -7,7 +7,7 @@ require 'conexao.php';
 
 // 2. Verifica se o formulário foi enviado (método POST)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
+
     // 3. Coleta os dados
     $email = trim($_POST['email']);
     $senha_digitada = $_POST['senha'];
@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // 5. Verifica se o usuário existe E se a senha está correta
         if ($usuario && password_verify($senha_digitada, $usuario['senha'])) {
-            
+
             // 6. Senha correta! Salva os dados na sessão
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
@@ -40,14 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // 8. Redireciona para a página principal (ou index.html)
             header("Location: ../src/index.php");
             exit();
-            
-            
         } else {
             // 9. Usuário ou senha incorretos
             header("Location: ../src/tela_login.html?erro=login_invalido");
             exit();
         }
-
     } catch (PDOException $e) {
         die("Erro ao fazer login: " . $e->getMessage());
     }
@@ -56,4 +53,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: tela_login.html");
     exit();
 }
-?>

@@ -9,7 +9,7 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 $usuario_id = $_SESSION['usuario_id'];
 
-$uploadDir = '../imagens/Produtos/';
+$uploadDir = '../assets/imagens/Produtos/';
 if (!file_exists($uploadDir) && !mkdir($uploadDir, 0777, true)) {
     echo json_encode(['sucesso' => false, 'mensagem' => 'Falha ao criar diretório de uploads.']);
     exit();
@@ -57,7 +57,7 @@ try {
         $ext = pathinfo($_FILES['imagem_principal']['name'], PATHINFO_EXTENSION);
         $newName = uniqid() . '.' . $ext;
         if (move_uploaded_file($_FILES['imagem_principal']['tmp_name'], $uploadDir . $newName)) {
-            $imagem_db_path = 'imagens/Produtos/' . $newName;
+            $imagem_db_path = '../assets/imagens/Produtos/' . $newName;
         }
     }
     // 2. Se não enviou arquivo, mas tem imagem_atual (url)

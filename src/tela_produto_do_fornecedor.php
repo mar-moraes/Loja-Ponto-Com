@@ -170,7 +170,7 @@ $nome_usuario = explode(' ', $_SESSION['usuario_nome'] ?? 'Usuário')[0];
       <div style="display: flex; gap: 30px; align-items: center;">
 
         <a href="tela_minha_conta.php">Olá, <?php echo htmlspecialchars($nome_usuario); ?></a>
-        <a href="../Banco de dados de dados/logout.php">Sair</a>
+        <a href="../Banco de dados/logout.php">Sair</a>
         <a href="tela_carrinho.php" style="display: flex; align-items: center; gap: 5px;"> Carrinho
           <img src="../assets/imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
         </a>
@@ -202,7 +202,7 @@ $nome_usuario = explode(' ', $_SESSION['usuario_nome'] ?? 'Usuário')[0];
             <label for="produto-../assets/imagens"
               id="imagem-placeholder"
               style="background-color: #f0f0f0; border: 1px dashed #ccc; height: 100%; display: flex; align-items: center; justify-content: center; width: 100%; cursor: pointer; color: #555; text-align: center; box-sizing: border-box;">
-              Clique aqui para selecionar as ../assets/imagens
+              Clique aqui para selecionar as imagens
             </label>
 
             <img alt="Imagem principal do produto"
@@ -354,7 +354,7 @@ $nome_usuario = explode(' ', $_SESSION['usuario_nome'] ?? 'Usuário')[0];
       const selectCategoria = document.getElementById('produto-categoria');
       async function carregarCategorias() {
         try {
-          const response = await fetch('../Banco de dados de dados/buscar_categorias.php');
+          const response = await fetch('../Banco de dados/buscar_categorias.php');
           const data = await response.json();
           if (data.sucesso && data.categorias.length > 0) {
             selectCategoria.innerHTML = '<option value="">Selecione uma categoria</option>';
@@ -386,7 +386,7 @@ $nome_usuario = explode(' ', $_SESSION['usuario_nome'] ?? 'Usuário')[0];
 
       async function carregarDadosProduto(id) {
         try {
-          const response = await fetch(`../Banco de dados de dados/buscar_produto.php?id=${id}`);
+          const response = await fetch(`../Banco de dados/buscar_produto.php?id=${id}`);
           const data = await response.json();
 
           if (data.sucesso) {
@@ -539,12 +539,12 @@ $nome_usuario = explode(' ', $_SESSION['usuario_nome'] ?? 'Usuário')[0];
           return;
         }
 
-        enviarDados('../Banco de dados de dados/processa_novo_produto.php', 'Enviando...', 'index.php');
+        enviarDados('../Banco de dados/processa_novo_produto.php', 'Enviando...', 'index.php');
       });
 
       // --- Salvar Rascunho ---
       document.getElementById('btn-salvar-rascunho').addEventListener('click', () => {
-        enviarDados('../Banco de dados de dados/salvar_rascunho.php', 'Salvando...', 'tela_minha_conta.php');
+        enviarDados('../Banco de dados/salvar_rascunho.php', 'Salvando...', 'tela_minha_conta.php');
       });
 
       async function enviarDados(url, textoBotao, redirectUrl) {

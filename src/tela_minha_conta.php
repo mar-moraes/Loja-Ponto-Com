@@ -246,7 +246,7 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
                     ?>
                     <div class="compra-card">
                         <div class="compra-imagem">
-                            <img src="<?php echo htmlspecialchars($item['produto_imagem'] ?? 'imagens/placeholder.png'); ?>" alt="Imagem do Produto">
+                            <img src="<?php echo htmlspecialchars($item['produto_imagem'] ?? '../assets/imagens/placeholder.png'); ?>" alt="Imagem do Produto">
                         </div>
                         <div class="compra-detalhes">
                             <span class="compra-status" style="color: #ff8c00;"> <?php echo htmlspecialchars(ucfirst($item['pedido_status'])); ?>
@@ -293,7 +293,7 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
                                 $preco = $p['preco'] ?? 0;
                                 $desconto = $p['desconto'] ?? 0;
                                 $precoFinal = $preco * (1 - $desconto / 100);
-                                $img = !empty($p['imagem_url']) ? $p['imagem_url'] : 'imagens/placeholder.png';
+                                $img = !empty($p['imagem_url']) ? $p['imagem_url'] : '../assets/imagens/placeholder.png';
                             ?>
                                 <article class="card" data-price="<?php echo $precoFinal; ?>">
                                     <div class="thumb" style="background-image:url('<?php echo htmlspecialchars($img); ?>')"></div>
