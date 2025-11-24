@@ -1,4 +1,4 @@
-# 🛒 Loja Ponto Com – Marketplace de Compras Online
+# Loja Ponto Com – Marketplace de Compras Online
 
 <div align="center">
 
@@ -23,7 +23,7 @@ Criar uma solução de marketplace que:
 - Permita que qualquer usuário se torne um fornecedor
 - Gerencie todo o ciclo de vida de um pedido
 
-### 🌟 Diferenciais
+### Diferenciais
 
 - **Marketplace Completo**: Múltiplos fornecedores em uma única plataforma
 - **Sistema de Rascunhos**: Fornecedores podem salvar produtos incompletos para continuar depois
@@ -59,7 +59,7 @@ Criar uma solução de marketplace que:
 - ✅ **Controle de Estoque**: Gerenciar quantidade disponível
 - ✅ **Visualização de Vendas**: Acompanhar produtos vendidos
 
-### 🔧 Funcionalidades Técnicas
+### Funcionalidades Técnicas
 
 - ✅ **Sessões Persistentes**: Manutenção de estado do usuário
 - ✅ **Segurança**: Proteção contra SQL Injection e XSS
