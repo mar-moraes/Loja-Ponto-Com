@@ -28,34 +28,34 @@ Criar uma solução de marketplace que:
 
 ### Para Clientes
 
-- ✅ **Cadastro e Login**: Sistema completo de autenticação de usuários
-- ✅ **Catálogo de Produtos**: Navegação por categorias e visualização detalhada
-- ✅ **Busca e Filtros**: Sistema de busca inteligente por nome de produtos
-- ✅ **Carrinho de Compras**: Adicionar, remover e alterar quantidades de produtos
-- ✅ **Gestão de Endereços**: Cadastrar, editar e excluir endereços de entrega
-- ✅ **Finalização de Pedido**: Processo completo de checkout
-- ✅ **Múltiplas Formas de Pagamento**: Cartão de Crédito, PIX e Boleto
-- ✅ **Histórico de Compras**: Visualização de todos os pedidos realizados
-- ✅ **Avaliações e Comentários**: Avaliar produtos comprados
-- ✅ **Perfil do Usuário**: Atualização de dados pessoais
+-  **Cadastro e Login**: Sistema completo de autenticação de usuários
+-  **Catálogo de Produtos**: Navegação por categorias e visualização detalhada
+-  **Busca e Filtros**: Sistema de busca inteligente por nome de produtos
+-  **Carrinho de Compras**: Adicionar, remover e alterar quantidades de produtos
+-  **Gestão de Endereços**: Cadastrar, editar e excluir endereços de entrega
+-  **Finalização de Pedido**: Processo completo de checkout
+-  **Múltiplas Formas de Pagamento**: Cartão de Crédito, PIX e Boleto
+-  **Histórico de Compras**: Visualização de todos os pedidos realizados
+-  **Avaliações e Comentários**: Avaliar produtos comprados
+-  **Perfil do Usuário**: Atualização de dados pessoais
 
 ### Para Fornecedores
 
-- ✅ **Gestão de Produtos**: Cadastrar, editar e excluir produtos
-- ✅ **Upload de Múltiplas Imagens**: Até 5 imagens por produto
-- ✅ **Sistema de Rascunhos**: Salvar produtos incompletos para finalizar depois
-- ✅ **Categorização**: Organizar produtos por categorias
-- ✅ **Especificações Técnicas**: Adicionar características e detalhes dos produtos
-- ✅ **Controle de Estoque**: Gerenciar quantidade disponível
-- ✅ **Visualização de Vendas**: Acompanhar produtos vendidos
+-  **Gestão de Produtos**: Cadastrar, editar e excluir produtos
+-  **Upload de Múltiplas Imagens**: Até 5 imagens por produto
+-  **Sistema de Rascunhos**: Salvar produtos incompletos para finalizar depois
+-  **Categorização**: Organizar produtos por categorias
+-  **Especificações Técnicas**: Adicionar características e detalhes dos produtos
+-  **Controle de Estoque**: Gerenciar quantidade disponível
+-  **Visualização de Vendas**: Acompanhar produtos vendidos
 
 ### Funcionalidades Técnicas
 
-- ✅ **Sessões Persistentes**: Manutenção de estado do usuário
-- ✅ **Segurança**: Proteção contra SQL Injection e XSS
-- ✅ **Validação de Dados**: Frontend e Backend
-- ✅ **Responsividade**: Design adaptável para mobile, tablet e desktop
-- ✅ **Performance**: Otimização de consultas ao banco de dados
+-  **Sessões Persistentes**: Manutenção de estado do usuário
+-  **Segurança**: Proteção contra SQL Injection e XSS
+-  **Validação de Dados**: Frontend e Backend
+-  **Responsividade**: Design adaptável para mobile, tablet e desktop
+-  **Performance**: Otimização de consultas ao banco de dados
 
 ---
 
@@ -442,13 +442,13 @@ npx cypress run
 
 ### Cobertura de Testes
 
-- ✅ Fluxo de cadastro de usuário
-- ✅ Fluxo de login
-- ✅ Navegação no catálogo
-- ✅ Adicionar produtos ao carrinho
-- ✅ Processo de checkout completo
-- ✅ Cadastro de produtos (fornecedor)
-- ✅ Sistema de rascunhos
+- [x] Fluxo de cadastro de usuário
+- [x] Fluxo de login
+- [x] Navegação no catálogo
+- [x] Adicionar produtos ao carrinho
+- [x] Processo de checkout completo
+- [x] Cadastro de produtos (fornecedor)
+- [x] Sistema de rascunhos
 
 ---
 
