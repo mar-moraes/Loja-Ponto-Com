@@ -2,7 +2,6 @@
 
 <div align="center">
 
-![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
@@ -13,7 +12,7 @@
 
 ## Sobre o Projeto
 
-**Loja Ponto Com** é uma plataforma de e-commerce completa (Marketplace) desenvolvida como projeto prático da disciplina de Desenvolvimento Web 1 do IFSP. O sistema permite que usuários comprem produtos de diversos fornecedores, além de possibilitar que os próprios usuários se cadastrem como vendedores para oferecer seus produtos na plataforma.
+**Loja Ponto Com** é uma plataforma de e-commerce desenvolvida como projeto prático da disciplina de Desenvolvimento Web 1 do IFSP. O sistema permite que usuários comprem produtos de diversos fornecedores, além de possibilitar que os próprios usuários se cadastrem como vendedores para oferecer seus produtos na plataforma.
 
 ### Objetivo
 
@@ -22,15 +21,6 @@ Criar uma solução de marketplace que:
 - Ofereça uma experiência de compra completa, desde a navegação até o pagamento
 - Permita que qualquer usuário se torne um fornecedor
 - Gerencie todo o ciclo de vida de um pedido
-
-### Diferenciais
-
-- **Marketplace Completo**: Múltiplos fornecedores em uma única plataforma
-- **Sistema de Rascunhos**: Fornecedores podem salvar produtos incompletos para continuar depois
-- **Gestão Inteligente de Carrinho**: Persistência de dados com sincronização entre sessões
-- **Múltiplas Formas de Pagamento**: Suporte para Cartão de Crédito, PIX e Boleto
-- **Sistema de Avaliações**: Usuários podem avaliar e comentar produtos
-- **Interface Responsiva**: Adaptável a diferentes tamanhos de tela
 
 ---
 
@@ -493,7 +483,7 @@ Para mais informações sobre o projeto, consulte:
 - [ ] CDN para imagens
 - [ ] Containerização com Docker
 - [ ] CI/CD com GitHub Actions
-- [ ] Testes Unitários e de Integração
+- [x] Testes Unitários e de Integração
 
 ---
 
