@@ -1,7 +1,7 @@
 # Loja Ponto Com – Marketplace de Compras Online
 
 <div align="center">
-
+![Status](https://img.shields.io/badge/status-finalizado?labelColor=black&color=green)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
@@ -483,7 +483,7 @@ Para mais informações sobre o projeto, consulte:
 - [ ] CDN para imagens
 - [ ] Containerização com Docker
 - [ ] CI/CD com GitHub Actions
-- [x] Testes Unitários e de Integração
+- [ ] Testes Unitários e de Integração
 
 ---
 
