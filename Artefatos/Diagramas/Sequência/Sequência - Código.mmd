@@ -1,0 +1,44 @@
+sequenceDiagram
+    autonumber
+    actor Usuario as Usuário
+    participant Frontend as Navegador (JS/Cliente)
+    participant Backend as Servidor PHP (API)
+    participant BD as Banco de Dados (MySQL)
+
+    Note over Usuario, Frontend: Interação Inicial
+    Usuario->>Frontend: Clica em "Finalizar Compra"
+    
+    activate Frontend
+    Frontend->>Frontend: Valida Formulário (Cartão/Dados)
+    Frontend->>Frontend: Ler dados do LocalStorage (Carrinho)
+    
+    Note over Frontend, Backend: Início da Requisição HTTP
+    Frontend->>+Backend: POST /processa_pedido.php (JSON)
+    
+    activate Backend
+    Backend->>Backend: Valida Sessão do Usuário
+    
+    Note over Backend, BD: Transação do Pedido
+    Backend->>+BD: beginTransaction()
+    Backend->>BD: INSERT INTO pedidos (...)
+    BD-->>Backend: Retorna ID do Pedido
+    
+    loop Para cada item no JSON
+        Backend->>BD: INSERT INTO pedido_itens (...)
+        Backend->>BD: UPDATE produtos SET estoque = estoque - qtd
+    end
+
+    Backend->>BD: DELETE FROM carrinho_itens (Limpeza BD)
+    
+    Backend->>BD: commit()
+    BD-->>-Backend: Confirmação da Transação
+
+    Backend-->>-Frontend: Retorna JSON {sucesso: true, id_pedido: X}
+    deactivate Backend
+
+    Note over Frontend: Pós-Processamento
+    Frontend->>Frontend: Limpa LocalStorage
+    Frontend->>Frontend: Gerar PDF (jsPDF)
+    Frontend-->>Usuario: Exibe Notificação de Sucesso
+    Frontend-->>Usuario: Download automático do PDF
+    deactivate Frontend
