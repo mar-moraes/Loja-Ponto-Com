@@ -488,8 +488,8 @@ Para mais informações sobre o projeto, consulte:
 <table width="100%">
   <tr>
     <td align="left" width="33%">
-      <a href="https://github.com/KekkaiSensen">
-        <img src="https://github.com/KekkaiSensen.png" width="80" />
+      <a href="https://github.com/mar-moraes">
+        <img src="https://github.com/mar-moraes.png" width="80" />
       </a>
     </td>
     <td align="center" width="33%">
