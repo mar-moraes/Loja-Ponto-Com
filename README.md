@@ -1,4 +1,4 @@
-# Loja Ponto Com – Marketplace de Compras Online
+<h1 align="center">Loja Ponto Com</h1>
 
 <div align="center">
 
@@ -141,7 +141,6 @@ Artefatos/                                  # Documentação do projeto
 ├── Diagramas/                              # Diagramas UML
 │   ├── Banco de dados/                     # Modelo ER
 │   ├── Casos de Uso/                       # Diagrama de casos de uso
-│   ├── Estado/                             # Diagrama de estados
 │   └── Sequência/                          # Diagrama de sequência
 ├── Diretrizes_TrabalhoPrático.pdf          # Especificações do projeto
 ├── Telas e requisitos.pdf                  # Requisitos funcionais
@@ -221,10 +220,10 @@ $password = '';             // Sua senha MySQL
 
 ```bash
 cd src
-php -S localhost:8000
+php -S localhost:3000
 ```
 
-Acesse: `http://localhost:8000/index.php`
+Acesse: `http://localhost:3000/index.php`
 
 #### 5. Acesse o Sistema
 
@@ -417,10 +416,6 @@ git push origin feature/nova-funcionalidade
 ### Diagrama de Sequência
 
 ![Sequência](Artefatos/Diagramas/Sequência/Sequência%20-%20Imagem.png)
-
-### Diagrama de Estado
-
-![Estado](Artefatos/Diagramas/Estado/Estado%20-%20Imagem.png)
 
 ---
 
