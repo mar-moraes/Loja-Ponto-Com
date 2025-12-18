@@ -20,7 +20,6 @@
 Criar uma solução de marketplace que:
 - Facilite a compra e venda de produtos online
 - Ofereça uma experiência de compra completa, desde a navegação até o pagamento
-- Permita que qualquer usuário se torne um fornecedor
 - Gerencie todo o ciclo de vida de um pedido
 
 ---
@@ -93,7 +92,7 @@ Criar uma solução de marketplace que:
 ## Estrutura do Projeto
 
 ```
-src/                                        # Código-fonte das páginas
+src/                                        # Diretório público (entry point) acessado via navegador
 ├── index.php                               # Página inicial (catálogo)
 ├── buscar.php                              # Sistema de busca
 ├── tela_login.html                         # Login de usuários
@@ -172,8 +171,8 @@ README.md                                   # Este arquivo
 #### 1. Clone o Repositório
 
 ```bash
-git clone https://github.com/KekkaiSensen/Projeto-de-desenvolvimento-web-.git
-cd Projeto-de-desenvolvimento-web-
+git clone https://github.com/mar-moraes/Loja-Ponto-Com.git
+cd Loja-Ponto-Com
 ```
 
 #### 2. Configure o Banco de Dados
@@ -214,22 +213,21 @@ $password = '';             // Sua senha MySQL
 
 1. Copie a pasta do projeto para `htdocs/` (XAMPP) ou `www/` (WAMP)
 2. Inicie o Apache e MySQL pelo painel de controle
-3. Acesse: `http://localhost/src/index.php`
+3. Acesse: `http://localhost:3000/src/index.php`
 
 ##### Usando o Servidor Embutido do PHP:
 
 ```bash
-cd src
 php -S localhost:3000
 ```
 
-Acesse: `http://localhost:3000/index.php`
+Acesse: http://localhost:3000/src/index.php
 
 #### 5. Acesse o Sistema
 
-- **Página Inicial**: `http://localhost/src/index.php`
-- **Login**: `http://localhost/src/tela_login.html`
-- **Cadastro**: `http://localhost/src/tela_cadastro.html`
+- **Página Inicial**: `http://localhost:3000/src/index.php`
+- **Login**: `http://localhost:3000/src/tela_login.html`
+- **Cadastro**: `http://localhost:3000/src/tela_cadastro.html`
 
 ---
 
@@ -405,7 +403,7 @@ git push origin feature/nova-funcionalidade
 
 ## Diagramas
 
-### Banco de Dados (DER)
+### Banco de Dados (Modelo ER)
 
 ![Diagrama ER](Artefatos/Diagramas/Banco%20de%20dados/BD%20-%20imagem.png)
 
