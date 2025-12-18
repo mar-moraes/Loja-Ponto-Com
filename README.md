@@ -407,15 +407,15 @@ git push origin feature/nova-funcionalidade
 
 ### Banco de Dados (Modelo ER)
 
-![Diagrama ER](Artefatos/Diagramas/Banco%20de%20dados/BD%20-%20imagem.png)
+![Diagrama ER](Artefatos/Diagramas/Banco de dados/BD - imagem.png)
 
 ### Casos de Uso
 
-![Casos de Uso](Artefatos/Diagramas/Casos%20de%20Uso/UC%20-%20Imagem.png)
+![Casos de Uso](Artefatos/Diagramas/Casos de Uso/UC - Imagem.png)
 
 ### Diagrama de Sequência
 
-![Sequência](Artefatos/Diagramas/Sequência/Sequência%20-%20Imagem.png)
+![Sequência](Artefatos/Diagramas/Sequência/Sequência - Imagem.png)
 
 ---
 
