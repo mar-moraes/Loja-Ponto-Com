@@ -161,7 +161,7 @@ README.md                                   # Este arquivo
 
 ### Pré-requisitos
 
-- **PHP 7.4+** ou superior
+- **PHP 8.0+** ou superior
 - **MySQL 5.7+** ou superior
 - **Servidor Web** (Apache ou Nginx)
 - **XAMPP** ou **WAMP** (recomendado para ambiente local)
@@ -186,7 +186,7 @@ Abra o **phpMyAdmin** (geralmente em `http://localhost/phpmyadmin`) ou seu clien
 Importe o arquivo de dump do banco de dados:
 
 ```bash
-mysql -u seu_usuario -p < "Banco de dados/bancodadosteste.sql"
+mysql -u seu_usuario -p bancodadosteste < "Banco de dados/bancodadosteste.sql"
 ```
 
 Ou pelo phpMyAdmin:
@@ -200,10 +200,9 @@ Edite o arquivo `Banco de dados/conexao.php` e ajuste as credenciais:
 
 ```php
 <?php
-$host = 'localhost';        // Host do banco de dados
-$dbname = 'bancodadosteste'; // Nome do banco de dados
-$username = 'root';         // Seu usuário MySQL
-$password = '';             // Sua senha MySQL
+$dsn = 'mysql:host=127.0.0.1;dbname=bancodadosteste'; 
+$dbusername = 'root'; 
+$dbpassword = ''; 
 ?>
 ```
 
