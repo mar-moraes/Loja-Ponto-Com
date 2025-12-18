@@ -405,7 +405,7 @@ git push origin feature/nova-funcionalidade
 
 ## Diagramas
 
-### Banco de Dados (Modelo ER)
+### Banco de Dados (DER)
 
 ![Diagrama ER](Artefatos/Diagramas/Banco%20de%20dados/BD%20-%20imagem.png)
 
