@@ -343,19 +343,8 @@ Confira nosso **[Roadmap](ROADMAP.md)** para ver as próximas funcionalidades pl
 
 
 
----
-
-
-## Suporte
-
-Encontrou algum problema ou tem alguma sugestão? Abra uma [issue](https://github.com/mar-moraes/Loja-Ponto-Com/issues) no GitHub.
-
----
-
-<div align="center">
-
-
 [⬆ Voltar ao topo](#-loja-ponto-com--marketplace-de-compras-online)
 
 </div>
+
 
