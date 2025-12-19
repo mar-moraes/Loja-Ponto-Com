@@ -220,7 +220,7 @@ try {
 ## Como Contribuir
 
 
-Para detalhes sobre como colaborar com este projeto, leia o **[guia de contribuição](CONTRIBUTING.md)**.
+Para detalhes sobre como colaborar com este projeto, leia o **[Guia de Contribuição](CONTRIBUTING.md)**.
 
 ---
 
@@ -315,7 +315,7 @@ Para mais informações sobre o projeto, consulte:
 
 ## Roadmap e Melhorias
 
-Confira **[Roadmap](ROADMAP.md)** para ver as próximas funcionalidades planejadas e melhorias técnicas.
+Confira nosso **[Roadmap](ROADMAP.md)** para ver as próximas funcionalidades planejadas e melhorias técnicas.
 
 ---
 
@@ -358,5 +358,3 @@ Encontrou algum problema ou tem alguma sugestão? Abra uma [issue](https://githu
 [⬆ Voltar ao topo](#-loja-ponto-com--marketplace-de-compras-online)
 
 </div>
-
-
