@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/imagens/exemplo-logo.png" alt="logo" width="100">
+<img src="assets/imagens/exemplo-logo.png" alt="logo" width="100" style="filter: invert(31%) sepia(94%) saturate(2515%) hue-rotate(211deg) brightness(95%) contrast(101%);">
 
 <h1>Loja Ponto Com</h1>
 
@@ -358,3 +358,4 @@ Encontrou algum problema ou tem alguma sugestão? Abra uma [issue](https://githu
 [⬆ Voltar ao topo](#-loja-ponto-com--marketplace-de-compras-online)
 
 </div>
+
