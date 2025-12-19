@@ -2,6 +2,7 @@
 
 <img src="assets/imagens/exemplo-logo-readme.png" width="100px">
 
+
 <h1>Loja Ponto Com</h1>
 
 </div>
@@ -343,8 +344,12 @@ Confira nosso **[Roadmap](ROADMAP.md)** para ver as próximas funcionalidades pl
 
 
 
-[⬆ Voltar ao topo](#-loja-ponto-com--marketplace-de-compras-online)
+---
 
-</div>
 
+## Suporte
+
+Encontrou algum problema ou tem alguma sugestão? Abra uma [issue](https://github.com/mar-moraes/Loja-Ponto-Com/issues) no GitHub.
+
+---
 
