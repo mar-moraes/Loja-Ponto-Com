@@ -4,7 +4,6 @@ Este documento lista as funcionalidades planejadas e sugestões técnicas para a
 
 ## Planejadas
 
-- [ ] Integração com Gateway de Pagamento Real (Mercado Pago/Stripe)
 - [ ] Sistema de Notificações (Email/Push)
 - [ ] Chat entre Comprador e Fornecedor
 - [ ] Sistema de Cupons e Descontos
@@ -22,3 +21,4 @@ Este documento lista as funcionalidades planejadas e sugestões técnicas para a
 - [ ] Containerização com Docker
 - [ ] CI/CD com GitHub Actions
 - [ ] Testes Unitários e de Integração
+
