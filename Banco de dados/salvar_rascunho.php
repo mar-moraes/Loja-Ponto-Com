@@ -10,10 +10,14 @@ if (!isset($_SESSION['usuario_id'])) {
 $usuario_id = $_SESSION['usuario_id'];
 
 $uploadDir = '../assets/imagens/Produtos/';
-if (!file_exists($uploadDir) && !mkdir($uploadDir, 0777, true)) {
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Falha ao criar diretório de uploads.']);
-    exit();
-}
+// if (!file_exists($uploadDir) && !mkdir($uploadDir, 0777, true)) { ... }
+
+// Autoload composer
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Services\CloudinaryService;
+
+$cloudinary = new CloudinaryService();
 
 try {
     // Coleta de dados (pode ser parcial)
@@ -53,11 +57,13 @@ try {
     $imagem_db_path = null;
 
     // 1. Se enviou arquivo novo
+    // 1. Se enviou arquivo novo
     if (isset($_FILES['imagem_principal']) && $_FILES['imagem_principal']['error'] == UPLOAD_ERR_OK) {
-        $ext = pathinfo($_FILES['imagem_principal']['name'], PATHINFO_EXTENSION);
-        $newName = uniqid() . '.' . $ext;
-        if (move_uploaded_file($_FILES['imagem_principal']['tmp_name'], $uploadDir . $newName)) {
-            $imagem_db_path = '../assets/imagens/Produtos/' . $newName;
+        try {
+            $imagem_db_path = $cloudinary->upload($_FILES['imagem_principal']);
+        } catch (Exception $e) {
+            echo json_encode(['sucesso' => false, 'mensagem' => 'Erro CDN: ' . $e->getMessage()]);
+            exit();
         }
     }
     // 2. Se não enviou arquivo, mas tem imagem_atual (url)

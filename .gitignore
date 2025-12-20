@@ -3,6 +3,9 @@ node_modules/
 Artefatos/node_modules/
 vendor/
 composer.phar
+.env
+.env.backup
+.env.test
 
 # Logs
 logs
