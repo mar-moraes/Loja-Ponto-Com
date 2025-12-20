@@ -1,6 +1,8 @@
 # Dependencies
 node_modules/
 Artefatos/node_modules/
+vendor/
+composer.phar
 
 # Logs
 logs

@@ -119,6 +119,7 @@ Para ver a organização detalhada dos arquivos e diretórios, consulte a **[est
 ```bash
 git clone https://github.com/mar-moraes/Loja-Ponto-Com.git
 cd Loja-Ponto-Com
+composer install
 ```
 
 #### 2. Configure o Banco de Dados
@@ -277,9 +278,17 @@ Para uma visão detalhada da estrutura técnica do projeto e seus diagramas UML,
 
 ## Testes
 
-O projeto conta com testes E2E automatizados usando Cypress.
+O projeto conta com testes E2E automatizados usando Cypress e testes unitários com PHPUnit.
 
-### Rodando os Testes
+### Testes Unitários (Backend)
+
+Para rodar os testes unitários do PHP:
+
+```bash
+.\vendor\bin\phpunit tests
+```
+
+### Testes E2E (Frontend/Integração)
 
 ```bash
 # Instalar dependências
@@ -353,9 +362,3 @@ Encontrou algum problema ou tem alguma sugestão? Abra uma [issue](https://githu
 
 ---
 
-<div align="center">
-
-
-[⬆ Voltar ao topo](#-loja-ponto-com--marketplace-de-compras-online)
-
-</div>

@@ -3,7 +3,17 @@
 session_start();
 
 // 1. Inclui a conexão
+// 1. Inclui a conexão
 require 'conexao.php';
+
+// Carregamento manual ou via Composer
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require __DIR__ . '/../vendor/autoload.php';
+} else {
+    require __DIR__ . '/../src/Services/AuthService.php';
+}
+
+use Services\AuthService;
 
 // 2. Verifica se o formulário foi enviado (método POST)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -13,28 +23,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $senha_digitada = $_POST['senha'];
 
     try {
-        // 4. Busca o usuário pelo email
-        // (Nota: O ideal seria buscar a coluna 'tipo' do banco, 
-        // mas seguindo a regra de verificar o e-mail no login)
-        $stmt = $pdo->prepare("SELECT id, nome, senha FROM usuarios WHERE email = ?");
-        $stmt->execute([$email]);
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+        $authService = new AuthService($pdo);
+        $usuario = $authService->login($email, $senha_digitada);
 
         // 5. Verifica se o usuário existe E se a senha está correta
-        if ($usuario && password_verify($senha_digitada, $usuario['senha'])) {
+        if ($usuario) {
 
             // 6. Senha correta! Salva os dados na sessão
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
 
-            // --- INÍCIO DA MODIFICAÇÃO ---
             // 7. Verifica se o e-mail é de um fornecedor
-            if (strpos($email, "@LojaLTDA.com") !== false) {
-                $_SESSION['usuario_tipo'] = 'fornecedor';
-            } else {
-                $_SESSION['usuario_tipo'] = 'cliente';
-            }
-            // --- FIM DA MODIFICAÇÃO ---
+            $_SESSION['usuario_tipo'] = $authService->identifyUserType($email);
 
 
             // 8. Redireciona para a página principal (ou index.html)

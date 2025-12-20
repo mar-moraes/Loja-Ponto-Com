@@ -20,4 +20,4 @@ Este documento lista as funcionalidades planejadas e sugestões técnicas para a
 - [ ] CDN para imagens
 - [ ] Containerização com Docker
 - [x] CI/CD com GitHub Actions
-- [ ] Testes Unitários e de Integração
+- [x] Testes Unitários e de Integração
