@@ -59,14 +59,21 @@ docs/                                       # Documentação do projeto refatora
 ├── ARCHITECTURE.md                         # Arquitetura e Diagramas
 └── STRUCTURE.md                            # Estrutura do projeto (este arquivo)
 
-Testes/                                     # Testes automatizados
-└── cypress/                                # Testes E2E
+Testes/                                     # Testes automatizados (E2E - Cypress)
+└── cypress/                                # Arquivos do Cypress
     ├── e2e/                                # Specs de teste
     └── support/                            # Utilitários de teste
+
+tests/                                      # Testes Unitários (PHPUnit)
+└── Unit/                                   # Testes unitários do backend
+
+vendor/                                     # Dependências do Composer
 
 .gitignore                                  # Arquivos ignorados pelo Git
 CONTRIBUTING.md                             # Guia de contribuição
 LICENSE                                     # Licença MIT
 README.md                                   # Documentação principal
 ROADMAP.md                                  # Mapa de melhorias futuras
+composer.json                               # Definição de dependências PHP
+composer.lock                               # Versões travadas das dependências
 ```

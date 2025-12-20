@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slides - Inteligência Artificial no Reconhecimento de Imagem</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .slide {
+            width: 1280px;
+            height: 720px;
+            background: white;
+            overflow: hidden;
+            page-break-after: always;
+            position: relative;
+            box-sizing: border-box;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            border: 1px solid #ccc;
+            margin: 20px auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @media print {
+            body {
+                background: none;
+            }
+
+            .slide {
+                margin: 0;
+                border: none;
+                box-shadow: none;
+                page-break-after: always;
+            }
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 36px;
+        }
+
+        h2 {
+            color: #2980b9;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 28px;
+            border-bottom: 1px solid #eee;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 24px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p,
+        li {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            padding-left: 40px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+            height: 100%;
+        }
+
+        .text-content {
+            flex: 1;
+            padding-right: 40px;
+        }
+
+        .image-content {
+            flex: 0 0 500px; /* Aumentei levemente para caber melhor o gráfico */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .image-caption {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+            text-align: center;
+            background: #fff3cd;
+            padding: 5px;
+            border: 1px dashed #e0a800;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            object-fit: cover;
+        }
+
+        /* Estilo específico para o container do gráfico */
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            background: white;
+            padding: 10px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 80px;
+            right: 80px;
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .horizontal-list {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 20px;
+            list-style-type: none;
+            padding: 0;
+            margin-top: 40px;
+        }
+
+        .horizontal-list li {
+            background-color: #f8f9fa;
+            border-top: 5px solid #3498db;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px 10px;
+            font-size: 18px;
+            text-align: center;
+            flex: 1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #2c3e50;
+            height: 120px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="slide">
+        <h1>Título e Dados do Artigo</h1>
+        <div class="content-wrapper">
+            <div class="text-content">
+                <h3>O uso da inteligência artificial no reconhecimento de imagem: uma revisão bibliométrica</h3>
+                <p><strong>Maria dos Prazeres Costa Santos et al.</strong></p>
+                <p>Revista: <em>R. Eletr. Cient. Inov. Tecnol.</em> (2025)</p>
+                <p>DOI: 10.3895/recit.v16n40.19186</p>
+                <br>
+                <p><em>Seminário Acadêmico</em></p>
+            </div>
+            <div class="image-content">
+                <img src="slide 1.png"
+                    alt="Visão Computacional - Detecção de Objetos">
+                <div class="image-caption">Sugestão: Imagem mostrando detecção de objetos (bounding boxes).</div>
+            </div>
+        </div>
+        <div class="footer">Seminário de Tecnologia e Inovação - 2025</div>
+    </div>
+
+    <div class="slide">
+        <h1>Contextualização / Motivação</h1>
+        <div class="content-wrapper">
+            <div class="text-content">
+                <h3>Por que IA + Reconhecimento de Imagem?</h3>
+                <ul>
+                    <li>Saúde (diagnósticos médicos)</li>
+                    <li>Segurança (vigilância, biometria)</li>
+                    <li>Educação (monitoramento)</li>
+                    <li>Finanças (autenticação)</li>
+                    <li>Entretenimento (filtros, jogos)</li>
+                </ul>
+
+                <h3>Por que Revisão Bibliométrica?</h3>
+                <ul>
+                    <li>Crescimento acelerado da área</li>
+                    <li>Identificação de tendências globais</li>
+                    <li>Mapeamento de países líderes</li>
+                </ul>
+            </div>
+            <div class="image-content">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAYAAABUYjvPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAvUlEQVR4nO3VMQ0AIAzAsP0v7eAGBE6SYJqm9u42wP/d9xtwAICAgICAgICAgICAgICCvwbGZAfQP5Y/YT8kP8kPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkP4AAGZb8AGP5pS4QAAAABJRU5ErkJggg=="
+                    alt="Aplicações de IA em diversos setores">
+                <div class="image-caption">Sugestão: Colagem visual dos setores (Saúde, Segurança, etc).</div>
+            </div>
+        </div>
+        <div class="footer">Contextualização</div>
+    </div>
+
+    <div class="slide">
+        <h1>Objetivo do Estudo</h1>
+        <div class="content-wrapper">
+            <div class="text-content">
+                <ul>
+                    <li>Analisar produção científica (2014–2024)</li>
+                    <li>Identificar autores, instituições e países</li>
+                    <li>Mapear palavras-chave e áreas</li>
+                    <li>Observar tendências do campo</li>
+                </ul>
+            </div>
+            <div class="image-content">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAACXBIWXMAAAsTAAALEwEAmpwYAAABHklEQVR4nO3QQQ3AIBDDsOP+V+4hA3SYQSbSgXubAEAAAAAAAAAAAAAgJ8JZq9NP7P2wcAAMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwOD/Avzkdxl3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3pNGm3gAAAP//AwBRT5pFAAAAAElFTkSuQmCC"
+                    alt="Mapa de Rede Bibliométrica">
+                <div class="image-caption">Sugestão: Screenshot de mapa de rede (ex: VOSviewer ou CiteSpace).</div>
+            </div>
+        </div>
+        <div class="footer">Objetivos</div>
+    </div>
+
+    <div class="slide">
+        <h1>Metodologia</h1>
+        <div class="content-wrapper">
+            <div class="text-content">
+                <h3>Tipo</h3>
+                <ul>
+                    <li>Revisão bibliométrica</li>
+                </ul>
+
+                <h3>Fonte de Dados</h3>
+                <ul>
+                    <li>Base de dados: <strong>Web of Science (WOS)</strong></li>
+                </ul>
+
+                <h3>Período</h3>
+                <ul>
+                    <li>2014 a Junho/2024 (10 anos)</li>
+                </ul>
+
+                <h3>Processos</h3>
+                <ul>
+                    <li>Extração de metadados</li>
+                    <li>Tabulação no Excel</li>
+                    <li>Análise gráfica quantitativa</li>
+                </ul>
+            </div>
+            <div class="image-content">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAYAAABUYjvPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAvUlEQVR4nO3VMQ0AIAzAsP0v7eAGBE6SYJqm9u42wP/d9xtwAICAgICAgICAgICAgICCvwbGZAfQP5Y/YT8kP8kPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkP4AAGZb8AGP5pS4QAAAABJRU5ErkJggg==" alt="Metodologia">
+                <div class="image-caption">Sugestão: Ícone representando filtro de dados ou logo da Web of Science.</div>
+            </div>
+        </div>
+        <div class="footer">Metodologia</div>
+    </div>
+
+    <div class="slide">
+        <h1>Principais Resultados</h1>
+        <div class="content-wrapper">
+            <div class="text-content">
+                <ul>
+                    <li><strong>Evolução Temporal:</strong> Crescimento expressivo após 2016.</li>
+                    <li><strong>Pico:</strong> Ano de 2022 com 163 publicações.</li>
+                    <li><strong>Volume:</strong> 725 artigos analisados.</li>
+                    <li><strong>Destaque Individual:</strong> Liang-Bi Chen (Autor mais produtivo).</li>
+                    <li><strong>Geopolítica:</strong> Predomínio da China nas publicações.</li>
+                </ul>
+            </div>
+            <div class="image-content">
+                <div class="chart-container">
+                    <canvas id="resultsChart"></canvas>
+                </div>
+                <div class="image-caption">Fonte: Elaborado pelos autores baseados no WOS (2024)</div>
+            </div>
+        </div>
+        <div class="footer">Resultados Quantitativos</div>
+    </div>
+
+    <div class="slide">
+        <h1>Palavras-chave, Áreas e Fomento</h1>
+        <div class="content-wrapper">
+            <div class="text-content">
+                <h3>Top Palavras-chave</h3>
+                <ul>
+                    <li>Classification, Model, AI, Diagnosis, Segmentation.</li>
+                </ul>
+
+                <h3>Áreas de Pesquisa Dominantes</h3>
+                <ul>
+                    <li>Engenharia Elétrica/Eletrônica</li>
+                    <li>Ciência da Computação (IA)</li>
+                    <li>Telecomunicações</li>
+                </ul>
+
+                <h3>Principal Financiador</h3>
+                <ul>
+                    <li><strong>National Natural Science Foundation of China</strong> (Evidencia o forte investimento estatal chinês).</li>
+                </ul>
+            </div>
+             <div class="image-content">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAYAAABUYjvPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAvUlEQVR4nO3VMQ0AIAzAsP0v7eAGBE6SYJqm9u42wP/d9xtwAICAgICAgICAgICAgICCvwbGZAfQP5Y/YT8kP8kPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkP4AAGZb8AGP5pS4QAAAABJRU5ErkJggg==" alt="Nuvem de Palavras">
+                <div class="image-caption">Sugestão: Nuvem de palavras (Word Cloud) com termos técnicos.</div>
+            </div>
+        </div>
+        <div class="footer">Análise Qualitativa</div>
+    </div>
+
+    <div class="slide">
+        <h1>Interpretação e Tendências</h1>
+        <div class="content-wrapper" style="flex-direction: column;">
+            <div class="text-content" style="width: 100%; padding-right: 0;">
+                <h3>O que os dados revelam sobre o futuro?</h3>
+                
+                <ul class="horizontal-list">
+                    <li>Expansão via<br>Deep Learning</li>
+                    <li>Domínio<br>Chinês</li>
+                    <li>Forte Aplicação<br>em Saúde</li>
+                    <li>Foco em<br>Classificação</li>
+                    <li>Caráter<br>Multidisciplinar</li>
+                </ul>
+
+                <br>
+                <div style="display: flex; justify-content: center; margin-top: 20px;">
+                    <div style="text-align: center; max-width: 600px;">
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAYAAABUYjvPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAvUlEQVR4nO3VMQ0AIAzAsP0v7eAGBE6SYJqm9u42wP/d9xtwAICAgICAgICAgICAgICCvwbGZAfQP5Y/YT8kP8kPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkP4AAGZb8AGP5pS4QAAAABJRU5ErkJggg==" 
+                             alt="Esquema Rede Neural" style="height: 250px; width: auto;">
+                        <div class="image-caption">Sugestão: Diagrama de arquitetura de Rede Neural Convolucional (CNN).</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">Discussão</div>
+    </div>
+
+    <div class="slide">
+        <h1>Conclusões</h1>
+        <div class="content-wrapper">
+            <div class="text-content">
+                <ul>
+                    <li>A área apresenta <strong>crescimento contínuo</strong> e sólido.</li>
+                    <li>A <strong>China</strong> lidera indiscutivelmente as publicações e o fomento.</li>
+                    <li>O <strong>Brasil</strong> ainda possui participação modesta no cenário global.</li>
+                    <li>A tecnologia deixou de ser teórica e hoje resolve <strong>problemas reais</strong> (Engenharia e Medicina).</li>
+                </ul>
+            </div>
+            <div class="image-content">
+                 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAYAAABUYjvPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAvUlEQVR4nO3VMQ0AIAzAsP0v7eAGBE6SYJqm9u42wP/d9xtwAICAgICAgICAgICAgICCvwbGZAfQP5Y/YT8kP8kPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkP4AAGZb8AGP5pS4QAAAABJRU5ErkJggg==" alt="Conclusão Global">
+                 <div class="image-caption">Sugestão: Imagem conceitual de tecnologia global (Globo ou Conexões).</div>
+            </div>
+        </div>
+        <div class="footer">Conclusões</div>
+    </div>
+
+    <div class="slide">
+        <h1>Limitações e Futuras Pesquisas</h1>
+        <div class="content-wrapper">
+            <div class="text-content">
+                <h3>Limitações do Estudo</h3>
+                <ul>
+                    <li>Restrito à base Web of Science (WOS).</li>
+                    <li>Não incluiu patentes (visão comercial incompleta).</li>
+                    <li>Questões éticas não foram o foco da análise bibliométrica.</li>
+                </ul>
+
+                <h3>Sugestões para Futuras Pesquisas</h3>
+                <ul>
+                    <li>Expandir para bases como Scopus e IEEE.</li>
+                    <li>Incluir análise de patentes para medir inovação industrial.</li>
+                    <li>Investigar impactos sociais e viés algorítmico na IA.</li>
+                </ul>
+            </div>
+            <div class="image-content">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAYAAABUYjvPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAvUlEQVR4nO3VMQ0AIAzAsP0v7eAGBE6SYJqm9u42wP/d9xtwAICAgICAgICAgICAgICCvwbGZAfQP5Y/YT8kP8kPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkPwkP4AAGZb8AGP5pS4QAAAABJRU5ErkJggg==" alt="Pesquisa Futura">
+                <div class="image-caption">Sugestão: Imagem abstrata de "caminho a seguir" ou lupa sobre documentos.</div>
+            </div>
+        </div>
+        <div class="footer">Próximos Passos</div>
+    </div>
+
+    <div class="slide">
+        <h1 class="center-content">Considerações Finais</h1>
+        <div class="content-wrapper center-content" style="flex-direction: column;">
+            <div class="text-content" style="text-align: center; width: 80%;">
+                <p>Esta revisão bibliométrica oferece um panorama claro de um campo em ebulição.</p>
+                <p>A Inteligência Artificial no reconhecimento de imagens é uma <strong>tecnologia estratégica</strong> para o desenvolvimento nacional e global.</p>
+                <br>
+                <hr style="width: 50%; border: 0; border-top: 1px solid #ccc; margin: 20px auto;">
+                <br>
+                <p><strong>Referência ABNT</strong></p>
+                <p style="font-size: 18px;">SANTOS, M. P. C. et al. <em>O uso da inteligência artificial no reconhecimento de imagem: uma revisão bibliométrica.</em> <strong>Revista Eletrônica Científica Inovação e Tecnologia</strong>, v. 16, n. 40, p. 19186, 2025.</p>
+            </div>
+        </div>
+        <div class="footer">Obrigado!</div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('resultsChart').getContext('2d');
+        
+        // Dados extraídos da imagem
+        const years = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
+        const publications = [0, 0, 4, 7, 21, 58, 104, 135, 163, 159, 86];
+
+        // Cálculo da Linha de Tendência baseada na fórmula da imagem: y = 17,109x - 34476
+        // Nota: 17,109 (formato EU/BR) é 17.109 em JS
+        const trendlineData = years.map(year => {
+            let val = (17.109 * year) - 34476;
+            return val < 0 ? 0 : val; // Não exibir valores negativos
+        });
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: 'Publicações',
+                        data: publications,
+                        borderColor: '#0caee3', // Azul ciano da imagem original
+                        backgroundColor: '#0caee3',
+                        borderWidth: 4,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        fill: false,
+                        tension: 0 // Linhas retas entre pontos
+                    },
+                    {
+                        label: 'Tendência (y = 17,109x - 34476)',
+                        data: trendlineData,
+                        borderColor: 'red',
+                        borderWidth: 3,
+                        borderDash: [10, 5], // Linha tracejada
+                        pointRadius: 0, // Sem bolinhas na linha de tendência
+                        fill: false,
+                        tension: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Crescimento das Publicações (Web of Science)',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    datalabels: {
+                        display: true,
+                        align: 'top',
+                        color: 'black'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 180,
+                        title: {
+                            display: true,
+                            text: 'Publicações',
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Ano',
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                },
+                // Plugin simples para desenhar os números em cima das bolinhas (igual à imagem)
+                animation: {
+                    onComplete: function() {
+                        const ctx = this.ctx;
+                        ctx.font = Chart.helpers.fontString(Chart.defaults.font.size, 'bold', Chart.defaults.font.family);
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+
+                        this.data.datasets.forEach(function(dataset, i) {
+                            if (i === 1) return; // Não desenhar números na linha de tendência
+                            
+                            const meta = chart.getDatasetMeta(i);
+                            meta.data.forEach(function(bar, index) {
+                                const data = dataset.data[index];
+                                // Ajuste de posição para não cortar o topo
+                                ctx.fillStyle = 'black';
+                                ctx.fillText(data, bar.x, bar.y - 10);
+                            });
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
