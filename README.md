@@ -153,7 +153,17 @@ $dbpassword = '';
 ?>
 ```
 
-#### 4. Configure o Servidor Web
+#### 4. Configure o Cloudinary (CDN de Imagens)
+
+Para que o upload de imagens funcione, crie um arquivo `.env` na raiz do projeto com sua URL de API do Cloudinary:
+
+```env
+CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+```
+
+> **Nota**: O sistema utiliza o Cloudinary para armazenar imagens de produtos. Sem isso, o upload falhará.
+
+#### 5. Configure o Servidor Web
 
 ##### Usando XAMPP/WAMP:
 

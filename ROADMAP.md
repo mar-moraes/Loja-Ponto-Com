@@ -17,7 +17,7 @@ Este documento lista as funcionalidades planejadas e sugestões técnicas para a
 - [ ] Migração para Laravel ou Symfony
 - [ ] Frontend em React ou Vue.js
 - [ ] Implementação de Cache (Redis)
-- [ ] CDN para imagens
+- [x] CDN para imagens
 - [ ] Containerização com Docker
 - [x] CI/CD com GitHub Actions
 - [x] Testes Unitários e de Integração

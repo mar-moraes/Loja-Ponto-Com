@@ -10,8 +10,18 @@ if (!isset($_SESSION['usuario_id'])) {
 $usuario_id = $_SESSION['usuario_id'];
 
 $uploadDir = '../assets/imagens/Produtos/';
-if (!file_exists($uploadDir) && !mkdir($uploadDir, 0777, true)) {
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Falha ao criar diretório de uploads.']);
+// Diretorio local ainda pode ser usado para fallback ou removido se tudo for p/ nuvem
+// if (!file_exists($uploadDir) && !mkdir($uploadDir, 0777, true)) { ... }
+
+// Autoload composer
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Services\CloudinaryService;
+
+try {
+    $cloudinary = new CloudinaryService();
+} catch (Exception $e) {
+    echo json_encode(['sucesso' => false, 'mensagem' => 'Erro config CDN: ' . $e->getMessage()]);
     exit();
 }
 
@@ -51,11 +61,13 @@ try {
     $mainImageDbPath = null;
 
     // 1. Se enviou arquivo novo
+    // 1. Se enviou arquivo novo
     if (isset($_FILES['imagem_principal']) && $_FILES['imagem_principal']['error'] == UPLOAD_ERR_OK) {
-        $ext = pathinfo($_FILES['imagem_principal']['name'], PATHINFO_EXTENSION);
-        $newName = uniqid() . '.' . $ext;
-        if (move_uploaded_file($_FILES['imagem_principal']['tmp_name'], $uploadDir . $newName)) {
-            $mainImageDbPath = '../assets/imagens/Produtos/' . $newName;
+        try {
+            $mainImageDbPath = $cloudinary->upload($_FILES['imagem_principal']);
+        } catch (Exception $e) {
+            echo json_encode(['sucesso' => false, 'mensagem' => $e->getMessage()]);
+            exit();
         }
     }
     // 2. Se já existe imagem (rascunho ou edição)
@@ -116,17 +128,31 @@ try {
         $id_final = $pdo->lastInsertId();
     }
 
-    // Processa Thumbnails (Adiciona novas, não remove antigas por enquanto)
+    // Processa Thumbnails
     if (isset($_FILES['thumbnails'])) {
         $stmt_thumb = $pdo->prepare("INSERT INTO PRODUTO_IMAGENS (produto_id, url_imagem) VALUES (?, ?)");
 
-        for ($i = 0; $i < count($_FILES['thumbnails']['name']); $i++) {
+        // Re-organiza array de files se necessario, mas CloudinaryService::upload espera um item de $_FILES (com tmp_name etc)
+        // O array $_FILES['thumbnails'] vem invertido (name => [0=>..., 1=>...]).
+
+        $count = count($_FILES['thumbnails']['name']);
+        for ($i = 0; $i < $count; $i++) {
             if ($_FILES['thumbnails']['error'][$i] == UPLOAD_ERR_OK) {
-                $ext = pathinfo($_FILES['thumbnails']['name'][$i], PATHINFO_EXTENSION);
-                $thumbName = uniqid() . '.' . $ext;
-                if (move_uploaded_file($_FILES['thumbnails']['tmp_name'][$i], $uploadDir . $thumbName)) {
-                    $thumbDbPath = '../assets/imagens/Produtos/' . $thumbName;
-                    $stmt_thumb->execute([$id_final, $thumbDbPath]);
+                // Monta array unico estilo $_FILES['file']
+                $fileItem = [
+                    'name'     => $_FILES['thumbnails']['name'][$i],
+                    'type'     => $_FILES['thumbnails']['type'][$i],
+                    'tmp_name' => $_FILES['thumbnails']['tmp_name'][$i],
+                    'error'    => $_FILES['thumbnails']['error'][$i],
+                    'size'     => $_FILES['thumbnails']['size'][$i],
+                ];
+
+                try {
+                    $thumbUrl = $cloudinary->upload($fileItem);
+                    $stmt_thumb->execute([$id_final, $thumbUrl]);
+                } catch (Exception $e) {
+                    // Ignora erro de uma imagem ou interrompe?
+                    // Vamos ignorar para nao cancelar o produto todo, mas idealmente logar
                 }
             }
         }

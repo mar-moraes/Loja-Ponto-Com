@@ -21,3 +21,12 @@ O Diagrama de Casos de Uso descreve as interações dos atores (Cliente, Fornece
 O Diagrama de Sequência detalha a ordem cronológica das mensagens trocadas entre os objetos e componentes do sistema para realizar uma funcionalidade específica (ex: Processamento de Compra).
 
 ![Sequência](../Artefatos/Diagramas/Sequência/Sequência%20-%20Imagem.png)
+
+## Serviços Externos
+
+### Cloudinary (CDN de Imagens)
+
+O sistema utiliza o Cloudinary para armazenamento e entrega otimizada de imagens.
+- **Upload**: O backend (`CloudinaryService`) envia imagens diretamente para a API do Cloudinary.
+- **Armazenamento**: As imagens não são salvas no disco local do servidor (exceto temporariamente em `/tmp`).
+- **Banco de Dados**: A tabela `produtos` armazena a URL absoluta da imagem (`imagem_url`) fornecida pelo Cloudinary (ex: `https://res.cloudinary.com/...`).
