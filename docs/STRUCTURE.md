@@ -59,7 +59,7 @@ docs/                                       # Documentação do projeto refatora
 ├── ARCHITECTURE.md                         # Arquitetura e Diagramas
 └── STRUCTURE.md                            # Estrutura do projeto (este arquivo)
 
-testes/                                     # Testes automatizados
+Testes/                                     # Testes automatizados
 └── cypress/                                # Testes E2E
     ├── e2e/                                # Specs de teste
     └── support/                            # Utilitários de teste

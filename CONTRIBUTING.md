@@ -52,7 +52,7 @@ git push origin feature/nova-funcionalidade
 2. Clique em "Pull Requests" > "New Pull Request"
 3. Selecione sua branch
 4. Descreva suas alterações detalhadamente
-5. Aguarde a revisão
+5. Aguarde s revisão e a aprovação dos testes de CI (GitHub Actions)
 
 ## Guia de Estilo
 

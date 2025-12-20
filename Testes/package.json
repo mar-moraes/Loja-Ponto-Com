@@ -1,0 +1,16 @@
+{
+    "name": "testes-automatizados",
+    "version": "1.0.0",
+    "description": "Testes automatizados com Cypress",
+    "main": "index.js",
+    "scripts": {
+        "test": "cypress run",
+        "cy:open": "cypress open"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "cypress": "^13.0.0"
+    }
+}

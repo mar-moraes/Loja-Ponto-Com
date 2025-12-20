@@ -30,3 +30,9 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+# Cypress
+cypress/screenshots/
+cypress/videos/
+Testes/cypress/screenshots/
+Testes/cypress/videos/

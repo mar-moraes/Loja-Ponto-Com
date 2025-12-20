@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_sqlite, pdo_mysql
+
+      - name: Start PHP Server
+        run: |
+          php -S 127.0.0.1:3000 -t . > /dev/null 2>&1 &
+          sleep 3 # Give it a moment to start
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        working-directory: ./Testes
+        run: npm ci
+
+      - name: Cypress Run
+        working-directory: ./Testes
+        run: npm run test
+        env:
+          CYPRESS_baseUrl: http://127.0.0.1:3000/src
