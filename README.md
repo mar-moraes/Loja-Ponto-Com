@@ -329,8 +329,6 @@ Para mais informações sobre o projeto, consulte:
 
 - **[Diretrizes do Trabalho Prático](Artefatos/Diretrizes_TrabalhoPrático.pdf)**: Escopo e regras do projeto
 - **[Telas e Requisitos](Artefatos/Telas%20e%20requisitos.pdf)**: Detalhamento funcional
-- **[Apresentação do Projeto](Artefatos/Slides/slides.pdf)**: Slides da apresentação
-
 ---
 
 ## Roadmap e Melhorias
