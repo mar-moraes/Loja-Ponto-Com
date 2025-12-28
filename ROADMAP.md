@@ -8,7 +8,7 @@ Este documento lista as funcionalidades planejadas e sugestões técnicas para a
 - [ ] Chat entre Comprador e Fornecedor
 - [ ] Sistema de Cupons e Descontos
 - [ ] Rastreamento de Pedidos
-- [ ] Relatórios e Dashboard para Fornecedores
+- [x] Relatórios e Dashboard para Fornecedores
 - [ ] API REST para integração com apps mobile
 - [ ] Comparação de Produtos
 
