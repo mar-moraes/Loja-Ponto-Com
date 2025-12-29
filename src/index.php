@@ -68,6 +68,7 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Loja Ponto Com</title>
   <link rel="stylesheet" href="../assets/estilos/style.css">
+  <link rel="stylesheet" href="../assets/estilos/notifications.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
     /* Ajuste para o slide do carrossel cobrir a área */
@@ -120,10 +121,30 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
           <a href="tela_cadastro.html">Crie a sua conta</a>
           <a href="tela_login.html">Entre</a>
         <?php endif; ?>
+
         <a href="tela_carrinho.php" style="display: flex; align-items: center; gap: 5px;">
           Carrinho
           <img src="../assets/imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
         </a>
+
+        <?php if ($usuario_logado): ?>
+          <!-- Notification System -->
+          <div id="notification-bell" class="notification-container">
+            <!-- Icone SVG desenhado -->
+            <svg class="notification-bell-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span id="notification-badge" class="notification-badge"></span>
+            <div id="notification-dropdown" class="notification-dropdown">
+              <div class="notification-header">
+                <span>Notificações</span>
+                <span id="mark-all-read" class="mark-all-read">Marcar todas como lidas</span>
+              </div>
+              <div id="notification-list"></div>
+            </div>
+          </div>
+        <?php endif; ?>
       </div>
     </nav>
   </header>
@@ -241,6 +262,7 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="../assets/js/notifications.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
 
