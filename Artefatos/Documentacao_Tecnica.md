@@ -1,5 +1,7 @@
 # Documentação Técnica do Projeto
 
+**Última atualização:** 2025-12-22 — Padronização das instruções de execução e adição de nota sobre arquivos ignorados.
+
 ## 1. Capa
 
 **Título do Projeto:** Loja Ponto Com – Marketplace de Compras Online

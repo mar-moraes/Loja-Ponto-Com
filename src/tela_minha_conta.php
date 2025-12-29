@@ -152,6 +152,7 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 
             <?php if ($is_fornecedor): ?>
                 <button class="tab-button" data-tab="painel-produtos">Meus produtos</button>
+                <button class="tab-button" data-tab="painel-relatorio">Relatório de Vendas</button>
             <?php endif; ?>
         </div>
 
@@ -322,8 +323,28 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 
             </div>
         <?php endif; ?>
+
+        <?php if ($is_fornecedor): ?>
+            <div id="painel-relatorio" class="tab-painel">
+                <section class="conta-secao">
+                    <h2>Desempenho de Vendas</h2>
+                    <div class="controls" style="margin-bottom: 20px;">
+                        <label for="salesRange">Período:</label>
+                        <select id="salesRange" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                            <option value="7days">Últimos 7 dias</option>
+                            <option value="30days">Últimos 30 dias</option>
+                            <option value="all">Desde o início</option>
+                        </select>
+                    </div>
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </section>
+            </div>
+        <?php endif; ?>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Lógica original das abas
@@ -337,8 +358,112 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
                     tab.classList.add('active');
                     const targetPanelId = tab.getAttribute('data-tab');
                     document.getElementById(targetPanelId).classList.add('active');
+
+                    // Se for a aba de relatório, carrega o gráfico se ainda não foi carregado
+                    if (targetPanelId === 'painel-relatorio' && window.mySalesChart === undefined) {
+                        loadSalesChart();
+                    }
                 });
             });
+
+            // Lógica do Gráfico de Vendas
+            const ctx = document.getElementById('salesChart');
+            if (ctx) { // Só executa se o elemento existir (se for fornecedor)
+                let salesChart;
+
+                window.loadSalesChart = function() {
+                    const range = document.getElementById('salesRange').value;
+                    fetchDataAndRender(range);
+                };
+
+                document.getElementById('salesRange').addEventListener('change', function() {
+                    const range = this.value;
+                    fetchDataAndRender(range);
+                });
+
+                function fetchDataAndRender(range) {
+                    fetch(`relatorio_vendas.php?range=${range}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                console.error(data.error);
+                                return;
+                            }
+                            renderChart(data);
+                        })
+                        .catch(error => console.error('Erro ao buscar dados:', error));
+                }
+
+                function renderChart(data) {
+                    const labels = data.map(item => {
+                        const date = new Date(item.date);
+                        // Ajuste para o fuso horário local se necessário, ou apenas formatação simples
+                        return date.toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit'
+                        });
+                    });
+                    const values = data.map(item => item.total);
+
+                    if (salesChart) {
+                        salesChart.destroy();
+                    }
+
+                    salesChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Vendas (R$)',
+                                data: values,
+                                borderColor: '#ff8c00', // Cor laranja do tema
+                                backgroundColor: 'rgba(255, 140, 0, 0.2)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.3 // Suaviza a linha
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: true
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false,
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.y !== null) {
+                                                label += new Intl.NumberFormat('pt-BR', {
+                                                    style: 'currency',
+                                                    currency: 'BRL'
+                                                }).format(context.parsed.y);
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value, index, values) {
+                                            return 'R$ ' + value;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    window.mySalesChart = salesChart; // Marca como carregado
+                }
+            }
         });
     </script>
 
