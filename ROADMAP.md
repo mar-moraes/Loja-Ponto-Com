@@ -4,7 +4,7 @@ Este documento lista as funcionalidades planejadas e sugestões técnicas para a
 
 ## Planejadas
 
-- [ ] Sistema de Notificações (Email/Push)
+- [x] Sistema de Notificações (Email/Push)
 - [ ] Chat entre Comprador e Fornecedor
 - [ ] Sistema de Cupons e Descontos
 - [ ] Rastreamento de Pedidos
