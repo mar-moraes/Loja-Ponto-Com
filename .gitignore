@@ -22,6 +22,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+Artefatos/Slides
 
 # OS generated files
 .DS_Store
@@ -41,3 +42,13 @@ cypress/screenshots/
 cypress/videos/
 Testes/cypress/screenshots/
 Testes/cypress/videos/
+
+# Ignorar documentação técnica, arquivos de conversão e gerados
+Artefatos/Documentacao_Tecnica.md\
+Artefatos/Documentacao_Tecnica.odt\
+Artefatos/Documentacao_Tecnica.pdf\
+Artefatos/converter.js
+Artefatos/gerar*
+**/gerar*
+slides.html
+Artefatos/Slides/ 

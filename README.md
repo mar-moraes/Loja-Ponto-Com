@@ -110,6 +110,7 @@ Para ver a organização detalhada dos arquivos e diretórios, consulte a **[est
 - **PHP 8.0+** ou superior
 - **MySQL 5.7+** ou superior
 - **Servidor Web** (Apache ou Nginx)
+- **Redis** (Opcional, mas recomendado para cache)
 - **XAMPP** ou **WAMP** (recomendado para ambiente local)
 
 ### Passo a Passo
@@ -159,6 +160,8 @@ Para que o upload de imagens funcione, crie um arquivo `.env` na raiz do projeto
 
 ```env
 CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
 ```
 
 > **Nota**: O sistema utiliza o Cloudinary para armazenar imagens de produtos. Sem isso, o upload falhará.
@@ -329,8 +332,6 @@ Para mais informações sobre o projeto, consulte:
 
 - **[Diretrizes do Trabalho Prático](Artefatos/Diretrizes_TrabalhoPrático.pdf)**: Escopo e regras do projeto
 - **[Telas e Requisitos](Artefatos/Telas%20e%20requisitos.pdf)**: Detalhamento funcional
-- **[Apresentação do Projeto](Artefatos/Slides/slides.pdf)**: Slides da apresentação
-
 ---
 
 ## Roadmap e Melhorias

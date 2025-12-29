@@ -1,32 +1,39 @@
 <?php
 session_start();
 require '../Banco de dados/conexao.php'; // Inclui a conexão
+require '../vendor/autoload.php';
+
+use Services\CacheService;
+
+$cache = new CacheService();
 
 // === BLOCO MODIFICADO: Busca produtos com a média de avaliações ===
 try {
-  // 1. A consulta SQL foi atualizada
-  //    - LEFT JOIN junta com a tabela de avaliações
-  //    - AVG(a.nota) calcula a média das notas
-  //    - COUNT(a.nota) conta quantas avaliações existem
-  //    - GROUP BY p.id agrupa os resultados por produto
-  $stmt = $pdo->prepare(
-    "SELECT
-            p.*,
-            AVG(a.nota) as media_avaliacoes,
-            COUNT(a.nota) as total_avaliacoes
-        FROM
-            produtos p
-        LEFT JOIN
-            avaliacoes a ON p.id = a.produto_id
-        WHERE
-            p.status = 'ativo'
-        GROUP BY
-            p.id
-        LIMIT 20"
-  );
-  $stmt->execute();
-  $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
+  $produtos = $cache->remember('home_produtos_destaque', 300, function () use ($pdo) {
+    // 1. A consulta SQL foi atualizada
+    //    - LEFT JOIN junta com a tabela de avaliações
+    //    - AVG(a.nota) calcula a média das notas
+    //    - COUNT(a.nota) conta quantas avaliações existem
+    //    - GROUP BY p.id agrupa os resultados por produto
+    $stmt = $pdo->prepare(
+      "SELECT
+                p.*,
+                AVG(a.nota) as media_avaliacoes,
+                COUNT(a.nota) as total_avaliacoes
+            FROM
+                produtos p
+            LEFT JOIN
+                avaliacoes a ON p.id = a.produto_id
+            WHERE
+                p.status = 'ativo'
+            GROUP BY
+                p.id
+            LIMIT 20"
+    );
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  });
+} catch (Exception $e) { // Catch broadly or keep PDOException if sure callback throws it
   $produtos = []; // Array vazio em caso de erro
   error_log("Erro ao buscar produtos: " . $e->getMessage());
 }
@@ -35,12 +42,14 @@ try {
 
 // === NOVO BLOCO: Busca 3 produtos aleatórios para o carrossel ===
 try {
-  // ORDER BY RAND() pega produtos aleatórios.
-  // Garante que tenham imagem e estejam ativos.
-  $stmt_carousel = $pdo->prepare("SELECT id, nome, imagem_url FROM produtos WHERE status = 'ativo' AND imagem_url IS NOT NULL ORDER BY RAND() LIMIT 3");
-  $stmt_carousel->execute();
-  $produtos_carousel = $stmt_carousel->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
+  $produtos_carousel = $cache->remember('home_produtos_carousel', 300, function () use ($pdo) {
+    // ORDER BY RAND() pega produtos aleatórios.
+    // Garante que tenham imagem e estejam ativos.
+    $stmt_carousel = $pdo->prepare("SELECT id, nome, imagem_url FROM produtos WHERE status = 'ativo' AND imagem_url IS NOT NULL ORDER BY RAND() LIMIT 3");
+    $stmt_carousel->execute();
+    return $stmt_carousel->fetchAll(PDO::FETCH_ASSOC);
+  });
+} catch (Exception $e) {
   $produtos_carousel = []; // Array vazio em caso de erro
   error_log("Erro ao buscar produtos do carrossel: " . $e->getMessage());
 }

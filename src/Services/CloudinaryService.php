@@ -11,19 +11,23 @@ class CloudinaryService
     public function __construct()
     {
         // Load .env if not already loaded and CLOUDINARY_URL is missing
-        if (!getenv('CLOUDINARY_URL')) {
+        // Load .env if not already loaded and CLOUDINARY_URL is missing
+        $url = getenv('CLOUDINARY_URL') ?: ($_ENV['CLOUDINARY_URL'] ?? ($_SERVER['CLOUDINARY_URL'] ?? null));
+
+        if (!$url) {
             // Adjust path to root directory assuming this file is in src/Services/
             $dotenvPath = __DIR__ . '/../../';
             if (file_exists($dotenvPath . '.env')) {
                 $dotenv = Dotenv::createImmutable($dotenvPath);
                 $dotenv->safeLoad();
+                $url = getenv('CLOUDINARY_URL') ?: ($_ENV['CLOUDINARY_URL'] ?? ($_SERVER['CLOUDINARY_URL'] ?? null));
             }
         }
 
         // Configure Cloudinary explicitly from environment variable
         // The SDK might auto-pick it up, but explicit init ensures it's set
-        if (getenv('CLOUDINARY_URL')) {
-            Configuration::instance(getenv('CLOUDINARY_URL'));
+        if ($url) {
+            Configuration::instance($url);
         }
     }
 

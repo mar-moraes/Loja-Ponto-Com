@@ -13,3 +13,4 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ### Alterado
 - Atualizado `ROADMAP.md` marcando a tarefa de CI/CD como concluída.
+- Atualização da documentação: `README.md`, `docs/STRUCTURE.md`, `docs/ARCHITECTURE.md` e `Artefatos/Documentacao_Tecnica.md` (padronização de instruções de execução e nota sobre arquivos ignorados).
