@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // API is src/api/notifications.php.
         // If loaded from src/index.php, path to api is 'api/notifications.php'.
 
+        // Revert to relative path which works for files in src/
         fetch('api/notifications.php?action=poll')
             .then(response => response.json())
             .then(data => {
@@ -84,8 +85,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Poll every 30 seconds
-    setInterval(loadNotifications, 30000);
+    // Poll every 5 seconds (more responsive)
+    setInterval(loadNotifications, 5000);
 
     // Initial load
     loadNotifications();

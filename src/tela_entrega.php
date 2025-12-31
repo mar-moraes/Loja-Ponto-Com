@@ -452,7 +452,7 @@ $dados_para_js = [
                         limparFormularioEndereco();
                         mostrarModal(modalId);
                     }, {
-                        enableHighAccuracy: false,
+                        enableHighAccuracy: true,
                         timeout: 10000,
                         maximumAge: 0
                     }

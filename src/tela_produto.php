@@ -11,7 +11,7 @@ $produto_id = $_GET['id'];
 
 // 2. Buscar o produto principal
 try {
-  $stmt = $pdo->prepare("SELECT * FROM PRODUTOS WHERE id = ? AND status = 'ativo'");
+  $stmt = $pdo->prepare("SELECT p.*, u.nome as fornecedor_nome FROM PRODUTOS p LEFT JOIN usuarios u ON p.usuario_id = u.id WHERE p.id = ? AND p.status = 'ativo'");
   $stmt->execute([$produto_id]);
   $produto = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -280,7 +280,8 @@ $meu_comentario_js = json_encode($minha_avaliacao ? $minha_avaliacao['comentario
     data-id="<?php echo $produto['id']; ?>"
     data-title="<?php echo htmlspecialchars($produto['nome']); ?>"
     data-price="<?php echo htmlspecialchars($preco_final); ?>"
-    data-img="<?php echo htmlspecialchars($produto['imagem_url']); ?>">
+    data-img="<?php echo htmlspecialchars($produto['imagem_url']); ?>"
+    data-fornecedor="<?php echo $produto['usuario_id'] ?? 6; ?>">
 
     <div class="coluna-galeria">
       <div class="thumbnails">
@@ -351,6 +352,23 @@ $meu_comentario_js = json_encode($minha_avaliacao ? $minha_avaliacao['comentario
       <div class="botoes-acao">
         <button class="btn-acao btn-comprar" id="btn-comprar">Comprar agora</button>
         <button class="btn-acao btn-adicionar" id="btn-adicionar-carrinho">Adicionar ao carrinho</button>
+
+        <?php if ($usuario_logado): ?>
+          <p style="margin-top: 15px; font-size: 0.95rem; color: #555;">
+            Vendido por
+            <?php
+            $idFornecedor = $produto['usuario_id'] ?? 6;
+            $nomeFornecedor = htmlspecialchars($produto['fornecedor_nome'] ?? 'Loja Ponto Com');
+
+            if ($usuario_id == $idFornecedor): ?>
+              <strong>Você</strong>
+            <?php else: ?>
+              <a href="javascript:void(0)" id="link-falar-fornecedor" style="color: #2196F3; text-decoration: none; font-weight: 600;">
+                <?php echo $nomeFornecedor; ?>
+              </a>
+            <?php endif; ?>
+          </p>
+        <?php endif; ?>
       </div>
     </div>
   </main>
@@ -458,6 +476,12 @@ $meu_comentario_js = json_encode($minha_avaliacao ? $minha_avaliacao['comentario
     const btnComprar = document.getElementById("btn-comprar");
     const btnAdicionar = document.getElementById("btn-adicionar-carrinho");
     const btnFavoritar = document.getElementById("btn-favoritar");
+    const linkFalarFornecedor = document.getElementById("link-falar-fornecedor");
+
+    // Produto Info para Chat (Assumindo que há um campo escondido ou pegamos do dataset)
+    // O dataset do container já tem dados. Falta o ID do fornecedor.
+    // Vamos adicionar um data-fornecedor no container principal.
+    const fornecedorId = container.dataset.fornecedor || 1; // Fallback para admin/id 1 se não tiver
 
     // --- 2. LÓGICA DA GALERIA ---
     function mudarImagem(thumbElement) {
@@ -513,7 +537,19 @@ $meu_comentario_js = json_encode($minha_avaliacao ? $minha_avaliacao['comentario
       localStorage.setItem("totalCompra", totalDaCompra.toFixed(2));
 
       window.location.href = "tela_entrega.php";
+      localStorage.setItem("salvos", JSON.stringify(salvos));
     });
+
+    if (linkFalarFornecedor) {
+      linkFalarFornecedor.addEventListener("click", () => {
+        // Redireciona para o chat passando IDs
+        const produtoId = container.dataset.id;
+        // Como não temos o ID do fornecedor no frontend ainda, vamos precisar injetá-lo no PHP do container ou aqui.
+        // Para MVP, vou assumir que o 'usuario_id' do produto (no banco) é o fornecedor.
+        // Preciso atualizar o PHP do container pra incluir data-fornecedor.
+        window.location.href = `tela_chat.php?create_chat_with=${fornecedorId}&product_id=${produtoId}&focus=true`;
+      });
+    }
 
     btnFavoritar.addEventListener("click", (e) => {
       const produto = getDadosProduto();

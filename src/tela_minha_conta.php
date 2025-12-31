@@ -66,11 +66,11 @@ try {
 $rascunhos = [];
 if ($is_fornecedor) {
     try {
-        $stmt_rascunhos = $pdo->prepare("SELECT * FROM PRODUTOS WHERE usuario_id = ? AND status = 'rascunho' ORDER BY id DESC");
+        $stmt_rascunhos = $pdo->prepare("SELECT * FROM PRODUTOS WHERE usuario_id = ? ORDER BY id DESC");
         $stmt_rascunhos->execute([$usuario_id]);
         $rascunhos = $stmt_rascunhos->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        error_log("Erro ao buscar rascunhos: " . $e->getMessage());
+        error_log("Erro ao buscar produtos: " . $e->getMessage());
     }
 }
 // ==========================================================
@@ -98,18 +98,9 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 
     <style>
         /* Estilos copiados de tela_gerenciar_produtos.html */
-        #lista-produtos {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-            gap: 20px;
-            /* Adicionado gap para espaçamento */
-        }
+        /* Estilos copiados de tela_gerenciar_produtos.html */
+        /* REMOVIDO: #lista-produtos usava flex, agora usa a classe .grid do style.css para 4 colunas */
 
-        #lista-produtos .card {
-            flex-grow: 0;
-            flex-shrink: 0;
-        }
 
         /* --- INÍCIO DA MODIFICAÇÃO --- */
         /* Estilo para o novo botão de adicionar produto */
@@ -296,7 +287,7 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
             <div id="painel-produtos" class="tab-painel">
 
                 <section class="conta-secao">
-                    <h2>Rascunhos</h2>
+                    <h2>Meus Produtos</h2>
 
                     <div class="controls" style="margin-bottom: 20px;">
                         <label for="sort-produtos">Ordenar por</label>
