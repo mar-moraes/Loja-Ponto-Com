@@ -1,0 +1,236 @@
+/* Layout Principal */
+body {
+    background-color: #f4f4f4;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-container {
+    display: flex;
+    flex: 1;
+    max-width: 1200px;
+    margin: 20px auto;
+    width: 95%;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    height: calc(100vh - 100px);
+    /* Ajuste conforme header */
+}
+
+/* Sidebar */
+.chat-sidebar {
+    width: 300px;
+    border-right: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+}
+
+.sidebar-header {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa;
+}
+
+.conversation-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.conversation-item {
+    padding: 15px;
+    border-bottom: 1px solid #f1f1f1;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.conversation-item:hover {
+    background-color: #f9f9f9;
+}
+
+.conversation-item.active {
+    background-color: #e3f2fd;
+    border-left: 4px solid #2196F3;
+}
+
+.conversation-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.conversation-preview {
+    font-size: 0.85rem;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.conversation-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.unread-badge {
+    background-color: #f44336;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 10px;
+}
+
+/* Janela Principal */
+.chat-window {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.product-context {
+    font-size: 0.85rem;
+    color: #666;
+    background: #f1f1f1;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #e5ddd5;
+    /* Cor estilo WhatsApp */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message-bubble {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.message-bubble.sent {
+    align-self: flex-end;
+    background-color: #dcf8c6;
+    border-radius: 8px 0 8px 8px;
+}
+
+.message-bubble.received {
+    align-self: flex-start;
+    background-color: #fff;
+    border-radius: 0 8px 8px 8px;
+}
+
+.message-time {
+    font-size: 0.7rem;
+    color: #999;
+    text-align: right;
+    margin-top: 4px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-check {
+    font-weight: bold;
+}
+
+.status-check.read {
+    color: #4fc3f7;
+    /* Azul = lido */
+}
+
+/* Área de Input */
+.chat-input-area {
+    padding: 15px;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ddd;
+}
+
+#form-send-message {
+    display: flex;
+    gap: 10px;
+}
+
+#message-input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    outline: none;
+}
+
+#message-input:focus {
+    border-color: #2196F3;
+}
+
+button[type="submit"] {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+button[type="submit"]:hover {
+    background-color: #1976D2;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #888;
+}
+
+@media (max-width: 768px) {
+    .chat-sidebar {
+        width: 80px;
+        /* Versão compacta */
+    }
+
+    .conversation-name,
+    .conversation-preview,
+    .conversation-meta {
+        display: none;
+    }
+
+    .chat-container {
+        width: 100%;
+        height: calc(100vh - 60px);
+        margin: 0;
+        border-radius: 0;
+    }
+}

@@ -17,12 +17,19 @@ $uploadDir = '../assets/imagens/Produtos/';
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Services\CloudinaryService;
+use Services\CacheService;
 
 try {
     $cloudinary = new CloudinaryService();
 } catch (Exception $e) {
     echo json_encode(['sucesso' => false, 'mensagem' => 'Erro config CDN: ' . $e->getMessage()]);
     exit();
+}
+
+try {
+    $cache = new CacheService();
+} catch (Exception $e) {
+    // Falha silenciosa ou log
 }
 
 try {
@@ -159,6 +166,13 @@ try {
     }
 
     $pdo->commit();
+
+    // Limpa o cache da home para mostrar o novo produto imediatamente
+    if (isset($cache)) {
+        $cache->forget('home_produtos_destaque');
+        $cache->forget('home_produtos_carousel');
+    }
+
     echo json_encode(['sucesso' => true, 'mensagem' => 'Produto publicado com sucesso!']);
 } catch (PDOException $e) {
     $pdo->rollBack();

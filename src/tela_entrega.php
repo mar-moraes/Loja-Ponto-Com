@@ -31,7 +31,7 @@ try {
     if ($dados_usuario) {
         $usuario_cpf = $dados_usuario['cpf'];
         $usuario_telefone = $dados_usuario['telefone'];
-        
+
         // Salva na SESSÃO para a tela_pagamento e o PDF usarem
         $_SESSION['usuario_cpf'] = $usuario_cpf;
         $_SESSION['usuario_telefone'] = $usuario_telefone;
@@ -45,7 +45,6 @@ try {
     $stmt_addr = $pdo->prepare("SELECT * FROM ENDERECOS WHERE usuario_id = ? ORDER BY id DESC LIMIT 1");
     $stmt_addr->execute([$usuario_id]);
     $endereco_padrao = $stmt_addr->fetch(PDO::FETCH_ASSOC);
-
 } catch (PDOException $e) {
     error_log("Erro ao buscar endereço: " . $e->getMessage());
 }
@@ -57,7 +56,7 @@ try {
                  JOIN CARRINHO_ITENS ci ON c.id = ci.carrinho_id
                  JOIN PRODUTOS p ON ci.produto_id = p.id
                  WHERE c.usuario_id = ?";
-                 
+
     $stmt_cart = $pdo->prepare($sql_cart);
     $stmt_cart->execute([$usuario_id]);
     $resultado = $stmt_cart->fetch(PDO::FETCH_ASSOC);
@@ -65,9 +64,8 @@ try {
     if ($resultado && $resultado['subtotal'] > 0) {
         $total_carrinho = (float) $resultado['subtotal'];
     }
-    
-    $_SESSION['total_compra'] = $total_carrinho;
 
+    $_SESSION['total_compra'] = $total_carrinho;
 } catch (PDOException $e) {
     error_log("Erro ao buscar carrinho: " . $e->getMessage());
 }
@@ -90,53 +88,74 @@ $dados_para_js = [
 
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Forma de Entrega</title>
 
-  <link rel="stylesheet" href="../assets/estilos/style.css">
-  <link rel="stylesheet" href="../assets/estilos/estilo_entrega.css">
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forma de Entrega</title>
+
+    <link rel="stylesheet" href="../assets/estilos/style.css">
+    <link rel="stylesheet" href="../assets/estilos/notifications.css">
+    <link rel="stylesheet" href="../assets/estilos/estilo_entrega.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
+
 <body>
 
     <header class="topbar">
-      <nav class="actions"> 
-        <div class="logo-container"> 
-            <a href="index.php" style="display: flex; align-items: center;">
-              <img src="../assets/imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px;">
-            </a>
-          </div> 
-        
-        <form action="buscar.php" method="GET" style="position: relative; width: 600px; max-width: 100%;">
-          <input type="search" id="pesquisa" name="q" placeholder="Digite sua pesquisa..." style="font-size: 16px; width: 100%; height: 40px; padding-left: 15px; padding-right: 45px; border-radius: 6px; border: none; box-sizing: border-box;">
-          <button type="submit" style="position: absolute; right: 0; top: 0; height: 40px; width: 45px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            <img src="../assets/imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px; opacity: 0.6;">
-          </button>
-        </form>
-        
-        <div style="display: flex; gap: 30px; align-items: center;">
-          <a href="tela_minha_conta.php">Olá, <?php echo htmlspecialchars($nome_usuario); ?></a>
-          <a href="../Banco de dados/logout.php">Sair</a>
-          <a href="tela_carrinho.php" style="display: flex; align-items: center; gap: 5px;">
-            Carrinho
-            <img src="../assets/imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
-          </a>
-        </div>
+        <nav class="actions">
+            <div class="logo-container">
+                <a href="index.php" style="display: flex; align-items: center;">
+                    <img src="../assets/imagens/exemplo-logo.png" alt="" style="width: 40px; height: 40px;">
+                </a>
+            </div>
+
+            <form action="buscar.php" method="GET" style="position: relative; width: 600px; max-width: 100%;">
+                <input type="search" id="pesquisa" name="q" placeholder="Digite sua pesquisa..." style="font-size: 16px; width: 100%; height: 40px; padding-left: 15px; padding-right: 45px; border-radius: 6px; border: none; box-sizing: border-box;">
+                <button type="submit" style="position: absolute; right: 0; top: 0; height: 40px; width: 45px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <img src="../assets/imagens/lupa.png" alt="lupa" style="width: 28px; height: 28px; opacity: 0.6;">
+                </button>
+            </form>
+
+            <div style="display: flex; gap: 30px; align-items: center;">
+                <a href="tela_minha_conta.php">Olá, <?php echo htmlspecialchars($nome_usuario); ?></a>
+                <a href="../Banco de dados/logout.php">Sair</a>
+                <a href="tela_carrinho.php" style="display: flex; align-items: center; gap: 5px;">
+                    Carrinho
+                    <img src="../assets/imagens/carrinho invertido.png" alt="" style="width: 20px; height: 20px;">
+                </a>
+
+                <?php if ($usuario_logado): ?>
+                    <!-- Notification System -->
+                    <div id="notification-bell" class="notification-container">
+                        <svg class="notification-bell-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span id="notification-badge" class="notification-badge"></span>
+                        <div id="notification-dropdown" class="notification-dropdown">
+                            <div class="notification-header">
+                                <span>Notificações</span>
+                                <span id="mark-all-read" class="mark-all-read">Marcar todas como lidas</span>
+                            </div>
+                            <div id="notification-list"></div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
         </nav>
     </header>
 
 
     <main class="entrega-layout-container">
-        
+
         <div class="opcoes-entrega">
             <h2>Escolha a forma de entrega</h2>
-            
+
             <form id="form-entrega">
                 <div class="opcao-bloco selecionado">
                     <input type="radio" id="enviar-endereco" name="forma-entrega" value="endereco" checked>
@@ -145,7 +164,7 @@ $dados_para_js = [
                             <span>Enviar no meu endereço</span>
                             <span class="preco-gratis">Grátis</span>
                         </div>
-                        
+
                         <div class="opcao-detalhes">
                             <?php if ($endereco_padrao): ?>
                                 <p style="font-weight: 600; font-size: 15px;">
@@ -171,7 +190,7 @@ $dados_para_js = [
                             <span>Retirada na Agência</span>
                             <span class="preco">R$ 5,99</span>
                         </div>
-                        
+
                         <div class="opcao-detalhes" id="detalhes-agencia-selecionada">
                             <p class="distancia">A 450 m do seu endereço</p>
                             <p>Agência - LOJA 1 - (Centro)</p>
@@ -180,7 +199,7 @@ $dados_para_js = [
                         </div>
                     </label>
                 </div>
-                
+
                 <button type="button" class="btn-continuar-entrega">Continuar</button>
             </form>
         </div>
@@ -208,9 +227,9 @@ $dados_para_js = [
         <div class="modal-conteudo" onclick="event.stopPropagation()">
             <button class="modal-fechar" onclick="fecharModal('modal-editar-endereco')"><i class="fa-solid fa-xmark"></i></button>
             <h3>Editar endereço</h3>
-            
+
             <form class="form-modal">
-                
+
                 <input type="hidden" id="bairro">
                 <input type="hidden" id="cidade">
                 <input type="hidden" id="estado">
@@ -219,7 +238,7 @@ $dados_para_js = [
                     <label for="cep">CEP</label>
                     <input type="text" id="cep" placeholder="Ex.: 13184-000">
                 </div>
-                
+
                 <div class="form-linha">
                     <div class="form-grupo" style="flex: 2;">
                         <label for="rua">Rua / Avenida</label>
@@ -229,13 +248,13 @@ $dados_para_js = [
                     <div class="form-grupo" style="flex: 1;">
                         <label for="numero">Número</label>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                        <input type="text" id="numero" placeholder="Ex.: 45607052" style="flex: 1; min-width: 50px;">
-                        <div class="checkbox-container" style="white-space: nowrap;">
-                            <input type="checkbox" id="sem-numero">
-                            <label for="sem-numero">Sem número</label>
+                            <input type="text" id="numero" placeholder="Ex.: 45607052" style="flex: 1; min-width: 50px;">
+                            <div class="checkbox-container" style="white-space: nowrap;">
+                                <input type="checkbox" id="sem-numero">
+                                <label for="sem-numero">Sem número</label>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
 
                 <div class="form-grupo">
@@ -268,7 +287,7 @@ $dados_para_js = [
             </form>
         </div>
     </div>
-    
+
     <div class="modal-overlay" id="modal-retirar-agencia" onclick="fecharModal('modal-retirar-agencia')">
         <div class="modal-conteudo modal-grande" onclick="event.stopPropagation()">
             <button class="modal-fechar" onclick="fecharModal('modal-retirar-agencia')"><i class="fa-solid fa-xmark"></i></button>
@@ -319,32 +338,37 @@ $dados_para_js = [
         // NUNCA mais usaremos '...'dentro deste script.
         const appData = <?php echo json_encode($dados_para_js); ?>;
         // ==========================================================
-        
+
         // --- Variáveis globais ---
         let map = null; // Referência global para o mapa Leaflet
-        
+
         // Tenta ler o total do localStorage (vindo do carrinho)
         let subtotalStorage = localStorage.getItem("totalCompra");
-        
+
         // Se não existir, usa o fallback seguro (do banco) vindo do appData
         let subtotalCompra = parseFloat(subtotalStorage) || appData.total_carrinho_php;
-        
+
 
         // --- Funções para Modais ---
         function mostrarModal(modalId) {
             document.getElementById(modalId).style.display = 'flex';
 
             if (modalId === 'modal-retirar-agencia' && !map) {
-                const locais = [
-                    {
+                const locais = [{
                         nome: 'LOJA 1',
                         endereco: 'RUA LUIZ CAMILO DE CAMARGO, 581, Centro, Hortolândia (13184-230)',
-                        coords: { lat: -22.85848, lng: -47.22129 }
+                        coords: {
+                            lat: -22.85848,
+                            lng: -47.22129
+                        }
                     },
                     {
                         nome: 'PONTO EXTRA HORTOLÂNDIA',
                         endereco: 'AV. DA EMACIPAÇÃO, 1200, Jardim Santa Rita de Cássia, Hortolândia (13186-505)',
-                        coords: { lat: -22.86985, lng: -47.21461 }
+                        coords: {
+                            lat: -22.86985,
+                            lng: -47.21461
+                        }
                     }
                 ];
                 const centroDoMapa = [-22.864, -47.218];
@@ -358,8 +382,8 @@ $dados_para_js = [
 
                     locais.forEach(local => {
                         L.marker([local.coords.lat, local.coords.lng])
-                         .addTo(map)
-                         .bindPopup(`<b>${local.nome}</b><br>${local.endereco}`);
+                            .addTo(map)
+                            .bindPopup(`<b>${local.nome}</b><br>${local.endereco}`);
                     });
 
                     setTimeout(() => {
@@ -380,7 +404,7 @@ $dados_para_js = [
         // --- Função para Atualizar Resumo ---
         function atualizarResumoEntrega() {
             const freteSelecionadoRadio = document.querySelector('input[name="forma-entrega"]:checked');
-            if (!freteSelecionadoRadio) return; 
+            if (!freteSelecionadoRadio) return;
 
             const freteSelecionado = freteSelecionadoRadio.value;
             const freteSpan = document.getElementById("resumo-frete-preco");
@@ -390,11 +414,11 @@ $dados_para_js = [
             if (freteSelecionado === 'agencia') {
                 valorFrete = 5.99;
                 textoFrete = "R$ 5,99";
-                if(freteSpan) freteSpan.classList.remove("preco-gratis");
+                if (freteSpan) freteSpan.classList.remove("preco-gratis");
             } else { // 'endereco'
                 valorFrete = 0.0;
                 textoFrete = "GRÁTIS";
-                if(freteSpan) freteSpan.classList.add("preco-gratis");
+                if (freteSpan) freteSpan.classList.add("preco-gratis");
             }
 
             const valorTotal = subtotalCompra + valorFrete;
@@ -402,9 +426,9 @@ $dados_para_js = [
             const elProduto = document.getElementById("resumo-produto-preco");
             const elTotal = document.getElementById("resumo-total-preco");
 
-            if(elProduto) elProduto.innerText = "R$ " + subtotalCompra.toFixed(2).replace(".", ",");
-            if(freteSpan) freteSpan.innerText = textoFrete;
-            if(elTotal) elTotal.innerText = "R$ " + valorTotal.toFixed(2).replace(".", ",");
+            if (elProduto) elProduto.innerText = "R$ " + subtotalCompra.toFixed(2).replace(".", ",");
+            if (freteSpan) freteSpan.innerText = textoFrete;
+            if (elTotal) elTotal.innerText = "R$ " + valorTotal.toFixed(2).replace(".", ",");
 
             // Salva no localStorage para a próxima página
             localStorage.setItem("totalCompra", subtotalCompra.toFixed(2));
@@ -427,9 +451,8 @@ $dados_para_js = [
                         console.warn(`Erro ao obter localização (${error.code}): ${error.message}`);
                         limparFormularioEndereco();
                         mostrarModal(modalId);
-                    },
-                    { 
-                        enableHighAccuracy: false,
+                    }, {
+                        enableHighAccuracy: true,
                         timeout: 10000,
                         maximumAge: 0
                     }
@@ -450,12 +473,12 @@ $dados_para_js = [
                         throw new Error(`Erro na API Nominatim: ${response.statusText}`);
                     }
                     return response.json();
-                 })
+                })
                 .then(data => {
                     if (data && data.address) {
                         preencherFormularioComDados(data.address);
                     } else {
-                         limparFormularioEndereco();
+                        limparFormularioEndereco();
                     }
                     mostrarModal(modalId);
                 })
@@ -487,11 +510,11 @@ $dados_para_js = [
                     }
                 }
             }
-             if (campos['rua'] && campos['numero']) {
-                 document.getElementById('complemento')?.focus();
-             } else if (campos['rua']) {
-                 document.getElementById('numero')?.focus();
-             }
+            if (campos['rua'] && campos['numero']) {
+                document.getElementById('complemento')?.focus();
+            } else if (campos['rua']) {
+                document.getElementById('numero')?.focus();
+            }
         }
 
         function limparFormularioEndereco() {
@@ -501,16 +524,16 @@ $dados_para_js = [
                 if (input) input.value = '';
             });
 
-             const erroRua = document.getElementById('erro-rua');
-             const inputRua = document.getElementById('rua');
+            const erroRua = document.getElementById('erro-rua');
+            const inputRua = document.getElementById('rua');
 
-             if(erroRua) erroRua.style.display = 'none';
-             if(inputRua) inputRua.classList.remove('input-erro');
+            if (erroRua) erroRua.style.display = 'none';
+            if (inputRua) inputRua.classList.remove('input-erro');
         }
 
         // --- Roda quando a página carrega ---
         document.addEventListener("DOMContentLoaded", () => {
- 
+
             atualizarResumoEntrega(); // Atualiza o resumo inicial
 
             // --- Lógica para selecionar as opções de entrega (Radios) ---
@@ -522,7 +545,7 @@ $dados_para_js = [
                     if (this.checked) {
                         this.closest('.opcao-bloco').classList.add('selecionado');
                     }
-                    atualizarResumoEntrega(); 
+                    atualizarResumoEntrega();
                 });
             });
 
@@ -538,17 +561,21 @@ $dados_para_js = [
 
                     const pEnderecoElement = itemAgencia.querySelector('p > i.fa-solid.fa-location-dot');
                     const pEndereco = pEnderecoElement ? pEnderecoElement.parentElement.innerText : '';
-                    const regex = /^(.*?), (.*?), (.*?), (.*?) \((.*?)\)/; 
+                    const regex = /^(.*?), (.*?), (.*?), (.*?) \((.*?)\)/;
                     const match = pEndereco.match(regex);
 
-                    let dadosAgencia = { tipo: 'agencia', nome: nomeAgencia, endereco: pEndereco }; // Fallback
+                    let dadosAgencia = {
+                        tipo: 'agencia',
+                        nome: nomeAgencia,
+                        endereco: pEndereco
+                    }; // Fallback
                     if (match && match.length >= 6) {
                         dadosAgencia = {
                             tipo: 'agencia',
                             endereco_id: null, // Agência não tem ID de endereço de usuário
                             nome: nomeAgencia,
-                            documento: 'ISENTO', 
-                            endereco: `${match[1].trim()}, ${match[2].trim()}`, 
+                            documento: 'ISENTO',
+                            endereco: `${match[1].trim()}, ${match[2].trim()}`,
                             bairro: match[3].trim(),
                             municipio: match[4].trim(),
                             cep: match[5].trim(),
@@ -575,7 +602,9 @@ $dados_para_js = [
                         radioAgencia.checked = true;
                         document.querySelectorAll('.opcao-bloco').forEach(b => b.classList.remove('selecionado'));
                         radioAgencia.closest('.opcao-bloco').classList.add('selecionado');
-                        radioAgencia.dispatchEvent(new Event('change', { bubbles: true }));
+                        radioAgencia.dispatchEvent(new Event('change', {
+                            bubbles: true
+                        }));
                     }
 
                     fecharModal('modal-retirar-agencia');
@@ -596,12 +625,12 @@ $dados_para_js = [
             if (btnSalvarEndereco) {
                 btnSalvarEndereco.addEventListener('click', () => {
                     let isValid = true;
-                    
-                    if(erroRua) erroRua.style.display = 'none';
-                    if(inputRua) inputRua.classList.remove('input-erro');
+
+                    if (erroRua) erroRua.style.display = 'none';
+                    if (inputRua) inputRua.classList.remove('input-erro');
 
                     if (inputRua && inputRua.value.trim() === '') {
-                        if(erroRua) erroRua.style.display = 'block';
+                        if (erroRua) erroRua.style.display = 'block';
                         inputRua.classList.add('input-erro');
                         isValid = false;
                     }
@@ -612,7 +641,7 @@ $dados_para_js = [
                         const inputEstado = document.getElementById('estado');
                         let complementoFinal = inputComplemento ? inputComplemento.value.trim() : '';
                         let infoAdicional = inputInfoAdicional ? inputInfoAdicional.value.trim() : '';
-                        
+
                         if (complementoFinal && infoAdicional) {
                             complementoFinal = `${complementoFinal} (${infoAdicional})`;
                         } else if (infoAdicional) {
@@ -630,43 +659,43 @@ $dados_para_js = [
                         };
 
                         fetch('../Banco de dados/salvar_endereco.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify(payloadEndereco)
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.sucesso) {
-                                const novoEndereco = data.endereco;
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify(payloadEndereco)
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.sucesso) {
+                                    const novoEndereco = data.endereco;
 
-                                // ==========================================================
-                                // --- CORREÇÃO APLICADA (CRÍTICO) ---
-                                // ==========================================================
-                                // Criamos o objeto COMPLETO para o localStorage
-                                // usando a variável segura 'appData' (do topo)
-                                
-                                const dadosEntregaCompleto = {
-                                    tipo: 'endereco',
-                                    endereco_id: novoEndereco.id,
-                                    nome: appData.usuario.nome_completo, // <-- Dado seguro
-                                    documento: appData.usuario.cpf,        // <-- Dado seguro
-                                    endereco: `${novoEndereco.rua}, ${novoEndereco.numero}`,
-                                    bairro: novoEndereco.bairro,
-                                    cep: novoEndereco.cep,
-                                    municipio: novoEndereco.cidade,
-                                    uf: novoEndereco.estado,
-                                    fone: appData.usuario.telefone       // <-- Dado seguro
-                                };
-                                
-                                localStorage.setItem('dadosEntrega', JSON.stringify(dadosEntregaCompleto));
+                                    // ==========================================================
+                                    // --- CORREÇÃO APLICADA (CRÍTICO) ---
+                                    // ==========================================================
+                                    // Criamos o objeto COMPLETO para o localStorage
+                                    // usando a variável segura 'appData' (do topo)
 
-                                const detalhesEnderecoDiv = document.querySelector('#enviar-endereco').closest('.opcao-bloco').querySelector('.opcao-detalhes');
-                                if (detalhesEnderecoDiv) {
-                                    // Usamos as variáveis JS seguras, sem 'echo'
-                                    detalhesEnderecoDiv.innerHTML = `
+                                    const dadosEntregaCompleto = {
+                                        tipo: 'endereco',
+                                        endereco_id: novoEndereco.id,
+                                        nome: appData.usuario.nome_completo, // <-- Dado seguro
+                                        documento: appData.usuario.cpf, // <-- Dado seguro
+                                        endereco: `${novoEndereco.rua}, ${novoEndereco.numero}`,
+                                        bairro: novoEndereco.bairro,
+                                        cep: novoEndereco.cep,
+                                        municipio: novoEndereco.cidade,
+                                        uf: novoEndereco.estado,
+                                        fone: appData.usuario.telefone // <-- Dado seguro
+                                    };
+
+                                    localStorage.setItem('dadosEntrega', JSON.stringify(dadosEntregaCompleto));
+
+                                    const detalhesEnderecoDiv = document.querySelector('#enviar-endereco').closest('.opcao-bloco').querySelector('.opcao-detalhes');
+                                    if (detalhesEnderecoDiv) {
+                                        // Usamos as variáveis JS seguras, sem 'echo'
+                                        detalhesEnderecoDiv.innerHTML = `
                                         <p style="font-weight: 600; font-size: 15px;">
                                             ${novoEndereco.rua}, ${novoEndereco.numero} - ${novoEndereco.bairro}
                                         </p>
@@ -676,96 +705,100 @@ $dados_para_js = [
                                         <p class="tipo-endereco">Recebe: ${appData.usuario.nome_completo}</p> 
                                         <a href="#" class="link-acao" onclick="abrirModalEnderecoComLocalizacao()">Alterar ou escolher outro endereço</a>
                                     `;
-                                }
-                                // ==========================================================
-                                // --- FIM DA CORREÇÃO ---
-                                // ==========================================================
-                                
-                                fecharModal('modal-editar-endereco');
-                                
-                                const radioEndereco = document.getElementById('enviar-endereco');
-                                if (radioEndereco) {
-                                    radioEndereco.checked = true;
-                                    radioEndereco.dispatchEvent(new Event('change', { bubbles: true }));
-                                }
+                                    }
+                                    // ==========================================================
+                                    // --- FIM DA CORREÇÃO ---
+                                    // ==========================================================
 
-                            } else {
-                                alert('Erro ao salvar endereço: ' + data.mensagem);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erro no fetch:', error);
-                            alert('Erro de comunicação. Tente novamente.');
-                        });
+                                    fecharModal('modal-editar-endereco');
+
+                                    const radioEndereco = document.getElementById('enviar-endereco');
+                                    if (radioEndereco) {
+                                        radioEndereco.checked = true;
+                                        radioEndereco.dispatchEvent(new Event('change', {
+                                            bubbles: true
+                                        }));
+                                    }
+
+                                } else {
+                                    alert('Erro ao salvar endereço: ' + data.mensagem);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Erro no fetch:', error);
+                                alert('Erro de comunicação. Tente novamente.');
+                            });
                     }
                 });
             } else {
                 console.error("Botão 'btn-salvar-endereco' não encontrado.");
             }
-            
+
             // --- Lógica do ViaCEP ---
             function buscarCepLocal() {
-                if (!inputCep) return; 
+                if (!inputCep) return;
 
-                const cep = inputCep.value.replace(/\D/g, ''); 
-                if(erroRua) erroRua.style.display = 'none'; 
-                if(inputRua) inputRua.classList.remove('input-erro');
+                const cep = inputCep.value.replace(/\D/g, '');
+                if (erroRua) erroRua.style.display = 'none';
+                if (inputRua) inputRua.classList.remove('input-erro');
 
                 if (cep.length === 8) {
-                    if(inputRua) inputRua.value = "Buscando..."; 
+                    if (inputRua) inputRua.value = "Buscando...";
                     fetch(`https://viacep.com.br/ws/${cep}/json/`)
                         .then(response => {
-                             if (!response.ok) { throw new Error('Erro na resposta da API ViaCEP'); }
-                             return response.json();
-                         })
+                            if (!response.ok) {
+                                throw new Error('Erro na resposta da API ViaCEP');
+                            }
+                            return response.json();
+                        })
                         .then(data => {
                             if (data.erro) {
                                 console.warn("CEP não encontrado na base do ViaCEP.");
-                                if(inputRua) inputRua.value = "";
+                                if (inputRua) inputRua.value = "";
                                 document.getElementById('bairro').value = "";
                                 document.getElementById('cidade').value = "";
                                 document.getElementById('estado').value = "";
-                                inputRua?.focus(); 
+                                inputRua?.focus();
                             } else {
-                                if(inputRua) inputRua.value = data.logradouro || ""; 
+                                if (inputRua) inputRua.value = data.logradouro || "";
                                 document.getElementById('bairro').value = data.bairro || "";
                                 document.getElementById('cidade').value = data.localidade || "";
                                 document.getElementById('estado').value = data.uf || "";
-                                document.getElementById('numero')?.focus(); 
+                                document.getElementById('numero')?.focus();
                             }
                         })
                         .catch(error => {
                             console.error('Erro ao consultar a API ViaCEP:', error);
-                            if(inputRua) inputRua.value = ""; 
+                            if (inputRua) inputRua.value = "";
                         });
                 } else if (cep.length > 0 && cep.length < 8) {
-                     if(inputRua && inputRua.value === "Buscando...") inputRua.value = "";
+                    if (inputRua && inputRua.value === "Buscando...") inputRua.value = "";
                 } else if (cep.length === 0) {
-                     if(inputRua) inputRua.value = "";
+                    if (inputRua) inputRua.value = "";
                 }
             }
-            
+
             if (inputCep) {
-                inputCep.addEventListener('blur', buscarCepLocal); 
-                inputCep.addEventListener('input', () => { 
-                     if(inputRua && inputRua.value === "Buscando...") inputRua.value = "";
+                inputCep.addEventListener('blur', buscarCepLocal);
+                inputCep.addEventListener('input', () => {
+                    if (inputRua && inputRua.value === "Buscando...") inputRua.value = "";
                 });
                 inputCep.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
-                        event.preventDefault(); 
-                        buscarCepLocal(); 
+                        event.preventDefault();
+                        buscarCepLocal();
                     }
                 });
             } else {
-                 console.error("Input 'cep' não encontrado.");
+                console.error("Input 'cep' não encontrado.");
             }
 
-             // --- Lógica da Busca de Localização (Mapa/Nominatim) ---
+            // --- Lógica da Busca de Localização (Mapa/Nominatim) ---
             const inputBuscaLocal = document.getElementById('busca-local');
             const btnBuscaLocal = document.getElementById('btn-busca-local');
 
             function buscarLocalizacaoMapa() {
-                if (!inputBuscaLocal || !map) return; 
+                if (!inputBuscaLocal || !map) return;
 
                 const query = inputBuscaLocal.value;
                 if (query.trim() === '') return;
@@ -779,9 +812,11 @@ $dados_para_js = [
 
                 fetch(url)
                     .then(response => {
-                         if (!response.ok) { throw new Error('Erro na API Nominatim Search'); }
-                         return response.json();
-                     })
+                        if (!response.ok) {
+                            throw new Error('Erro na API Nominatim Search');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         inputBuscaLocal.placeholder = originalPlaceholder;
                         inputBuscaLocal.disabled = false;
@@ -790,9 +825,9 @@ $dados_para_js = [
                             const lat = parseFloat(result.lat);
                             const lon = parseFloat(result.lon);
                             if (!isNaN(lat) && !isNaN(lon)) {
-                                map.setView([lat, lon], 16); 
+                                map.setView([lat, lon], 16);
                             } else {
-                                 alert("Localização encontrada, mas com coordenadas inválidas.");
+                                alert("Localização encontrada, mas com coordenadas inválidas.");
                             }
                         } else {
                             alert("Localização não encontrada. Tente termos mais específicos.");
@@ -815,7 +850,7 @@ $dados_para_js = [
                 });
                 btnBuscaLocal.addEventListener('click', buscarLocalizacaoMapa);
             } else {
-                 console.error("Elementos 'busca-local' ou 'btn-busca-local' não encontrados.");
+                console.error("Elementos 'busca-local' ou 'btn-busca-local' não encontrados.");
             }
 
             // --- Lógica do Botão Continuar (Navegação) ---
@@ -830,15 +865,17 @@ $dados_para_js = [
                     const freteSelecionado = freteSelecionadoRadio.value;
 
                     if (freteSelecionado === 'endereco') {
-                        
+
                         const dadosEditadosJSON = localStorage.getItem('dadosEntrega');
                         let dadosEditados = null;
-                        try { dadosEditados = dadosEditadosJSON ? JSON.parse(dadosEditadosJSON) : null; } catch(e){}
+                        try {
+                            dadosEditados = dadosEditadosJSON ? JSON.parse(dadosEditadosJSON) : null;
+                        } catch (e) {}
 
-                        if(dadosEditados && dadosEditados.tipo === 'endereco') {
-                             // OK, já foi salvo pelo modal
+                        if (dadosEditados && dadosEditados.tipo === 'endereco') {
+                            // OK, já foi salvo pelo modal
                         } else if (appData.endereco_padrao) { // Usa a variável segura 'appData'
-                            
+
                             // ==========================================================
                             // --- CORREÇÃO APLICADA ---
                             // ==========================================================
@@ -857,65 +894,69 @@ $dados_para_js = [
                             };
                             localStorage.setItem('dadosEntrega', JSON.stringify(dadosHomeDefault));
                             // ==========================================================
-                        
+
                         } else {
                             alert("Por favor, adicione um endereço de entrega clicando em 'Alterar ou escolher outro endereço'.");
-                            return; 
+                            return;
                         }
 
                     } else { // 'agencia'
                         const dadosAgenciaJSON = localStorage.getItem('dadosEntrega');
                         let dadosAgencia = null;
-                         try { dadosAgencia = dadosAgenciaJSON ? JSON.parse(dadosAgenciaJSON) : null; } catch(e){}
+                        try {
+                            dadosAgencia = dadosAgenciaJSON ? JSON.parse(dadosAgenciaJSON) : null;
+                        } catch (e) {}
 
                         if (!dadosAgencia || dadosAgencia.tipo !== 'agencia') {
-                             // Se o usuário clicar em "Continuar" sem ter escolhido uma agência,
-                             // salvamos a agência padrão (LOJA 1)
-                             const dadosDefaultAgencia = {
+                            // Se o usuário clicar em "Continuar" sem ter escolhido uma agência,
+                            // salvamos a agência padrão (LOJA 1)
+                            const dadosDefaultAgencia = {
                                 tipo: 'agencia',
                                 endereco_id: null,
-                                nome: 'Agência - LOJA 1', 
+                                nome: 'Agência - LOJA 1',
                                 documento: 'ISENTO',
-                                endereco: 'RUA LUIZ CAMILO DE CAMARGO, 581', 
+                                endereco: 'RUA LUIZ CAMILO DE CAMARGO, 581',
                                 bairro: 'Centro',
                                 municipio: 'Hortolândia',
                                 cep: '13184-230',
                                 uf: 'SP',
                                 fone: '(19) 3888-8888' // Fictício
                             };
-                             localStorage.setItem('dadosEntrega', JSON.stringify(dadosDefaultAgencia));
+                            localStorage.setItem('dadosEntrega', JSON.stringify(dadosDefaultAgencia));
                         }
                     }
 
                     window.location.href = 'tela_pagamento.php';
                 });
             } else {
-                 console.error("Botão '.btn-continuar-entrega' não encontrado.");
+                console.error("Botão '.btn-continuar-entrega' não encontrado.");
             }
 
-             // --- Ajuste para checkbox "Sem número" ---
-             if (checkboxSemNumero && inputNumero) {
-                 checkboxSemNumero.addEventListener('change', function() {
-                     inputNumero.disabled = this.checked;
-                     if (this.checked) {
-                         inputNumero.value = ''; 
-                     }
-                 });
-             }
+            // --- Ajuste para checkbox "Sem número" ---
+            if (checkboxSemNumero && inputNumero) {
+                checkboxSemNumero.addEventListener('change', function() {
+                    inputNumero.disabled = this.checked;
+                    if (this.checked) {
+                        inputNumero.value = '';
+                    }
+                });
+            }
 
-             // --- Lógica contador de caracteres ---
-             const textareaInfo = document.getElementById('info-adicional');
-             const contadorSpan = document.querySelector('.char-contador');
-             if(textareaInfo && contadorSpan) {
-                 textareaInfo.addEventListener('input', () => {
-                     const currentLength = textareaInfo.value.length;
-                     contadorSpan.textContent = `${currentLength} / 128`;
-                 });
-                 // Atualiza na inicialização
-                 contadorSpan.textContent = `${textareaInfo.value.length} / 128`;
-             }
-         
+            // --- Lógica contador de caracteres ---
+            const textareaInfo = document.getElementById('info-adicional');
+            const contadorSpan = document.querySelector('.char-contador');
+            if (textareaInfo && contadorSpan) {
+                textareaInfo.addEventListener('input', () => {
+                    const currentLength = textareaInfo.value.length;
+                    contadorSpan.textContent = `${currentLength} / 128`;
+                });
+                // Atualiza na inicialização
+                contadorSpan.textContent = `${textareaInfo.value.length} / 128`;
+            }
+
         }); // <-- FIM do DOMContentLoaded
     </script>
+    <script src="../assets/js/notifications.js"></script>
 </body>
+
 </html>

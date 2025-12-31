@@ -16,8 +16,15 @@ $uploadDir = '../assets/imagens/Produtos/';
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Services\CloudinaryService;
+use Services\CacheService;
 
 $cloudinary = new CloudinaryService();
+
+try {
+    $cache = new CacheService();
+} catch (Exception $e) {
+    // Falha silenciosa
+}
 
 try {
     // Coleta de dados (pode ser parcial)
@@ -108,6 +115,12 @@ try {
 
         $msg = "Rascunho salvo com sucesso!";
         $id_retorno = $pdo->lastInsertId();
+    }
+
+    // Limpa o cache pois o produto pode ter saído de 'ativo' para 'rascunho'
+    if (isset($cache)) {
+        $cache->forget('home_produtos_destaque');
+        $cache->forget('home_produtos_carousel');
     }
 
     echo json_encode(['sucesso' => true, 'mensagem' => $msg, 'id' => $id_retorno]);

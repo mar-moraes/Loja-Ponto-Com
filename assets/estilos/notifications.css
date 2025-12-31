@@ -1,0 +1,112 @@
+.notification-container {
+    position: relative;
+    cursor: pointer;
+    margin-right: 0;
+    margin-left: 10px;
+    /* Slight gap since it's now on the right */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Removed background color and fixed size */
+    background-color: transparent;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.notification-bell-icon {
+    width: 20px;
+    /* Tamanho do ícone (modifique aqui) */
+    height: 27px;
+    stroke: #000000;
+    /* Cor do contorno (amarelo solicitado) */
+    fill: none;
+    /* Sem preenchimento, ou mude para a cor desejada */
+    transition: transform 0.2s ease;
+}
+
+.notification-bell-icon:hover {
+    transform: scale(1.1);
+    /* Efeito de zoom ao passar o mouse */
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 10px;
+    min-width: 15px;
+    text-align: center;
+    display: none;
+    z-index: 2;
+}
+
+.notification-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+    max-height: 400px;
+    overflow-y: auto;
+    border-radius: 4px;
+}
+
+.notification-dropdown.active {
+    display: block;
+}
+
+.notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    cursor: default;
+}
+
+.notification-item[onclick] {
+    cursor: pointer;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item.unread {
+    background-color: #f0f8ff;
+    font-weight: 500;
+}
+
+.notification-item:hover {
+    background-color: #f5f5f5;
+}
+
+.notification-header {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f8f8;
+}
+
+.mark-all-read {
+    font-size: 12px;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.mark-all-read:hover {
+    text-decoration: underline;
+}
