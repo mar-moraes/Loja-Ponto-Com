@@ -51,4 +51,9 @@ Artefatos/converter.js
 Artefatos/gerar*
 **/gerar*
 slides.html
-Artefatos/Slides/ 
+Artefatos/Slides/
+
+# Magalu API Integration or Secrets
+src/magalu_token.json
+src/magalu_config.php
+ 
