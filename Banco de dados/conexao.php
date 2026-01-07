@@ -7,16 +7,14 @@ $dbpassword = '1234'; // Galera, essa é senha do meu XAMPP/MySQL. Altere confor
 try {
     // Cria a conexão PDO
     $pdo = new PDO($dsn, $dbusername, $dbpassword);
-    
+
     // Define o modo de erro para exceções, para podermos ver os erros
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
+
     // Define o charset para utf8mb4, conforme seu script SQL
     $pdo->exec("SET NAMES 'utf8mb4'");
-    
 } catch (PDOException $e) {
     // Em caso de falha, exibe o erro. 
     // Em um site em produção, você deve logar este erro, não exibi-lo.
     die('Conexão falhou: ' . $e->getMessage());
 }
-?>

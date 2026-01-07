@@ -175,8 +175,15 @@ try {
 
     echo json_encode(['sucesso' => true, 'mensagem' => 'Produto publicado com sucesso!']);
 } catch (PDOException $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    file_put_contents(__DIR__ . '/../debug_product_error.log', date('Y-m-d H:i:s') . " DB Error: " . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n", FILE_APPEND);
     echo json_encode(['sucesso' => false, 'mensagem' => 'Erro DB: ' . $e->getMessage()]);
 } catch (Exception $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    file_put_contents(__DIR__ . '/../debug_product_error.log', date('Y-m-d H:i:s') . " General Error: " . $e->getMessage() . "\n", FILE_APPEND);
     echo json_encode(['sucesso' => false, 'mensagem' => 'Erro Geral: ' . $e->getMessage()]);
 }

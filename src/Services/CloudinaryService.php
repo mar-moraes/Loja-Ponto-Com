@@ -50,4 +50,20 @@ class CloudinaryService
             throw new \Exception("Erro no upload para Cloudinary: " . $e->getMessage());
         }
     }
+
+    public function delete($publicId)
+    {
+        try {
+            $upload = new UploadApi();
+            $result = $upload->destroy($publicId, [
+                'resource_type' => 'image',
+                'invalidate' => true
+            ]);
+            return $result;
+        } catch (\Exception $e) {
+            // Log warning but don't stop execution
+            error_log("Erro ao deletar imagem do Cloudinary ($publicId): " . $e->getMessage());
+            return null;
+        }
+    }
 }

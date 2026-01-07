@@ -14,6 +14,9 @@ class ChatService
     {
         $this->pdo = $pdo;
         $this->notificationService = $notificationService;
+
+        $debugFile = 'C:\Users\eumes\Documents\IFSP\Matérias\2025-2\Desenvolvimento Web 1\Projeto pratico\Trabalho Dev Web\Telas\debug_master.log';
+        file_put_contents($debugFile, "ChatService Constructed. NotificationService is: " . ($this->notificationService ? 'SET' : 'NULL') . "\n", FILE_APPEND);
     }
 
     /**
@@ -79,18 +82,36 @@ class ChatService
 
             // 3. Notificar o destinatário (se NotificationService estiver disponível)
             if ($this->notificationService) {
-                // Descobre quem é o OUTRO participante
-                $stmtConv = $this->pdo->prepare("SELECT comprador_id, fornecedor_id FROM conversas WHERE id = ?");
-                $stmtConv->execute([$conversaId]);
+                // Descobre quem é o OUTRO participante e pega infos para a mensagem
+                $stmtConv = $this->pdo->prepare("
+                    SELECT 
+                        c.comprador_id, 
+                        c.fornecedor_id,
+                        u_remetente.nome as nome_remetente,
+                        p.nome as nome_produto
+                    FROM conversas c
+                    JOIN usuarios u_remetente ON u_remetente.id = :remetenteId
+                    LEFT JOIN produtos p ON c.produto_id = p.id
+                    WHERE c.id = :conversaId
+                ");
+                $stmtConv->execute([':conversaId' => $conversaId, ':remetenteId' => $remetenteId]);
                 $chat = $stmtConv->fetch(PDO::FETCH_ASSOC);
 
                 if ($chat) {
                     $destinatarioId = ($chat['comprador_id'] == $remetenteId) ? $chat['fornecedor_id'] : $chat['comprador_id'];
-                    $msgPreview = substr($conteudo, 0, 50) . (strlen($conteudo) > 50 ? '...' : '');
+
+                    // Formato: {nome_do_remetente} enviou uma mensagem referente ao produto {nome_do_produto}
+                    $nomeRemetente = $chat['nome_remetente'] ?? 'Usuário';
+                    $nomeProduto = $chat['nome_produto'] ?? 'um produto';
+
+                    // Se não tiver produto (ex: chat geral ou de pedido sem link direto com produto na tabela conversas, fallback)
+                    // Mas pelo requisito: "referente ao produto {nome_do_produto}"
+
+                    $mensagemNotificacao = "{$nomeRemetente} enviou uma mensagem referente ao produto {$nomeProduto}";
 
                     $this->notificationService->create(
                         $destinatarioId,
-                        "Nova mensagem: " . $msgPreview,
+                        $mensagemNotificacao,
                         "primary",
                         "tela_chat.php?chat_id=" . $conversaId
                     );

@@ -110,3 +110,13 @@
 .mark-all-read:hover {
     text-decoration: underline;
 }
+
+/* Truncate notification text */
+.notification-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 260px;
+    /* Adjust based on container width */
+    display: block;
+}

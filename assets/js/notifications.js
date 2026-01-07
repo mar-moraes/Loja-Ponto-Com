@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         list.innerHTML = notifications.map(n => `
             <div class="notification-item ${n.lida == 0 ? 'unread' : ''}" onclick="window.markAsRead(${n.id}, '${n.link || ''}')">
-                <div>${n.mensagem}</div>
+                <div class="notification-text" title="${n.mensagem}">${n.mensagem}</div>
                 <div style="font-size: 11px; color: #888; margin-top: 4px;">${new Date(n.data_criacao).toLocaleString('pt-BR')}</div>
             </div>
         `).join('');
