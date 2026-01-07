@@ -283,12 +283,6 @@ Para detalhes sobre como colaborar com este projeto, leia o **[Guia de Contribui
 
 ---
 
-## Arquitetura e Diagramas
-
-Para uma visão detalhada da estrutura técnica do projeto e seus diagramas UML, consulte a **[documentação de arquitetura](docs/ARCHITECTURE.md)**.
-
----
-
 ## Testes
 
 O projeto conta com testes E2E automatizados usando Cypress e testes unitários com PHPUnit.
