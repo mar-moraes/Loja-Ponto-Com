@@ -1,0 +1,25 @@
+Test Start: 2026-01-03 17:21:49
+Testing Header Set #0
+HTTP Code: 403
+Response: {
+    "slug": "FORBIDDEN",
+    "message": "You don't have permission to access this server"
+}
+
+---------------------------------------------------
+Testing Header Set #1
+HTTP Code: 403
+Response: {
+    "slug": "FORBIDDEN",
+    "message": "You don't have permission to access this server"
+}
+
+---------------------------------------------------
+Testing Header Set #2
+HTTP Code: 403
+Response: {
+    "slug": "FORBIDDEN",
+    "message": "You don't have permission to access this server"
+}
+
+---------------------------------------------------

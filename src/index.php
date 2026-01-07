@@ -15,6 +15,7 @@ try {
     //    - AVG(a.nota) calcula a média das notas
     //    - COUNT(a.nota) conta quantas avaliações existem
     //    - GROUP BY p.id agrupa os resultados por produto
+    //    - ORDER BY p.id DESC para mostrar os mais novos primeiro
     $stmt = $pdo->prepare(
       "SELECT
                 p.*,
@@ -28,6 +29,8 @@ try {
                 p.status = 'ativo'
             GROUP BY
                 p.id
+            ORDER BY
+                p.id DESC
             LIMIT 20"
     );
     $stmt->execute();
