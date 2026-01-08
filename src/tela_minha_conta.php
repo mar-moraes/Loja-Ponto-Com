@@ -66,7 +66,7 @@ try {
 $rascunhos = [];
 if ($is_fornecedor) {
     try {
-        $stmt_rascunhos = $pdo->prepare("SELECT * FROM PRODUTOS WHERE usuario_id = ? ORDER BY id DESC");
+        $stmt_rascunhos = $pdo->prepare("SELECT * FROM PRODUTOS WHERE usuario_id = ? AND status != 'inativo' ORDER BY id DESC");
         $stmt_rascunhos->execute([$usuario_id]);
         $rascunhos = $stmt_rascunhos->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
@@ -104,6 +104,52 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 
         /* --- INÍCIO DA MODIFICAÇÃO --- */
         /* Estilo para o novo botão de adicionar produto */
+
+        /* Switch CSS */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #2968C8;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
     </style>
 </head>
 
@@ -157,6 +203,45 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 
     <main class="container">
         <h1>Minha Conta</h1>
+
+        <?php if ($is_fornecedor): ?>
+            <div class="editor-mode-container" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <label class="switch">
+                    <input type="checkbox" id="modeEditorSwitch" <?php echo (isset($_SESSION['modo_editor']) && $_SESSION['modo_editor']) ? 'checked' : ''; ?>>
+                    <span class="slider round"></span>
+                </label>
+                <span style="font-size: 1.1rem; font-weight: bold;">Modo editor</span>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const switchBtn = document.getElementById('modeEditorSwitch');
+                    if (switchBtn) {
+                        switchBtn.addEventListener('change', function() {
+                            const isActive = this.checked;
+                            fetch('api/toggle_editor.php', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        active: isActive
+                                    })
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        console.log('Modo editor atualizado: ' + isActive);
+                                    } else {
+                                        console.error('Erro ao atualizar modo editor');
+                                    }
+                                })
+                                .catch(err => console.error('Erro:', err));
+                        });
+                    }
+                });
+            </script>
+        <?php endif; ?>
+
 
         <div class="tabs-container">
             <button class="tab-button active" data-tab="painel-conta">Minha Conta</button>
@@ -363,20 +448,41 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
             const tabs = document.querySelectorAll('.tab-button');
             const panels = document.querySelectorAll('.tab-painel');
 
+            function switchTab(targetId) {
+                // Remove active class from all
+                tabs.forEach(t => t.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+
+                // Find and activate requested tab
+                const activeTabBtn = document.querySelector(`.tab-button[data-tab="${targetId}"]`);
+                const activePanel = document.getElementById(targetId);
+
+                if (activeTabBtn && activePanel) {
+                    activeTabBtn.classList.add('active');
+                    activePanel.classList.add('active');
+
+                    // Se for a aba de relatório, carrega o gráfico
+                    if (targetId === 'painel-relatorio' && window.mySalesChart === undefined) {
+                        if (typeof loadSalesChart === 'function') {
+                            loadSalesChart();
+                        }
+                    }
+                }
+            }
+
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    panels.forEach(p => p.classList.remove('active'));
-                    tab.classList.add('active');
-                    const targetPanelId = tab.getAttribute('data-tab');
-                    document.getElementById(targetPanelId).classList.add('active');
-
-                    // Se for a aba de relatório, carrega o gráfico se ainda não foi carregado
-                    if (targetPanelId === 'painel-relatorio' && window.mySalesChart === undefined) {
-                        loadSalesChart();
-                    }
+                    const targetId = tab.getAttribute('data-tab');
+                    switchTab(targetId);
                 });
             });
+
+            // Verificar se há uma aba específica na URL para abrir
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            if (tabParam) {
+                switchTab(tabParam);
+            }
 
             // Lógica do Gráfico de Vendas
             const ctx = document.getElementById('salesChart');

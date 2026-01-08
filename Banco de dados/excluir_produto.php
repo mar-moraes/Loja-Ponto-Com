@@ -70,7 +70,8 @@ try {
         }
     }
 
-    $stmt = $pdo->prepare("DELETE FROM PRODUTOS WHERE id = ? AND usuario_id = ?");
+    // Modificado para Soft Delete
+    $stmt = $pdo->prepare("UPDATE PRODUTOS SET status = 'inativo' WHERE id = ? AND usuario_id = ?");
     $stmt->execute([$id, $usuario_id]);
 
     if ($stmt->rowCount() > 0) {
@@ -85,7 +86,7 @@ try {
         }
     }
 
-    header('Location: ../src/tela_minha_conta.php?msg=produto_excluido');
+    header('Location: ../src/tela_minha_conta.php?msg=produto_excluido&tab=painel-produtos');
 } catch (PDOException $e) {
     die("Erro ao excluir: " . $e->getMessage());
 }
