@@ -225,7 +225,7 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
         // --- (FIM - LÓGICA DE AVALIAÇÃO) ---
         ?>
 
-        <a href="tela_produto.php?id=<?php echo $produto['id']; ?>" class="card-link">
+        <a href="tela_produto.php?id=<?php echo $produto['id']; ?>" class="card-link" data-id="<?php echo $produto['id']; ?>">
           <article class="card" data-price="<?php echo htmlspecialchars($preco_final); ?>">
             <div class="thumb" style="background-image:url('<?php echo htmlspecialchars($produto['imagem_url'] ?? '../assets/imagens/placeholder.png'); ?>')"></div>
             <div class="title"><?php echo htmlspecialchars($produto['nome']); ?></div>
@@ -266,6 +266,7 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="../assets/js/notifications.js"></script>
+  <script src="../assets/js/compare.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
 

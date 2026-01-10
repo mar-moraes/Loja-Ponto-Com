@@ -297,6 +297,14 @@ $meu_comentario_js = json_encode($minha_avaliacao ? $minha_avaliacao['comentario
 
     <div class="coluna-info">
 
+      <button class="btn-comparar" id="btn-comparar" title="Comparar este produto">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 20V10" />
+          <path d="M12 20V4" />
+          <path d="M6 20v-6" />
+        </svg>
+      </button>
+
       <button class="btn-favoritar" id="btn-favoritar">
         <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -726,8 +734,24 @@ $meu_comentario_js = json_encode($minha_avaliacao ? $minha_avaliacao['comentario
 
     // (MODIFICADO) Desenha as estrelas com a nota salva assim que a página carrega
     drawStars(currentRating);
+
+    // --- 8. INICIAR COMPARAÇÃO ---
+    const btnComparar = document.getElementById("btn-comparar");
+    if (btnComparar) {
+      btnComparar.addEventListener("click", () => {
+        const prod = getDadosProduto();
+        // Inicia fluxo -> redireciona para home
+        startComparisonFlow({
+          id: prod.id,
+          nome: prod.title,
+          imagem: prod.img,
+          price: prod.price
+        });
+      });
+    }
   </script>
   <script src="../assets/js/notifications.js"></script>
+  <script src="../assets/js/compare.js"></script>
 </body>
 
 </html>
