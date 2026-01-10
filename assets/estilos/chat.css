@@ -166,14 +166,18 @@ body {
 
 /* Área de Input */
 .chat-input-area {
-    padding: 15px;
+    padding: 10px;
     background-color: #f0f0f0;
     border-top: 1px solid #ddd;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #form-send-message {
     display: flex;
     gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #message-input {
@@ -182,6 +186,12 @@ body {
     border: 1px solid #ddd;
     border-radius: 20px;
     outline: none;
+    resize: none;
+    min-height: 45px;
+    max-height: 150px;
+    overflow-y: auto;
+    font-family: inherit;
+    line-height: 1.4;
 }
 
 #message-input:focus {

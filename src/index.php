@@ -266,6 +266,7 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="../assets/js/notifications.js"></script>
+  <script src="../assets/js/compare.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
 

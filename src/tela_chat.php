@@ -95,7 +95,7 @@ $usuario_logado = true;
             <div id="chat-input-area" class="chat-input-area" style="display: none;">
                 <form id="form-send-message">
                     <input type="hidden" id="current-chat-id" value="">
-                    <input type="text" id="message-input" placeholder="Digite sua mensagem..." autocomplete="off">
+                    <textarea id="message-input" placeholder="Digite sua mensagem..." rows="1"></textarea>
                     <button type="submit">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="22" y1="2" x2="11" y2="13"></line>

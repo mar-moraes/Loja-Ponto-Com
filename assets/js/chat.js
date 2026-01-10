@@ -199,12 +199,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- 4. ENVIO ---
+    // --- 4. ENVIO ---
+
+    // Auto-resize do textarea
+    inputMessage.addEventListener('input', function () {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+        if (this.value === '') {
+            this.style.height = ''; // Volta ao CSS original (min-height)
+        }
+    });
+
+    // Enter para enviar, Shift+Enter para nova linha
+    inputMessage.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            formSend.dispatchEvent(new Event('submit'));
+        }
+    });
+
     formSend.addEventListener("submit", (e) => {
         e.preventDefault();
         const msg = inputMessage.value.trim();
         if (!msg || !currentChatId) return;
 
         inputMessage.value = "";
+        inputMessage.style.height = ''; // Reseta altura
 
         enviarMensagem(currentChatId, msg).then(data => {
             if (data.sucesso) {
