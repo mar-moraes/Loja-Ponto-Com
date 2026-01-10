@@ -26,7 +26,8 @@ try {
     $produtos = [];
 }
 
-// Ordena os produtos conforme a ordem dos IDs na URL (opcional)
+// Ordena os produtos conforme a ordem dos IDs na URL (opcional, mas bom pra UX)
+// (Implementação simples: reordena $produtos baseado em $ids_array)
 $produtos_ordenados = [];
 foreach ($ids_array as $id) {
     foreach ($produtos as $p) {
@@ -46,11 +47,12 @@ if (empty($produtos)) {
 $nome_usuario = isset($_SESSION['usuario_nome']) ? explode(' ', $_SESSION['usuario_nome'])[0] : '';
 $usuario_logado = isset($_SESSION['usuario_nome']);
 
-// 3. Função auxiliar para extrair características
+// 3. Função auxiliar para extrair características (reutilizada de tela_produto logicamente)
 function parseCaracteristicas($descricao)
 {
     $caracteristicas = [];
     $inicio = strpos($descricao, "--- CARACTERÍSTICAS ---");
+    // Lógica simplificada: extrair linhas Chave: Valor
     if ($inicio !== false) {
         $substr = substr($descricao, $inicio);
         $linhas = explode("\n", $substr);
@@ -64,8 +66,9 @@ function parseCaracteristicas($descricao)
     return $caracteristicas;
 }
 
+// Prepara lista unificada de todas as chaves de características encontradas
 $todas_chaves_caract = [];
-$produtos_view = [];
+$produtos_view = []; // Para facilitar o loop na view
 
 foreach ($produtos as $p) {
     $caracts = parseCaracteristicas($p['descricao']);

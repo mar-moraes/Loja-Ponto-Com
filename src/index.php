@@ -30,7 +30,7 @@ try {
             GROUP BY
                 p.id
             ORDER BY
-                p.id DESC
+                p.ordem_destaque ASC, p.id DESC
             LIMIT 20"
     );
     $stmt->execute();
@@ -287,7 +287,7 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
         },
       });
 
-      // === NOVO SCRIPT PARA ORDENAÇÃO ===
+      // === NOVO SCRIPT PARA ORDENAÇÃO (Sort) ===
       const sortSelect = document.getElementById('sort');
       const productGrid = document.getElementById('product-grid');
       // Pega todos os 'a.card-link' que estão dentro do grid
@@ -295,39 +295,108 @@ $nome_usuario = $usuario_logado ? explode(' ', $_SESSION['usuario_nome'])[0] : '
       // Salva a ordem original (para o "Mais Relevantes")
       const originalProducts = [...products];
 
-      sortSelect.addEventListener('change', function() {
-        const sortBy = this.value; // Pega o valor (ex: 'menor-preco')
+      if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+          const sortBy = this.value; // Pega o valor (ex: 'menor-preco')
 
-        let sortedProducts = [];
+          let sortedProducts = [];
 
-        if (sortBy === 'menor-preco') {
-          sortedProducts = products.sort((a, b) => {
-            // Pega o 'data-price' de dentro do 'article' de cada 'a'
-            const priceA = parseFloat(a.querySelector('.card').dataset.price);
-            const priceB = parseFloat(b.querySelector('.card').dataset.price);
-            return priceA - priceB; // Ordena do menor para o maior
+          if (sortBy === 'menor-preco') {
+            sortedProducts = products.sort((a, b) => {
+              // Pega o 'data-price' de dentro do 'article' de cada 'a'
+              const priceA = parseFloat(a.querySelector('.card').dataset.price);
+              const priceB = parseFloat(b.querySelector('.card').dataset.price);
+              return priceA - priceB; // Ordena do menor para o maior
+            });
+          } else if (sortBy === 'maior-preco') {
+            sortedProducts = products.sort((a, b) => {
+              const priceA = parseFloat(a.querySelector('.card').dataset.price);
+              const priceB = parseFloat(b.querySelector('.card').dataset.price);
+              return priceB - priceA; // Ordena do maior para o menor
+            });
+          } else {
+            // 'relevantes' (volta à ordem original)
+            sortedProducts = originalProducts;
+          }
+
+          // Limpa o grid e re-adiciona os produtos na ordem correta
+          productGrid.innerHTML = ''; // Limpa o grid
+          sortedProducts.forEach(product => {
+            productGrid.appendChild(product); // Adiciona o produto (o <a>) de volta
           });
-        } else if (sortBy === 'maior-preco') {
-          sortedProducts = products.sort((a, b) => {
-            const priceA = parseFloat(a.querySelector('.card').dataset.price);
-            const priceB = parseFloat(b.querySelector('.card').dataset.price);
-            return priceB - priceA; // Ordena do maior para o menor
-          });
-        } else {
-          // 'relevantes' (volta à ordem original)
-          sortedProducts = originalProducts;
-        }
-
-        // Limpa o grid e re-adiciona os produtos na ordem correta
-        productGrid.innerHTML = ''; // Limpa o grid
-        sortedProducts.forEach(product => {
-          productGrid.appendChild(product); // Adiciona o produto (o <a>) de volta
         });
-      });
-      // === FIM DO NOVO SCRIPT ===
+      }
+      // === FIM DO SCRIT DE ORDENAÇÃO ===
 
     });
   </script>
+
+  <?php if (isset($_SESSION['modo_editor']) && $_SESSION['modo_editor']): ?>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const grid = document.getElementById('product-grid');
+
+        const sortable = new Sortable(grid, {
+          animation: 150,
+          ghostClass: 'sortable-ghost',
+          // Desabilitar clique ao arrastar
+          onStart: function() {
+            grid.classList.add('dragging');
+          },
+          onEnd: function(evt) {
+            grid.classList.remove('dragging');
+
+            // Get order
+            const order = Array.from(grid.children).map(el => el.getAttribute('data-id'));
+
+            fetch('api/update_order.php', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  order: order
+                })
+              })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  console.log('Ordem salva com sucesso');
+                } else {
+                  console.error('Erro ao salvar ordem:', data.error);
+                  alert('Erro ao salvar a nova ordem!');
+                }
+              })
+              .catch(err => {
+                console.error('Erro na requisição:', err);
+              });
+          }
+        });
+
+        // Previne clique nos links se estiver arrastando (hack simples)
+        // SortableJS geralmente lida bem, mas podemos reforçar
+        grid.addEventListener('click', function(e) {
+          if (grid.classList.contains('dragging')) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }, true);
+      });
+    </script>
+    <style>
+      .card-link {
+        cursor: move !important;
+        /* Cursor de movimento */
+        user-select: none;
+      }
+
+      .sortable-ghost {
+        opacity: 0.5;
+        background: #f0f0f0;
+      }
+    </style>
+  <?php endif; ?>
 </body>
 
 </html>
