@@ -10,7 +10,7 @@ Este documento lista as funcionalidades planejadas e sugestões técnicas para a
 - [ ] Rastreamento de Pedidos
 - [x] Relatórios e Dashboard para Fornecedores
 - [ ] API REST para integração com apps mobile
-- [ ] Comparação de Produtos
+- [x] Comparação de Produtos
 
 ## Sugestões Técnicas
  
