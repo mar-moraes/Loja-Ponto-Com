@@ -72,6 +72,16 @@ if ($is_fornecedor) {
     } catch (PDOException $e) {
         error_log("Erro ao buscar produtos: " . $e->getMessage());
     }
+
+    // --- BUSCA CUPONS DO FORNECEDOR ---
+    $meus_cupons = [];
+    try {
+        $stmt_cupons = $pdo->prepare("SELECT * FROM cupons WHERE usuario_id = ? ORDER BY id DESC");
+        $stmt_cupons->execute([$usuario_id]);
+        $meus_cupons = $stmt_cupons->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erro ao buscar cupons: " . $e->getMessage());
+    }
 }
 // ==========================================================
 // --- FIM DA LÓGICA ---
@@ -164,6 +174,7 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 
             <?php if ($is_fornecedor): ?>
                 <button class="tab-button" data-tab="painel-produtos">Meus produtos</button>
+                <button class="tab-button" data-tab="painel-cupons">Meus Cupons</button>
                 <button class="tab-button" data-tab="painel-relatorio">Relatório de Vendas</button>
             <?php endif; ?>
         </div>
@@ -333,6 +344,53 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
                     </a>
                 </section>
 
+            </div>
+        <?php endif; ?>
+
+        <?php if ($is_fornecedor): ?>
+            <div id="painel-cupons" class="tab-painel">
+                <section class="conta-secao">
+                    <h2>Meus Cupons de Desconto</h2>
+
+                    <?php if (empty($meus_cupons)): ?>
+                        <p>Você ainda não criou nenhum cupom.</p>
+                    <?php else: ?>
+                        <div style="overflow-x: auto;">
+                            <table class="dados-pessoais" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="text-align: left; background: #f5f5f5;">
+                                        <th style="padding: 10px;">Código</th>
+                                        <th style="padding: 10px;">Desconto</th>
+                                        <th style="padding: 10px;">Validade</th>
+                                        <th style="padding: 10px;">Usos</th>
+                                        <th style="padding: 10px;">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($meus_cupons as $cupom):
+                                        $valor = $cupom['tipo_desconto'] == 'porcentagem' ? number_format($cupom['valor_desconto'], 0) . '%' : 'R$ ' . number_format($cupom['valor_desconto'], 2, ',', '.');
+                                        $data_fim = $cupom['data_fim'] ? date('d/m/Y', strtotime($cupom['data_fim'])) : 'Indeterminado';
+                                        $ativo = $cupom['ativo'] ? 'Ativo' : 'Inativo';
+                                    ?>
+                                        <tr style="border-bottom: 1px solid #eee;">
+                                            <td style="padding: 10px;"><strong><?php echo htmlspecialchars($cupom['codigo']); ?></strong></td>
+                                            <td style="padding: 10px;"><?php echo $valor; ?></td>
+                                            <td style="padding: 10px;"><?php echo $data_fim; ?></td>
+                                            <td style="padding: 10px;"><?php echo $cupom['limite_uso'] ? "Limite: {$cupom['limite_uso']}" : 'Ilimitado'; ?></td>
+                                            <td style="padding: 10px;">
+                                                <a href="../Banco de dados/excluir_cupom.php?id=<?php echo $cupom['id']; ?>" onclick="return confirm('Excluir cupom?');" style="color: red;">Excluir</a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+
+                    <a href="tela_cupom_form.php" class="btn-adicionar-endereco" style="margin-top: 20px;">
+                        <span>+</span> Criar Novo Cupom
+                    </a>
+                </section>
             </div>
         <?php endif; ?>
 

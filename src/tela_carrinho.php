@@ -173,6 +173,21 @@ if ($usuario_logado) {
     <div class="resumo-container">
       <h3>Resumo da compra</h3>
       <div id="resumo-separador" class="resumo-divisor" style="display: none;"></div>
+
+      <!-- Cupom Section -->
+      <div id="cupom-container" style="display: none; margin-bottom: 10px; flex-direction: column; gap: 5px;">
+        <div style="display: flex; gap: 5px;">
+          <input type="text" id="cupom-codigo" placeholder="Cupom de desconto" style="flex: 1; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+          <button type="button" id="btn-aplicar-cupom" style="padding: 5px 10px; background: #2968C8; color: white; border: none; border-radius: 4px; cursor: pointer;">Aplicar</button>
+        </div>
+        <div id="msg-cupom" style="font-size: 12px;"></div>
+      </div>
+
+      <div id="desconto-container" class="resumo-linha" style="display: none; color: #388e3c;">
+        <span>Desconto</span>
+        <span id="valor-desconto">- R$ 0,00</span>
+      </div>
+
       <div id="total-container" class="resumo-linha total" style="display: none;">
         <span>Total</span>
         <span id="valor-total">R$ 0,00</span>
@@ -340,10 +355,95 @@ if ($usuario_logado) {
         } else {
           const total = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
           separador.style.display = "block";
+
+          // Show Coupon Field
+          const cupomContainer = document.getElementById("cupom-container");
+          if (cupomContainer) cupomContainer.style.display = "flex";
+
           totalContainer.style.display = "flex";
           btnContinuar.style.display = "block";
-          totalSpan.innerText = "R$ " + total.toFixed(2).replace(".", ",");
+
+          // Calculate with Discount
+          let finalTotal = total;
+          if (window.cupomAplicado && window.cupomAplicado.valid) {
+            const descontoContainer = document.getElementById("desconto-container");
+            const valorDescontoSpan = document.getElementById("valor-desconto");
+
+            // Recalculate discount based on current total (important if quantity changed)
+            let valorDesconto = 0;
+            if (window.cupomAplicado.tipo === 'porcentagem') {
+              valorDesconto = (total * window.cupomAplicado.valor) / 100;
+            } else {
+              valorDesconto = Math.min(window.cupomAplicado.valor, total);
+            }
+
+            finalTotal = total - valorDesconto;
+
+            descontoContainer.style.display = "flex";
+            valorDescontoSpan.innerText = "- R$ " + valorDesconto.toFixed(2).replace(".", ",");
+          } else {
+            const descontoContainer = document.getElementById("desconto-container");
+            if (descontoContainer) descontoContainer.style.display = "none";
+          }
+
+          totalSpan.innerText = "R$ " + finalTotal.toFixed(2).replace(".", ",");
         }
+      }
+
+      // --- CUPOM LOGIC ---
+      const btnAplicarCupom = document.getElementById("btn-aplicar-cupom");
+      const inputCupom = document.getElementById("cupom-codigo");
+      const msgCupom = document.getElementById("msg-cupom");
+
+      if (btnAplicarCupom) {
+        btnAplicarCupom.addEventListener("click", function() {
+          const codigo = inputCupom.value.trim();
+          if (!codigo) return;
+
+          const total = carrinho.reduce((acc, p) => acc + (p.price * p.quantidade), 0);
+          const usuarioId = <?php echo $usuario_logado ? $usuario_id : 'null'; ?>;
+
+          fetch('api/validar_cupom.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                codigo: codigo,
+                total: total,
+                usuario_id: usuarioId
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.valid) {
+                msgCupom.innerText = "Cupom aplicado!";
+                msgCupom.style.color = "green";
+
+                const valor = parseFloat(data.cupom.valor_desconto);
+                const tipo = data.cupom.tipo_desconto;
+
+                window.cupomAplicado = {
+                  valid: true,
+                  codigo: data.cupom.codigo,
+                  tipo: tipo,
+                  valor: valor,
+                  id: data.cupom.id
+                };
+                atualizarTotal();
+              } else {
+                msgCupom.innerText = data.message;
+                msgCupom.style.color = "red";
+                window.cupomAplicado = null;
+                atualizarTotal();
+              }
+            })
+            .catch(err => {
+              console.error(err);
+              msgCupom.innerText = "Erro ao validar cupom.";
+              msgCupom.style.color = "red";
+            });
+        });
       }
 
       // Atualiza os contadores nas ABAS
@@ -526,7 +626,8 @@ if ($usuario_logado) {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              carrinho: carrinho
+              carrinho: carrinho,
+              cupom: window.cupomAplicado // Envia o cupom aplicado, se houver
             })
           })
           .then(response => response.json())

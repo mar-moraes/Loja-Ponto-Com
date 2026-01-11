@@ -12,6 +12,13 @@ if (!isset($_SESSION['usuario_id'])) {
 $usuario_id = $_SESSION['usuario_id'];
 $dados = json_decode(file_get_contents('php://input'), true);
 $carrinhoJS = $dados['carrinho'] ?? [];
+$cupomJS = $dados['cupom'] ?? null;
+
+if ($cupomJS && isset($cupomJS['id'])) {
+    $_SESSION['checkout_cupom'] = $cupomJS;
+} else {
+    unset($_SESSION['checkout_cupom']);
+}
 
 // if (empty($carrinhoJS)) {
 //     echo json_encode(['sucesso' => false, 'mensagem' => 'Carrinho vazio recebido.']);
@@ -42,27 +49,25 @@ try {
 
     // 4. Inserir os novos itens
     $stmt_insere = $pdo->prepare("INSERT INTO CARRINHO_ITENS (carrinho_id, produto_id, quantidade) VALUES (?, ?, ?)");
-    
+
     foreach ($carrinhoJS as $item) {
         // ATENÇÃO: Você precisa ter o ID do produto no seu JS.
         // Seu JS atual só tem o Título. Você precisará adicionar 'produto.id'
         // Vou assumir que 'item['id']' existe.
-        
+
         $produto_id = $item['id']; // Você precisa adicionar isso ao seu JS
         $quantidade = $item['quantidade'];
-        
+
         // Em um app real, você também buscaria o preço do PRODUTO no BD aqui
         // para evitar fraude, mas vamos manter simples por agora.
-        
+
         $stmt_insere->execute([$carrinho_id, $produto_id, $quantidade]);
     }
 
     // Confirma a transação
     $pdo->commit();
     echo json_encode(['sucesso' => true]);
-
 } catch (PDOException $e) {
     $pdo->rollBack();
     echo json_encode(['sucesso' => false, 'mensagem' => 'Erro de banco de dados: ' . $e->getMessage()]);
 }
-?>
