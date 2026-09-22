@@ -697,16 +697,16 @@
         },
         {
             "name": "predis/predis",
-            "version": "v3.4.0",
+            "version": "v3.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/predis/predis.git",
-                "reference": "1183f5732e6b10efd33f64984a96726eaecb59aa"
+                "reference": "e2db96312ecf57a01a3477bf192d1ebc0ad7e9fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/predis/predis/zipball/1183f5732e6b10efd33f64984a96726eaecb59aa",
-                "reference": "1183f5732e6b10efd33f64984a96726eaecb59aa",
+                "url": "https://api.github.com/repos/predis/predis/zipball/e2db96312ecf57a01a3477bf192d1ebc0ad7e9fb",
+                "reference": "e2db96312ecf57a01a3477bf192d1ebc0ad7e9fb",
                 "shasum": ""
             },
             "require": {
@@ -748,7 +748,7 @@
             ],
             "support": {
                 "issues": "https://github.com/predis/predis/issues",
-                "source": "https://github.com/predis/predis/tree/v3.4.0"
+                "source": "https://github.com/predis/predis/tree/v3.6.1"
             },
             "funding": [
                 {
@@ -756,7 +756,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-11T17:30:28+00:00"
+            "time": "2026-09-17T20:41:00+00:00"
         },
         {
             "name": "psr/http-client",
@@ -3222,5 +3222,5 @@
     "prefer-lowest": false,
     "platform": {},
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
